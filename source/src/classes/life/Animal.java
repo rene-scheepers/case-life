@@ -4,7 +4,9 @@ import classes.world.Location;
 
 public class Animal implements Food {
 
-    /** Inherited */
+    /**
+     * Inherited
+     */
 
     private Digestion digestion;
 
@@ -22,7 +24,9 @@ public class Animal implements Food {
 
     private int legs;
 
-    /** Animal specific */
+    /**
+     * Animal specific
+     */
 
     private int energy;
 
@@ -37,6 +41,19 @@ public class Animal implements Food {
     private State state;
 
     private Location position;
+
+    public Animal(Digestion digestion, float reproductionThreshold, float reproductionCost, int stamina, int strength, float swimmingThreshold, float movementThreshold, int legs, Location position) {
+        this.digestion = digestion;
+        this.reproductionThreshold = reproductionThreshold;
+        this.reproductionCost = reproductionCost;
+        this.stamina = stamina;
+        this.strength = strength;
+        this.swimmingThreshold = swimmingThreshold;
+        this.movementThreshold = movementThreshold;
+        this.legs = legs;
+        this.position = position;
+        this.energy = stamina;
+    }
 
     public int getWeight() {
         int weight = energy - strength;
