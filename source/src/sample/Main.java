@@ -3,6 +3,7 @@ package sample;
 import classes.enumerations.LocationType;
 import classes.world.Location;
 import classes.world.World;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -16,11 +17,16 @@ import java.util.ArrayList;
 
 public class Main extends Application {
 
+    private Canvas canvas;
+    private Simulator simulator;
     private int width;
     private int height;
     private World world;
 
     public Main() {
+        this.world = new World("C:\\Users\\Rene\\Desktop\\kut.bmp");
+
+
         this.width = 1000;
         this.height = 1000;
     }
@@ -28,46 +34,26 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Pane root = new Pane();
+
+        canvas = new Canvas(width, height);
+        this.simulator = new Simulator(world, canvas);
         Scene scene = new Scene(root);
 
-        world = new World("C:\\Users\\Rene\\Desktop\\kut.bmp");
-
-        Canvas canvas = new Canvas(width, height);
         GraphicsContext context = canvas.getGraphicsContext2D();
-        draw(context);
+        //draw(context);
         root.getChildren().add(canvas);
 
+        //Timeline line = new Timeline(1000);
 
         primaryStage.setTitle("Hello World");
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        this.simulator.setSpeed(1000);
+        this.simulator.start();
     }
 
-    public void draw(GraphicsContext context) {
-        int drawWidth = width / world.getWidth();
-        if (drawWidth < 1) {
-            drawWidth = 1;
-        }
 
-        int drawHeight = height / world.getHeight();
-        if (drawHeight < 1) {
-            drawHeight = 1;
-        }
-
-        ArrayList<Location> locations = world.getLocations();
-
-        for (Location location : locations) {
-            if (location.getType().equals(LocationType.Land)) {
-                context.setFill(Color.WHITE);
-            } else if (location.getType().equals(LocationType.Obstacle)) {
-                context.setFill(Color.BLACK);
-            } else {
-                context.setFill(Color.BLUE);
-            }
-            context.fillRect(location.getX() * drawWidth, location.getY() * drawHeight, drawWidth, drawHeight);
-        }
-
-    }
 
 
     public static void main(String[] args) {

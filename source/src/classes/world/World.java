@@ -81,7 +81,13 @@ public class World implements ISimulate {
     }
 
     public void simulate() {
+        for (Plant plant : plants) {
+            plant.simulate();
+        }
 
+        for (Animal animal : animals) {
+            animal.simulate();
+        }
     }
 
     public void removeAnimal(Animal animal) {
