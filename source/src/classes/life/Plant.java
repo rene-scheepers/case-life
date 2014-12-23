@@ -1,11 +1,8 @@
 package classes.life;
 
-import classes.interfaces.Food;
+import classes.interfaces.IFood;
 
-/**
- * Created by Rene on 23-12-2014.
- */
-public class Plant implements Food {
+public class Plant implements IFood {
 
     public static final int RESPAWN_TIME = 100;
     public static final int TIMES_EATEN_BEFORE_DEAD = 10;
@@ -13,6 +10,10 @@ public class Plant implements Food {
     protected int energy;
     protected int timesDied;
     protected int timesEaten;
+
+    public Plant(int energy) {
+        this.energy = energy;
+    }
 
     @Override
     public int getEaten() {

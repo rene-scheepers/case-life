@@ -3,8 +3,8 @@ package classes.enumerations;
 /**
  * Created by Rene on 23-12-2014.
  */
-public enum Type {
-    Sea,
+public enum LocationType {
+    Water,
     Land,
     Obstacle
 }

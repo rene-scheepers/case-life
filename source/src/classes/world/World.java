@@ -1,14 +1,19 @@
 package classes.world;
 
-import classes.enumerations.Type;
+import classes.enumerations.LocationType;
+import classes.interfaces.ISimulate;
 import classes.life.Animal;
 import classes.life.Plant;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Random;
 
-public class World {
+public class World implements ISimulate {
 
     private ArrayList<Location> locations;
     private ArrayList<Animal> animals;
@@ -17,36 +22,66 @@ public class World {
     private int width;
     private int height;
 
-    public World() {
-        this.locations = new ArrayList<Location>();
-        this.animals = new ArrayList<Animal>();
-        this.plants = new ArrayList<Plant>();
+    public World(String path) {
+        locations = new ArrayList<Location>();
+        animals = new ArrayList<Animal>();
+        plants = new ArrayList<Plant>();
 
-        this.width = 100;
-        this.height = 100;
 
-        Random random = new Random();
+        File file = new File(path);
+        BufferedImage image;
+        try {
+            image = ImageIO.read(file);
+        } catch(IOException exception) {
+            return;
+        }
+
+        width = image.getWidth();
+        height = image.getHeight();
+
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                Type type;
+                Color color = new Color(image.getRGB(x, y));
+                String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getGreen());
 
-                if (random.nextBoolean()) {
-                    type = Type.Sea;
+                LocationType type;
+                if (hex.equals("#000000")) {
+                    type = LocationType.Land;
+                } else if (hex.equals("#ed1c1c")) {
+                    type = LocationType.Obstacle;
                 } else {
-                    type = Type.Land;
+                    type = LocationType.Water;
+
                 }
 
-                locations.add(new Location(this, x, y, type));
+                Location location = new Location(this, x, y, type);
+                locations.add(location);
             }
         }
+    }
+
+    public ArrayList<Location> getLocations() {
+        return locations;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getWidth() {
+        return width;
     }
 
     public ArrayList<Location> getNeighbouringLocations() {
         throw new NotImplementedException();
     }
 
-    public void addFood(Animal animal) {
+    public void addAnimal(Animal animal) {
         animals.add(animal);
+    }
+
+    public void simulate() {
+
     }
 
     public void removeAnimal(Animal animal) {

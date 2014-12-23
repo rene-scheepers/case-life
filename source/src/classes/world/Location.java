@@ -1,37 +1,40 @@
 package classes.world;
 
-import classes.enumerations.Type;
+import classes.enumerations.LocationType;
 
-import java.awt.*;
-
-/**
- * Created by Rene on 23-12-2014.
- */
 public class Location {
 
-    private Point point;
-    private Type type;
+    private int x;
+    private int y;
+
+    private LocationType type;
     private World world;
 
-    public Location(World world, int x, int y, Type type) {
+    public Location(World world, int x, int y, LocationType type) {
         this.world = world;
-        this.point = new Point(x, y);
+        this.x = x;
+        this.y = y;
         this.type = type;
     }
 
     public int getX() {
-        return (int)point.getX();
+        return x;
     }
 
     public int getY() {
-        return (int)point.getY();
+        return y;
     }
 
-    public Type getType() {
+    public LocationType getType() {
         return type;
     }
 
     public World getWorld() {
         return world;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("X: %s, Y: %s, Type: %s", x, y, type.name());
     }
 }
