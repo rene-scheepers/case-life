@@ -1,4 +1,4 @@
-package classes.life;
+package classes.interfaces;
 
 public interface Food {
 
@@ -8,5 +8,10 @@ public interface Food {
      * @return Return the amount of energy passed to the eater.
      */
     public int getEaten();
+
+    /**
+     * Simulate the object.
+     */
+    public void simulate();
 
 }

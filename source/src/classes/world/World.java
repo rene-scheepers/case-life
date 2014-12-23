@@ -1,15 +1,13 @@
 package classes.world;
 
+import classes.enumerations.Type;
 import classes.life.Animal;
 import classes.life.Plant;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
-/**
- * Created by Rene on 23-12-2014.
- */
 public class World {
 
     private ArrayList<Location> locations;
@@ -38,11 +36,29 @@ public class World {
                     type = Type.Land;
                 }
 
-                locations.add(new Location(x, y, type));
+                locations.add(new Location(this, x, y, type));
             }
         }
     }
 
+    public ArrayList<Location> getNeighbouringLocations() {
+        throw new NotImplementedException();
+    }
 
+    public void addFood(Animal animal) {
+        animals.add(animal);
+    }
+
+    public void removeAnimal(Animal animal) {
+        animals.remove(animal);
+    }
+
+    public void addPlant(Plant plant) {
+        plants.add(plant);
+    }
+
+    public void removePlant(Plant plant) {
+        plants.remove(plant);
+    }
 
 }

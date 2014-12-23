@@ -1,4 +1,4 @@
-package classes.life;
+package classes.enumerations;
 
 public enum State {
     Moving,

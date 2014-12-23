@@ -1,5 +1,10 @@
 package classes.life;
 
+import classes.enumerations.Digestion;
+import classes.enumerations.Direction;
+import classes.enumerations.State;
+import classes.enumerations.Type;
+import classes.interfaces.Food;
 import classes.world.Location;
 
 public class Animal implements Food {
@@ -32,7 +37,7 @@ public class Animal implements Food {
 
     private int hunger;
 
-    private int direction;
+    private Direction direction;
 
     private int speed;
 
@@ -65,7 +70,7 @@ public class Animal implements Food {
     }
 
     public void move(Location newLocation) {
-        if (newLocation.hasObstacle()) {
+        if (newLocation.getType().equals(Type.Obstacle)) {
             this.energy /= 2;
             return;
         }
@@ -74,8 +79,8 @@ public class Animal implements Food {
         position = newLocation;
     }
 
-    public void eat(Food food) {
-
+    public void simulate() {
+        
     }
 
     @Override

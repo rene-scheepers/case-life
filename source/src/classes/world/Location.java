@@ -1,5 +1,7 @@
 package classes.world;
 
+import classes.enumerations.Type;
+
 import java.awt.*;
 
 /**
@@ -9,14 +11,12 @@ public class Location {
 
     private Point point;
     private Type type;
+    private World world;
 
-    public Location(int x, int y, Type type) {
+    public Location(World world, int x, int y, Type type) {
+        this.world = world;
         this.point = new Point(x, y);
         this.type = type;
-    }
-
-    public boolean hasObstacle() {
-        return false;
     }
 
     public int getX() {
@@ -29,5 +29,9 @@ public class Location {
 
     public Type getType() {
         return type;
+    }
+
+    public World getWorld() {
+        return world;
     }
 }
