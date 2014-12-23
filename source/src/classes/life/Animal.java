@@ -7,6 +7,7 @@ import classes.interfaces.IAnimal;
 import classes.interfaces.IFood;
 import classes.interfaces.ISimulate;
 import classes.world.Location;
+import classes.world.World;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class Animal implements IFood, ISimulate, IAnimal {
@@ -23,16 +24,16 @@ public class Animal implements IFood, ISimulate, IAnimal {
 
     private State state;
 
-    private Location position;
+    private Location location;
 
     public Animal(Genetics genetics, Location position) {
         this.genetics = genetics;
-        this.position = position;
+        this.location = position;
         this.energy = genetics.getStamina();
     }
 
-    public Location getPosition() {
-        return position;
+    public Location getLocation() {
+        return location;
     }
 
     public int getAge() {
@@ -73,34 +74,42 @@ public class Animal implements IFood, ISimulate, IAnimal {
     }
 
     public void move(Location newLocation) {
-        if (newLocation.getType().equals(LocationType.Obstacle)) {
+        if (newLocation.getLocationType().equals(LocationType.Obstacle)) {
             this.energy /= 2;
             return;
         }
 
         energy -= genetics.getLegs();
-        position = newLocation;
+        location = newLocation;
+        state = State.Moving;
     }
 
     public void simulate() {
-        
+        World world = location.getWorld();
+        Location newLocation = world.getLocation(location.getX(), location.getY() + 1);
+
+        move(newLocation);
     }
 
     @Override
     public void eat(IFood food) {
         int energy = food.getEaten();
         this.energy += energy;
+
+        state = State.Eating;
     }
 
     @Override
     public void reproduce(Animal animal) {
-        Animal child = new Animal(this.genetics, this.position);
-        position.getWorld().addAnimal(child);
+        Animal child = new Animal(this.genetics, this.location);
+        location.getWorld().addAnimal(child);
+
+        state = State.Reproducing;
     }
 
     @Override
     public int getEaten() {
-        position.getWorld().removeAnimal(this);
+        location.getWorld().removeAnimal(this);
         return 0;
     }
 }

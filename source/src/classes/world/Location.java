@@ -25,7 +25,7 @@ public class Location {
         return y;
     }
 
-    public LocationType getType() {
+    public LocationType getLocationType() {
         return type;
     }
 

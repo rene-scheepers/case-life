@@ -1,86 +1,97 @@
 package sample;
 
+import classes.enumerations.Digestion;
 import classes.enumerations.LocationType;
+import classes.life.Animal;
+import classes.life.Plant;
 import classes.world.Location;
 import classes.world.World;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.Random;
 
 public class Simulator {
 
     private Canvas canvas;
     private World world;
-    private Timer timer = new Timer();
+    private Timeline timeline;
     private int speed;
-
-    private boolean running;
 
     public Simulator(World world, Canvas canvas) {
         this.world = world;
-        this.speed = 1000;
         this.canvas = canvas;
+        speed = 1;
+        timeline = new Timeline();
     }
 
     public void setSpeed(int speed) {
         this.speed = speed;
     }
 
-    public boolean isRunning() {
-        return running;
+    public Animation.Status getStatus() {
+        return timeline.getStatus();
     }
 
-    public void start() {
-        if (timer == null) {
-            timer = new Timer();
-        }
+    public void play() {
+        timeline.setRate(speed);
 
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                world.simulate();
-                draw(canvas.getGraphicsContext2D());
-            }
-        }, 0, speed);
-
-        running = true;
+        KeyFrame frame = new KeyFrame(Duration.seconds(1), ev -> {
+            world.simulate();
+            draw(canvas);
+        });
+        timeline.getKeyFrames().add(frame);
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();
     }
 
-    public boolean stop() {
-        if (timer == null) {
-            return false;
-        }
-
-        timer.cancel();
-        running = false;
-        return true;
+    public void pause() {
+        timeline.pause();
     }
 
-    public void draw(GraphicsContext context) {
-        int drawWidth = (int)canvas.getWidth() / world.getWidth();
+    public void stop() {
+        timeline.stop();
+    }
+
+    private void draw(Canvas canvas) {
+        GraphicsContext context = canvas.getGraphicsContext2D();
+        context.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
+        int drawWidth = (int) canvas.getWidth() / world.getWidth();
         if (drawWidth < 1) {
             drawWidth = 1;
         }
 
-        int drawHeight = (int)canvas.getHeight() / world.getHeight();
+        int drawHeight = (int) canvas.getHeight() / world.getHeight();
         if (drawHeight < 1) {
             drawHeight = 1;
         }
 
-        ArrayList<Location> locations = world.getLocations();
-
-        for (Location location : locations) {
-            if (location.getType().equals(LocationType.Land)) {
-                context.setFill(Color.WHITE);
-            } else if (location.getType().equals(LocationType.Obstacle)) {
-                context.setFill(Color.BLACK);
+        ArrayList<Animal> animals = world.getAnimals();
+        for (Animal animal : animals) {
+            Location location = animal.getLocation();
+            Digestion digestion = animal.getGenetics().getDigestion();
+            if (digestion.equals(Digestion.Carnivore)) {
+                context.setFill(Color.RED);
+            } else if (digestion.equals(Digestion.Herbivore)) {
+                context.setFill(Color.BROWN);
             } else {
-                context.setFill(Color.BLUE);
+                context.setFill(Color.YELLOW);
             }
+
+            context.fillRect(location.getX() * drawWidth, location.getY() * drawHeight, drawWidth, drawHeight);
+        }
+
+        context.setFill(Color.GREEN);
+        ArrayList<Plant> plants = world.getPlants();
+        for (Plant plant : plants) {
+            Location location = plant.getLocation();
             context.fillRect(location.getX() * drawWidth, location.getY() * drawHeight, drawWidth, drawHeight);
         }
     }

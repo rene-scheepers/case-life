@@ -1,18 +1,25 @@
 package classes.life;
 
 import classes.interfaces.IFood;
+import classes.world.Location;
 
 public class Plant implements IFood {
 
     public static final int RESPAWN_TIME = 100;
     public static final int TIMES_EATEN_BEFORE_DEAD = 10;
 
+    protected Location location;
     protected int energy;
     protected int timesDied;
     protected int timesEaten;
 
-    public Plant(int energy) {
+    public Plant(Location location, int energy) {
+        this.location = location;
         this.energy = energy;
+    }
+
+    public Location getLocation() {
+        return location;
     }
 
     @Override

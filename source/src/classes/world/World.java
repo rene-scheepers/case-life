@@ -12,18 +12,19 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class World implements ISimulate {
 
-    private ArrayList<Location> locations;
     private ArrayList<Animal> animals;
     private ArrayList<Plant> plants;
+
+    private HashMap<String, Location> locations = new HashMap<>();
 
     private int width;
     private int height;
 
     public World(String path) {
-        locations = new ArrayList<Location>();
         animals = new ArrayList<Animal>();
         plants = new ArrayList<Plant>();
 
@@ -32,7 +33,7 @@ public class World implements ISimulate {
         BufferedImage image;
         try {
             image = ImageIO.read(file);
-        } catch(IOException exception) {
+        } catch (IOException exception) {
             return;
         }
 
@@ -55,13 +56,33 @@ public class World implements ISimulate {
                 }
 
                 Location location = new Location(this, x, y, type);
-                locations.add(location);
+                locations.put(String.format("%s,%s", x, y), location);
             }
         }
     }
 
+    public Location getLocation(int x, int y) {
+        if (x >= width) {
+            x = x % width;
+        }
+
+        if (y >= height) {
+            y = y % height;
+        }
+
+        return locations.get(String.format("%s,%s", x, y));
+    }
+
     public ArrayList<Location> getLocations() {
-        return locations;
+        return new ArrayList<Location>(locations.values());
+    }
+
+    public ArrayList<Plant> getPlants() {
+        return plants;
+    }
+
+    public ArrayList<Animal> getAnimals() {
+        return animals;
     }
 
     public int getHeight() {
@@ -73,6 +94,7 @@ public class World implements ISimulate {
     }
 
     public ArrayList<Location> getNeighbouringLocations() {
+
         throw new NotImplementedException();
     }
 
