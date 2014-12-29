@@ -3,7 +3,7 @@ package classes.life;
 import classes.interfaces.IFood;
 import classes.world.Location;
 
-public class Plant implements IFood {
+public class Plant extends Object implements IFood {
 
     public static final int RESPAWN_TIME = 100;
     public static final int TIMES_EATEN_BEFORE_DEAD = 10;

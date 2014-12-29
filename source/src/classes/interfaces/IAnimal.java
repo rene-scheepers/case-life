@@ -5,10 +5,10 @@ import classes.world.Location;
 
 public interface IAnimal {
 
-    public void eat(IFood food);
+    public boolean eat(IFood food);
 
-    public void move(Location newLocation);
+    public boolean move(Location newLocation);
 
-    public void reproduce(Animal animal);
+    public boolean reproduce(Animal animal);
 
 }

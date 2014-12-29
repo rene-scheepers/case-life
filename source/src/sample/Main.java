@@ -1,5 +1,6 @@
 package sample;
 
+import classes.Exceptions.LocationAlreadyOccupiedException;
 import classes.enumerations.Digestion;
 import classes.enumerations.LocationType;
 import classes.life.Animal;
@@ -37,8 +38,13 @@ public class Main extends Application {
         for(int i = 0; i < 50; i++) {
             for(Location location : locations) {
                 if (random.nextInt(10) > 8) {
-                    Animal animal = new Animal(genetics, location);
-                    world.addAnimal(animal);
+                    try {
+                        Animal animal = new Animal(genetics, location);
+
+                    world.addObject(animal);
+                    } catch(LocationAlreadyOccupiedException exception) {
+
+                    }
                     break;
                 }
             }

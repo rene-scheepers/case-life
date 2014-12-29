@@ -2,7 +2,7 @@ package classes.life;
 
 import classes.enumerations.Digestion;
 
-public class Genetics {
+public class Genetics extends Object {
 
     private Digestion digestion;
 

@@ -1,5 +1,6 @@
 package classes.world;
 
+import classes.enumerations.Direction;
 import classes.enumerations.LocationType;
 import classes.interfaces.ISimulate;
 import classes.life.Animal;
@@ -16,8 +17,7 @@ import java.util.HashMap;
 
 public class World implements ISimulate {
 
-    private ArrayList<Animal> animals;
-    private ArrayList<Plant> plants;
+    private ArrayList<Object> objects;
 
     private HashMap<String, Location> locations = new HashMap<>();
 
@@ -25,8 +25,7 @@ public class World implements ISimulate {
     private int height;
 
     public World(String path) {
-        animals = new ArrayList<Animal>();
-        plants = new ArrayList<Plant>();
+        objects = new ArrayList<Object>();
 
 
         File file = new File(path);
@@ -77,12 +76,8 @@ public class World implements ISimulate {
         return new ArrayList<Location>(locations.values());
     }
 
-    public ArrayList<Plant> getPlants() {
-        return plants;
-    }
-
-    public ArrayList<Animal> getAnimals() {
-        return animals;
+    public ArrayList<Object> getObjects() {
+        return objects;
     }
 
     public int getHeight() {
@@ -93,35 +88,45 @@ public class World implements ISimulate {
         return width;
     }
 
-    public ArrayList<Location> getNeighbouringLocations() {
+    public HashMap<Direction, Location> getNeighbouringLocations(Location location) {
+        HashMap<Direction, Location> neighbouringLocations = new HashMap<>();
 
-        throw new NotImplementedException();
+        int x = location.getX();
+        int y = location.getY();
+
+        neighbouringLocations.put(Direction.NorthEast, getLocation(x + -1, y + 1));
+        neighbouringLocations.put(Direction.North, getLocation(x + 0, y + 1));
+        neighbouringLocations.put(Direction.NorthWest, getLocation(x + 1, y + 1));
+        neighbouringLocations.put(Direction.West, getLocation(x + 1, y + 0));
+        neighbouringLocations.put(Direction.SouthWest, getLocation(x + 1, y + -1));
+        neighbouringLocations.put(Direction.South, getLocation(x + 0, y + -1));
+        neighbouringLocations.put(Direction.SouthEast, getLocation(x + -1, y + -1));
+        neighbouringLocations.put(Direction.West, getLocation(x + -1, y + 0));
+
+        return neighbouringLocations;
     }
 
-    public void addAnimal(Animal animal) {
-        animals.add(animal);
+    public void addObject(Object object) {
+        objects.add(object);
     }
 
     public void simulate() {
-        for (Plant plant : plants) {
-            plant.simulate();
-        }
-
-        for (Animal animal : animals) {
-            animal.simulate();
+        for (Object object : objects) {
+            if (object instanceof ISimulate) {
+                ((ISimulate) object).simulate();
+            }
         }
     }
 
-    public void removeAnimal(Animal animal) {
-        animals.remove(animal);
+    public double getDistanceBetweenLocations(Location location1, Location location2) {
+        double firstSide = Math.abs(Math.pow(location1.getX() - location2.getX(), 2));
+        double secondSize = Math.abs(Math.pow(location1.getY() - location2.getY(), 2));
+
+        return Math.sqrt(firstSide + secondSize);
     }
 
-    public void addPlant(Plant plant) {
-        plants.add(plant);
-    }
-
-    public void removePlant(Plant plant) {
-        plants.remove(plant);
+    public void removeObject(Object object) {
+        objects.remove(object);
     }
 
 }

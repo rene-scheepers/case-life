@@ -1,7 +1,6 @@
 package sample;
 
 import classes.enumerations.Digestion;
-import classes.enumerations.LocationType;
 import classes.life.Animal;
 import classes.life.Plant;
 import classes.world.Location;
@@ -13,9 +12,6 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
-
-import java.util.ArrayList;
-import java.util.Random;
 
 public class Simulator {
 
@@ -73,26 +69,31 @@ public class Simulator {
             drawHeight = 1;
         }
 
-        ArrayList<Animal> animals = world.getAnimals();
-        for (Animal animal : animals) {
-            Location location = animal.getLocation();
-            Digestion digestion = animal.getGenetics().getDigestion();
-            if (digestion.equals(Digestion.Carnivore)) {
-                context.setFill(Color.RED);
-            } else if (digestion.equals(Digestion.Herbivore)) {
-                context.setFill(Color.BROWN);
-            } else {
-                context.setFill(Color.YELLOW);
+        for (Object object : world.getObjects()) {
+            Location location = null;
+            Color color = Color.BLACK;
+            if (object instanceof Animal) {
+                Animal animal = (Animal)object;
+                Digestion digestion = animal.getGenetics().getDigestion();
+                location = animal.getLocation();
+
+                if (digestion.equals(Digestion.Carnivore)) {
+                    color = Color.RED;
+                } else if (digestion.equals(Digestion.Herbivore)) {
+                    color = Color.BROWN;
+                } else {
+                    color = Color.YELLOW;
+                }
+            } else if (object instanceof Plant) {
+                Plant plant = (Plant)object;
+                location = plant.getLocation();
+                color = Color.GREEN;
             }
 
-            context.fillRect(location.getX() * drawWidth, location.getY() * drawHeight, drawWidth, drawHeight);
-        }
-
-        context.setFill(Color.GREEN);
-        ArrayList<Plant> plants = world.getPlants();
-        for (Plant plant : plants) {
-            Location location = plant.getLocation();
-            context.fillRect(location.getX() * drawWidth, location.getY() * drawHeight, drawWidth, drawHeight);
+            if (location != null) {
+                context.setFill(color);
+                context.fillRect(location.getX() * drawWidth, location.getY() * drawHeight, drawWidth, drawHeight);
+            }
         }
     }
 
