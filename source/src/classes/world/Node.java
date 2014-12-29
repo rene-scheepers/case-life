@@ -5,47 +5,34 @@ package classes.world;
  */
 public class Node implements Comparable {
 
-    private int x;
-    private int y;
-    private float cost = 0;
-    private Node origin;
-    private int depth = 0;
+    private Location location;
+    private Double cost;
 
-    public Node(int y, int x) {
-        this.y = y;
-        this.x = x;
-    }
-
-    public void setParent(Node origin) {
-        depth = origin.depth + 1;
-        this.origin = origin;
-    }
-
-    public void setCost(float cost) {
+    public Node(Location location, Double cost) {
+        this.location = location;
         this.cost = cost;
-    }
-
-    public float getCost() {
-        return cost;
-    }
-
-    public int getDepth() {
-        return depth;
     }
 
     @Override
     public int compareTo(Object other) {
         if (other instanceof Node) {
-            Node node = (Node)other;
-
-            if (cost > node.cost) {
-                return 1;
-            } else if (cost < node.cost) {
-                return  -1;
-            }
+            Node node = (Node) other;
+            return cost.compareTo(node.getCost());
         }
 
         return 0;
+    }
 
+    public Location getLocation() {
+        return location;
+    }
+
+    public Double getCost() {
+        return cost;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Weight: %s, %s", cost, location);
     }
 }
