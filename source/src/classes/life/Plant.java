@@ -1,25 +1,25 @@
 package classes.life;
 
-import classes.interfaces.IFood;
-import classes.world.Location;
+import classes.world.Node;
+import classes.world.World;
 
-public class Plant extends Object implements IFood {
+public class Plant extends Life {
 
     public static final int RESPAWN_TIME = 100;
     public static final int TIMES_EATEN_BEFORE_DEAD = 10;
 
-    protected Location location;
-    protected int energy;
-    protected int timesDied;
-    protected int timesEaten;
+    private int energy;
+    private int timesDied;
+    private int timesEaten;
+            private World world;
 
-    public Plant(Location location, int energy) {
-        this.location = location;
+    public Plant(World world, int energy) {
+        this.world = world;
         this.energy = energy;
     }
 
-    public Location getLocation() {
-        return location;
+    public Node getNode() {
+        return world.getNodeForLife(this);
     }
 
     @Override

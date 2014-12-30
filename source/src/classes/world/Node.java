@@ -1,30 +1,36 @@
 package classes.world;
 
 import classes.Exceptions.LocationAlreadyOccupiedException;
-import classes.enumerations.Direction;
 import classes.enumerations.LocationType;
+import classes.life.Life;
 
-import java.awt.*;
-import java.util.HashMap;
+import java.util.ArrayList;
 
-public class Location {
+public class Node {
 
     private int x;
     private int y;
 
     private LocationType type;
-    private World world;
+    private ArrayList<Node> adjacentNodes = new ArrayList();
 
-    private Object holder;
+    private Life holder;
 
-    public Location(World world, int x, int y, LocationType type) {
-        this.world = world;
+    public Node(int x, int y, LocationType type) {
         this.x = x;
         this.y = y;
         this.type = type;
     }
 
-    public Object getHolder() {
+    public void addAdjacentNode(Node node) {
+        adjacentNodes.add(node);
+    }
+
+    public ArrayList<Node> getAdjacentNodes() {
+        return adjacentNodes;
+    }
+
+    public Life getHolder() {
         return holder;
     }
 
@@ -40,11 +46,7 @@ public class Location {
         return type;
     }
 
-    public World getWorld() {
-        return world;
-    }
-
-    public void setHolder(Object object) throws LocationAlreadyOccupiedException {
+    public void setHolder(Life object) throws LocationAlreadyOccupiedException {
         if (holder == null) {
             holder = object;
         } else {

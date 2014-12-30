@@ -1,34 +1,32 @@
 package classes.world;
 
+import classes.Exceptions.LocationAlreadyOccupiedException;
 import classes.enumerations.Direction;
 import classes.enumerations.LocationType;
 import classes.interfaces.ISimulate;
-import classes.life.Animal;
-import classes.life.Plant;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import classes.life.Life;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class World implements ISimulate {
 
-    private ArrayList<Object> objects;
+    private ArrayList<Life> life;
 
-    private HashMap<String, Location> locations = new HashMap<>();
+    private Node[][] nodes;
 
     private int width;
     private int height;
 
     public World(BufferedImage image) {
-        objects = new ArrayList<Object>();
+        life = new ArrayList();
 
         width = image.getWidth();
         height = image.getHeight();
+        nodes = new Node[width][height];
 
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
@@ -45,30 +43,50 @@ public class World implements ISimulate {
 
                 }
 
-                Location location = new Location(this, x, y, type);
-                locations.put(String.format("%s,%s", x, y), location);
+                nodes[x][y] =new Node(x, y, type);
             }
         }
-    }
 
-    public Location getLocation(int x, int y) {
-        if (x >= width) {
-            x = x % width;
+        for (int x = 0; x < nodes.length; x++) {
+            for (int y =0; y < nodes[x].length; y++) {
+                Node node = nodes[x][y];
+
+                node.addAdjacentNode(getNode(x - 1, y + 1));
+                node.addAdjacentNode(getNode(x, y + 1));
+                node.addAdjacentNode(getNode(x + 1, y + 1));
+
+                node.addAdjacentNode(getNode(x - 1,y ));
+                node.addAdjacentNode(getNode(x + 1, y));
+
+                node.addAdjacentNode(getNode(x - 1,y - 1));
+                node.addAdjacentNode(getNode(x,y - 1));
+                node.addAdjacentNode(getNode(x + 1,y - 1));
+            }
         }
 
-        if (y >= height) {
-            y = y % height;
+    }
+
+    public Node getNode(int x, int y) {
+        x = x % width;
+        y = y % height;
+
+        while (x < 0) {
+            x += width;
         }
 
-        return locations.get(String.format("%s,%s", x, y));
+        while (y < 0) {
+            y += height;
+        }
+
+        return nodes[x][y];
     }
 
-    public ArrayList<Location> getLocations() {
-        return new ArrayList<Location>(locations.values());
+    public Node[][] getNodes() {
+        return nodes;
     }
 
-    public ArrayList<Object> getObjects() {
-        return objects;
+    public ArrayList<Life> getLife() {
+        return life;
     }
 
     public int getHeight() {
@@ -79,45 +97,40 @@ public class World implements ISimulate {
         return width;
     }
 
-    public HashMap<Direction, Location> getNeighbouringLocations(Location location) {
-        HashMap<Direction, Location> neighbouringLocations = new HashMap<>();
+    public Node getNodeForLife(Life life) {
+        for (int x = 0; x < nodes.length; x++) {
+            for (int y = 0; y < nodes[x].length; y++) {
+                Node node = nodes[x][y];
+                Life holder = node.getHolder();
+                if (holder != null && holder.equals(life)) {
+                    return node;
+                }
+            }
+        }
 
-        int x = location.getX();
-        int y = location.getY();
-
-        neighbouringLocations.put(Direction.NorthEast, getLocation(x + -1, y + 1));
-        neighbouringLocations.put(Direction.North, getLocation(x + 0, y + 1));
-        neighbouringLocations.put(Direction.NorthWest, getLocation(x + 1, y + 1));
-        neighbouringLocations.put(Direction.West, getLocation(x + 1, y + 0));
-        neighbouringLocations.put(Direction.SouthWest, getLocation(x + 1, y + -1));
-        neighbouringLocations.put(Direction.South, getLocation(x + 0, y + -1));
-        neighbouringLocations.put(Direction.SouthEast, getLocation(x + -1, y + -1));
-        neighbouringLocations.put(Direction.West, getLocation(x + -1, y + 0));
-
-        return neighbouringLocations;
+        return null;
     }
 
-    public void addObject(Object object) {
-        objects.add(object);
+    public void addLife(Life life, Node node) throws LocationAlreadyOccupiedException {
+        this.life.add(life);
+        node.setHolder(life);
     }
 
     public void simulate() {
-        for (Object object : objects) {
-            if (object instanceof ISimulate) {
-                ((ISimulate) object).simulate();
-            }
+        for (Life life : this.life) {
+            life.simulate();
         }
     }
 
-    public double getDistanceBetweenLocations(Location location1, Location location2) {
-        double firstSide = Math.abs(Math.pow(location1.getX() - location2.getX(), 2));
-        double secondSize = Math.abs(Math.pow(location1.getY() - location2.getY(), 2));
+    public double getDistanceBetweenLocations(Node node1, Node node2) {
+        double firstSide = Math.abs(Math.pow(node1.getX() - node2.getX(), 2));
+        double secondSize = Math.abs(Math.pow(node1.getY() - node2.getY(), 2));
 
         return Math.sqrt(firstSide + secondSize);
     }
 
-    public void removeObject(Object object) {
-        objects.remove(object);
+    public void removeLife(Life life) {
+        this.life.remove(life);
     }
 
 }

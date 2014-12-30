@@ -5,7 +5,7 @@ import classes.enumerations.Digestion;
 import classes.enumerations.LocationType;
 import classes.life.Animal;
 import classes.life.Genetics;
-import classes.world.Location;
+import classes.world.Node;
 import classes.world.World;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -20,6 +20,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
 
@@ -41,19 +42,26 @@ public class Main extends Application {
 
         this.world = new World(image);
 
-        ArrayList<Location> locations = (ArrayList<Location>)world.getLocations().clone();
         Genetics genetics = new Genetics(Digestion.Carnivore, 4, 50, 100, 100, 20, 20, 20);
 
-        Collections.shuffle(locations);
+        Node[][] worldNodes = world.getNodes();
+        ArrayList<Node> nodes = new ArrayList();
+        for (int x = 0; x < world.getWidth(); x++) {
+            for (int y = 0; y < world.getHeight(); y++) {
+                nodes.add(worldNodes[x][y]);
+            }
+        }
+
+        Collections.shuffle(nodes);
 
         Random random = new Random();
         for(int i = 0; i < 50; i++) {
-            for(Location location : locations) {
+            for(Node node : nodes) {
                 if (random.nextInt(10) > 8) {
                     try {
-                        Animal animal = new Animal(genetics, location);
+                        Animal animal = new Animal(world, genetics);
 
-                    world.addObject(animal);
+                        world.addLife(animal, node);
                     } catch(LocationAlreadyOccupiedException exception) {
 
                     }
@@ -102,18 +110,22 @@ public class Main extends Application {
             drawHeight = 1;
         }
 
-        ArrayList<Location> locations = world.getLocations();
+        Node[][] nodes = world.getNodes();
 
-        for (Location location : locations) {
-            if (location.getLocationType().equals(LocationType.Land)) {
-                context.setFill(Color.WHITE);
-            } else if (location.getLocationType().equals(LocationType.Obstacle)) {
-                context.setFill(Color.LIGHTGRAY);
-            } else {
-                context.setFill(Color.LIGHTBLUE);
+        for (int x = 0; x < nodes.length; x++) {
+            for (int y = 0; y < nodes[x].length; y++) {
+                Node node = nodes[x][y];
+
+                if (node.getLocationType().equals(LocationType.Land)) {
+                    context.setFill(Color.WHITE);
+                } else if (node.getLocationType().equals(LocationType.Obstacle)) {
+                    context.setFill(Color.LIGHTGRAY);
+                } else {
+                    context.setFill(Color.LIGHTBLUE);
+                }
+
+                context.fillRect(node.getX() * drawWidth, node.getY() * drawHeight, drawWidth, drawHeight);
             }
-
-            context.fillRect(location.getX() * drawWidth, location.getY() * drawHeight, drawWidth, drawHeight);
         }
     }
 

@@ -2,8 +2,9 @@ package sample;
 
 import classes.enumerations.Digestion;
 import classes.life.Animal;
+import classes.life.Life;
 import classes.life.Plant;
-import classes.world.Location;
+import classes.world.Node;
 import classes.world.World;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -69,13 +70,13 @@ public class Simulator {
             drawHeight = 1;
         }
 
-        for (Object object : world.getObjects()) {
-            Location location = null;
+        for (Life life : world.getLife()) {
+            Node node = null;
             Color color = Color.BLACK;
-            if (object instanceof Animal) {
-                Animal animal = (Animal)object;
+            if (life instanceof Animal) {
+                Animal animal = (Animal)life;
                 Digestion digestion = animal.getGenetics().getDigestion();
-                location = animal.getLocation();
+                node = animal.getNode();
 
                 if (digestion.equals(Digestion.Carnivore)) {
                     color = Color.RED;
@@ -84,15 +85,15 @@ public class Simulator {
                 } else {
                     color = Color.YELLOW;
                 }
-            } else if (object instanceof Plant) {
-                Plant plant = (Plant)object;
-                location = plant.getLocation();
+            } else if (life instanceof Plant) {
+                Plant plant = (Plant)life;
+                node = plant.getNode();
                 color = Color.GREEN;
             }
 
-            if (location != null) {
+            if (node != null) {
                 context.setFill(color);
-                context.fillRect(location.getX() * drawWidth, location.getY() * drawHeight, drawWidth, drawHeight);
+                context.fillRect(node.getX() * drawWidth, node.getY() * drawHeight, drawWidth, drawHeight);
             }
         }
     }
