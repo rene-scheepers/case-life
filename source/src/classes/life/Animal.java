@@ -9,11 +9,10 @@ import classes.interfaces.IAnimal;
 import classes.interfaces.IFood;
 import classes.interfaces.ISimulate;
 import classes.world.Location;
-import classes.world.Node;
+import classes.world.pathfinding.Node;
 import classes.world.World;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class Animal extends Object implements IFood, ISimulate, IAnimal {
@@ -81,7 +80,7 @@ public class Animal extends Object implements IFood, ISimulate, IAnimal {
                 }
             }
 
-            weightedNodes.add(new Node(otherLocation, weight));
+            weightedNodes.add(new Node(world,otherLocation, weight));
         }
     }
 
