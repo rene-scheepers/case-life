@@ -14,11 +14,15 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Simulator {
 
     private Canvas canvas;
     private World world;
     private Timeline timeline;
+    private int currentTurn = 0;
     private int speed;
 
     public Simulator(World world, Canvas canvas) {
@@ -41,9 +45,11 @@ public class Simulator {
 
         KeyFrame frame = new KeyFrame(Duration.seconds(1), ev -> {
             world.simulate();
+            currentTurn++;
             draw(canvas);
         });
-        timeline.getKeyFrames().add(frame);
+
+        timeline.getKeyFrames().add(currentTurn, frame);
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
     }
@@ -53,12 +59,15 @@ public class Simulator {
     }
 
     public void stop() {
-        timeline.stop();
+        timeline.stop(); currentTurn = 0;
     }
 
     private void draw(Canvas canvas) {
         GraphicsContext context = canvas.getGraphicsContext2D();
         context.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
+        context.setFill(Color.BLACK);
+        context.fillText(String.valueOf(currentTurn), 2, 12);
 
         int drawWidth = (int) canvas.getWidth() / world.getWidth();
         if (drawWidth < 1) {

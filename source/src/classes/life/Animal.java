@@ -1,6 +1,7 @@
 package classes.life;
 
 import classes.Exceptions.LocationAlreadyOccupiedException;
+import classes.enumerations.Digestion;
 import classes.enumerations.Direction;
 import classes.enumerations.LocationType;
 import classes.enumerations.State;
@@ -30,10 +31,26 @@ public class Animal extends Life implements IAnimal {
 
     private State state;
 
+    private HashMap<Node, Double> weightedMap = new HashMap();
+
     public Animal(World world, Genetics genetics) throws LocationAlreadyOccupiedException {
         this.world = world;
         this.genetics = genetics;
         this.energy = genetics.getStamina();
+    }
+
+    private void resetWeightedMap() {
+        Node[][] nodes = world.getNodes();
+        for (int x = 0; x < nodes.length; x++) {
+            for (int y = 0; y < nodes[x].length; y++) {
+                Node node = nodes[x][y];
+                if (node.getLocationType().equals(LocationType.Obstacle) || node.getHolder() != null) {
+                    continue;
+                }
+
+                weightedMap.put(nodes[x][y], 100.0);
+            }
+        }
     }
 
     public Node getNode() {
@@ -77,9 +94,38 @@ public class Animal extends Life implements IAnimal {
         return weight + genetics.getLegs() * 10;
     }
 
+    private void generateWeightedMap() {
+        resetWeightedMap();
+        for (int x = 0; x < world.getWidth(); x++) {
+            for (int y = 0; y < world.getHeight(); y++) {
+                Node node = world.getNode(x, y);
+                if (node.getHolder() == null) {
+                    Double weight;
+                    if (node.getLocationType().equals(LocationType.Water)) {
+                        weight = 20.0;
+                    } else {
+                        weight = 10.0;
+                    }
+
+                    weightedMap.put(node, weight);
+                }
+
+//                Digestion digestion = genetics.getDigestion();
+//                if (digestion.equals(Digestion.Carnivore) || digestion.equals(Digestion.Carnivore.Omnivore)) {
+//                    for (Node adjacentNode : node.getAdjacentNodes()) {
+//                        Double adjacentNodeWeight = weightedMap.get(adjacentNode);
+//                        if (adjacentNodeWeight != null) {
+//                            adjacentNodeWeight -= 15;
+//                        }
+//                    }
+//                }
+            }
+        }
+    }
+
     public boolean move(Node newNode) {
         Node current = getNode();
-        System.out.println(current);
+        //System.out.println(current);
 
         if (newNode == null) {
             return false;
@@ -102,15 +148,30 @@ public class Animal extends Life implements IAnimal {
     }
 
     public void simulate() {
+        generateWeightedMap();
         Node current = getNode();
 
-        Random random = new Random();
-        try {
-            ArrayList<Node> adjacent = current.getAdjacentNodes();
+        Iterator iterator = weightedMap.entrySet().iterator();
 
-            move(adjacent.get(random.nextInt(adjacent.size())));
-        } catch(Exception ex) {
-            
+        Double lowestWeight = null;
+        Node node = null;
+        try {
+        while(iterator.hasNext()) {
+            Map.Entry pairs = (Map.Entry)iterator.next();
+
+                if (current.getAdjacentNodes().contains(pairs.getKey())) {
+                    if (lowestWeight == null || lowestWeight > (Double) pairs.getValue()) {
+                        node = (Node) pairs.getKey();
+                        lowestWeight = (Double) pairs.getValue();
+                    }
+                }
+        }
+
+        if (node != null) {
+            move(node);
+        }
+        }catch(Exception ex) {
+
         }
     }
 

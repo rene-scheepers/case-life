@@ -8,11 +8,12 @@ import classes.life.Life;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class World implements ISimulate {
+public class World implements Serializable, ISimulate {
 
     private ArrayList<Life> life;
 

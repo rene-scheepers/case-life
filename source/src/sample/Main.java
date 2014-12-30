@@ -48,7 +48,10 @@ public class Main extends Application {
         ArrayList<Node> nodes = new ArrayList();
         for (int x = 0; x < world.getWidth(); x++) {
             for (int y = 0; y < world.getHeight(); y++) {
-                nodes.add(worldNodes[x][y]);
+                Node node = worldNodes[x][y];
+                if (node.getLocationType().equals(LocationType.Land)) {
+                    nodes.add(node);
+                }
             }
         }
 
@@ -93,7 +96,7 @@ public class Main extends Application {
 
         draw(worldCanvas);
 
-        this.simulator.setSpeed(5);
+        this.simulator.setSpeed(1);
         this.simulator.play();
     }
 
