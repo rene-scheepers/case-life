@@ -1,16 +1,13 @@
 package classes.life;
 
 import classes.Exceptions.LocationAlreadyOccupiedException;
-import classes.enumerations.Digestion;
 import classes.enumerations.Direction;
 import classes.enumerations.LocationType;
 import classes.enumerations.State;
 import classes.interfaces.IAnimal;
 import classes.interfaces.IFood;
-import classes.interfaces.IPosition;
-import classes.interfaces.ISimulate;
 import classes.world.Node;
-import classes.world.NodeHeuristic;
+import classes.world.Path;
 import classes.world.World;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -32,7 +29,7 @@ public class Animal extends Life implements IAnimal {
 
     private State state;
 
-    private NodeHeuristic path;
+    private Path path;
 
     public Animal(World world, Genetics genetics) throws LocationAlreadyOccupiedException {
         this.world = world;
@@ -81,26 +78,26 @@ public class Animal extends Life implements IAnimal {
         return weight + genetics.getLegs() * 10;
     }
 
-    private NodeHeuristic getMostFavorableTarget(Node target) {
-        SortedList<NodeHeuristic> openNodes = new SortedList<NodeHeuristic>();
-        ArrayList<NodeHeuristic> closedNodes = new ArrayList();
+    private Path getMostFavorableTarget(Node target) {
+        SortedList<Path> openNodes = new SortedList<Path>();
+        ArrayList<Path> closedNodes = new ArrayList();
 
-        openNodes.add(new NodeHeuristic(getNode()));
+        openNodes.add(new Path(getNode()));
         while (openNodes.getSize() >= 1) {
-            NodeHeuristic current = openNodes.getFirst();
+            Path current = openNodes.getFirst();
 
             for (Node node : current.getNode().getAdjacentNodes()) {
 
                 if (node.getHolder() == null && !node.getLocationType().equals(LocationType.Obstacle)) {
                     boolean alreadyWalked = false;
-                    for (NodeHeuristic walkableNode : openNodes.getObjects()) {
+                    for (Path walkableNode : openNodes.getObjects()) {
                         if (walkableNode.getNode().equals(node)) {
                             alreadyWalked = true;
                         }
                     }
 
                     if (!alreadyWalked) {
-                        for (NodeHeuristic walkableNode : closedNodes) {
+                        for (Path walkableNode : closedNodes) {
                             if (walkableNode.getNode().equals(node)) {
                                 alreadyWalked = true;
                             }
@@ -124,7 +121,7 @@ public class Animal extends Life implements IAnimal {
                             cost += current.getCost();
                         }
 
-                        NodeHeuristic adjacent = new NodeHeuristic(node, cost, heuristic);
+                        Path adjacent = new Path(node, cost, heuristic);
                         adjacent.setParent(current);
                         openNodes.add(adjacent);
                     }
@@ -132,7 +129,7 @@ public class Animal extends Life implements IAnimal {
             }
 
             if (current.getNode().equals(target)) {
-                NodeHeuristic targetHeuristic = new NodeHeuristic(target, 0, 0);
+                Path targetHeuristic = new Path(target, 0, 0);
                 targetHeuristic.setParent(current);
                 return targetHeuristic;
             }
@@ -172,7 +169,7 @@ public class Animal extends Life implements IAnimal {
             path = getMostFavorableTarget(world.getNode(38,3));
         }
 
-        NodeHeuristic parent = path.getParent();
+        Path parent = path.getParent();
         while(true) {
             if (parent.getParent() != null && !parent.getParent().getNode().equals(current)) {
                 parent = parent.getParent();

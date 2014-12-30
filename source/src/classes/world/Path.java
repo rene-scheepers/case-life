@@ -1,18 +1,18 @@
 package classes.world;
 
-public class NodeHeuristic implements Comparable {
+public class Path implements Comparable {
 
     private Node node;
     private float cost;
     private float heuristic;
-    private NodeHeuristic parent;
+    private Path parent;
     private int depth;
 
-    public NodeHeuristic(Node node) {
+    public Path(Node node) {
         this.node = node;
     }
 
-    public NodeHeuristic(Node node, float cost, float heuristic) {
+    public Path(Node node, float cost, float heuristic) {
         this.node = node;
         this.cost = cost;
         this.heuristic = heuristic;
@@ -22,11 +22,11 @@ public class NodeHeuristic implements Comparable {
         return node;
     }
 
-    public void setParent(NodeHeuristic node) {
+    public void setParent(Path node) {
         parent = node;
     }
 
-    public NodeHeuristic getParent() {
+    public Path getParent() {
         return parent;
     }
 
@@ -44,7 +44,7 @@ public class NodeHeuristic implements Comparable {
 
     @Override
     public String toString() {
-        return "NodeHeuristic{" +
+        return "Path{" +
                 "node=" + node +
                 ", cost=" + cost +
                 ", heuristic=" + heuristic +
@@ -55,8 +55,8 @@ public class NodeHeuristic implements Comparable {
 
     @Override
     public int compareTo(Object other) {
-        if (other instanceof NodeHeuristic) {
-            NodeHeuristic otherNode = (NodeHeuristic)other;
+        if (other instanceof Path) {
+            Path otherNode = (Path)other;
 
             if (getTotal() < otherNode.getTotal()) {
                 return -1;
