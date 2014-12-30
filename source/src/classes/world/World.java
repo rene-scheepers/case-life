@@ -24,17 +24,8 @@ public class World implements ISimulate {
     private int width;
     private int height;
 
-    public World(String path) {
+    public World(BufferedImage image) {
         objects = new ArrayList<Object>();
-
-
-        File file = new File(path);
-        BufferedImage image;
-        try {
-            image = ImageIO.read(file);
-        } catch (IOException exception) {
-            return;
-        }
 
         width = image.getWidth();
         height = image.getHeight();

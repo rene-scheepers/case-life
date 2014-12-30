@@ -15,6 +15,10 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -27,7 +31,15 @@ public class Main extends Application {
     private World world;
 
     public Main() {
-        this.world = new World("C:\\Users\\Rene\\Desktop\\kut.bmp");
+        File file = new File("resources/maps/map.png");
+        BufferedImage image;
+        try {
+            image = ImageIO.read(file);
+        } catch (IOException exception) {
+            return;
+        }
+
+        this.world = new World(image);
 
         ArrayList<Location> locations = (ArrayList<Location>)world.getLocations().clone();
         Genetics genetics = new Genetics(Digestion.Carnivore, 4, 50, 100, 100, 20, 20, 20);
@@ -51,8 +63,8 @@ public class Main extends Application {
         }
 
 
-        this.width = 2000;
-        this.height = 2000;
+        this.width = 1000;
+        this.height = 1000;
     }
 
     @Override
@@ -96,9 +108,9 @@ public class Main extends Application {
             if (location.getLocationType().equals(LocationType.Land)) {
                 context.setFill(Color.WHITE);
             } else if (location.getLocationType().equals(LocationType.Obstacle)) {
-                context.setFill(Color.BLACK);
+                context.setFill(Color.LIGHTGRAY);
             } else {
-                context.setFill(Color.BLUE);
+                context.setFill(Color.LIGHTBLUE);
             }
 
             context.fillRect(location.getX() * drawWidth, location.getY() * drawHeight, drawWidth, drawHeight);

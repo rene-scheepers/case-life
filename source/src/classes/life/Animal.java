@@ -163,8 +163,6 @@ public class Animal extends Object implements IFood, ISimulate, IAnimal {
 
         Random random = new Random();
 
-        System.out.println(sameWeights.size());
-
         move(sameWeights.get(random.nextInt(sameWeights.size())).getLocation());
     }
 
