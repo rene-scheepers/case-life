@@ -32,7 +32,7 @@ public class Main extends Application {
     private World world;
 
     public Main() {
-        File file = new File("resources/maps/map.png");
+        File file = new File("resources/maps/small.png");
         BufferedImage image;
         try {
             image = ImageIO.read(file);
@@ -57,21 +57,36 @@ public class Main extends Application {
 
         Collections.shuffle(nodes);
 
-        Random random = new Random();
-        for(int i = 0; i < 50; i++) {
-            for(Node node : nodes) {
-                if (random.nextInt(10) > 8) {
-                    try {
-                        Animal animal = new Animal(world, genetics);
+        Node node = world.getNode(4, 4);
 
-                        world.addLife(animal, node);
-                    } catch(LocationAlreadyOccupiedException exception) {
+        try {
+            Animal animal = new Animal(world, genetics);
+            Animal animal1 = new Animal(world, genetics);
+            Animal animal2 = new Animal(world, genetics);
+            Animal animal3 = new Animal(world, genetics);
+            Animal animal4 = new Animal(world, genetics);
 
-                    }
-                    break;
-                }
-            }
+
+
+            world.addLife(animal, node);
+        } catch (Exception ex) {
+
         }
+//        Random random = new Random();
+//        for(int i = 0; i < 1; i++) {
+//            for(Node node : nodes) {
+//                if (random.nextInt(10) > 8) {
+//                    try {
+//                        Animal animal = new Animal(world, genetics);
+//
+//                        world.addLife(animal, node);
+//                    } catch(LocationAlreadyOccupiedException exception) {
+//
+//                    }
+//                    break;
+//                }
+//            }
+//        }
 
 
         this.width = 1000;
@@ -96,7 +111,7 @@ public class Main extends Application {
 
         draw(worldCanvas);
 
-        this.simulator.setSpeed(1);
+        this.simulator.setSpeed(10);
         this.simulator.play();
     }
 

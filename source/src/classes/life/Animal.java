@@ -10,6 +10,7 @@ import classes.interfaces.IFood;
 import classes.interfaces.IPosition;
 import classes.interfaces.ISimulate;
 import classes.world.Node;
+import classes.world.NodeHeuristic;
 import classes.world.World;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -31,26 +32,12 @@ public class Animal extends Life implements IAnimal {
 
     private State state;
 
-    private HashMap<Node, Double> weightedMap = new HashMap();
+    private NodeHeuristic path;
 
     public Animal(World world, Genetics genetics) throws LocationAlreadyOccupiedException {
         this.world = world;
         this.genetics = genetics;
         this.energy = genetics.getStamina();
-    }
-
-    private void resetWeightedMap() {
-        Node[][] nodes = world.getNodes();
-        for (int x = 0; x < nodes.length; x++) {
-            for (int y = 0; y < nodes[x].length; y++) {
-                Node node = nodes[x][y];
-                if (node.getLocationType().equals(LocationType.Obstacle) || node.getHolder() != null) {
-                    continue;
-                }
-
-                weightedMap.put(nodes[x][y], 100.0);
-            }
-        }
     }
 
     public Node getNode() {
@@ -94,38 +81,70 @@ public class Animal extends Life implements IAnimal {
         return weight + genetics.getLegs() * 10;
     }
 
-    private void generateWeightedMap() {
-        resetWeightedMap();
-        for (int x = 0; x < world.getWidth(); x++) {
-            for (int y = 0; y < world.getHeight(); y++) {
-                Node node = world.getNode(x, y);
-                if (node.getHolder() == null) {
-                    Double weight;
-                    if (node.getLocationType().equals(LocationType.Water)) {
-                        weight = 20.0;
-                    } else {
-                        weight = 10.0;
+    private NodeHeuristic getMostFavorableTarget(Node target) {
+        SortedList<NodeHeuristic> openNodes = new SortedList<NodeHeuristic>();
+        ArrayList<NodeHeuristic> closedNodes = new ArrayList();
+
+        openNodes.add(new NodeHeuristic(getNode()));
+        while (openNodes.getSize() >= 1) {
+            NodeHeuristic current = openNodes.getFirst();
+
+            for (Node node : current.getNode().getAdjacentNodes()) {
+
+                if (node.getHolder() == null && !node.getLocationType().equals(LocationType.Obstacle)) {
+                    boolean alreadyWalked = false;
+                    for (NodeHeuristic walkableNode : openNodes.getObjects()) {
+                        if (walkableNode.getNode().equals(node)) {
+                            alreadyWalked = true;
+                        }
                     }
 
-                    weightedMap.put(node, weight);
-                }
+                    if (!alreadyWalked) {
+                        for (NodeHeuristic walkableNode : closedNodes) {
+                            if (walkableNode.getNode().equals(node)) {
+                                alreadyWalked = true;
+                            }
+                        }
+                    }
 
-//                Digestion digestion = genetics.getDigestion();
-//                if (digestion.equals(Digestion.Carnivore) || digestion.equals(Digestion.Carnivore.Omnivore)) {
-//                    for (Node adjacentNode : node.getAdjacentNodes()) {
-//                        Double adjacentNodeWeight = weightedMap.get(adjacentNode);
-//                        if (adjacentNodeWeight != null) {
-//                            adjacentNodeWeight -= 15;
-//                        }
-//                    }
-//                }
+                    if (!alreadyWalked) {
+                        Double distance = world.getDistanceBetweenLocations(node, target);
+
+                        float heuristic = distance.floatValue();
+                        heuristic = Math.abs(target.getX() - node.getX()) + Math.abs(target.getY() - node.getY());
+
+                        float cost;
+                        if (node.getLocationType().equals(LocationType.Land)) {
+                            cost = 100;
+                        } else {
+                            cost = 10;
+                        }
+
+                        if (current.getParent() != null) {
+                            cost += current.getCost();
+                        }
+
+                        NodeHeuristic adjacent = new NodeHeuristic(node, cost, heuristic);
+                        adjacent.setParent(current);
+                        openNodes.add(adjacent);
+                    }
+                }
             }
+
+            if (current.getNode().equals(target)) {
+                NodeHeuristic targetHeuristic = new NodeHeuristic(target, 0, 0);
+                targetHeuristic.setParent(current);
+                return targetHeuristic;
+            }
+            closedNodes.add(current);
+            openNodes.remove(current);
         }
+
+        return null;
     }
 
     public boolean move(Node newNode) {
         Node current = getNode();
-        //System.out.println(current);
 
         if (newNode == null) {
             return false;
@@ -148,31 +167,21 @@ public class Animal extends Life implements IAnimal {
     }
 
     public void simulate() {
-        generateWeightedMap();
         Node current = getNode();
-
-        Iterator iterator = weightedMap.entrySet().iterator();
-
-        Double lowestWeight = null;
-        Node node = null;
-        try {
-        while(iterator.hasNext()) {
-            Map.Entry pairs = (Map.Entry)iterator.next();
-
-                if (current.getAdjacentNodes().contains(pairs.getKey())) {
-                    if (lowestWeight == null || lowestWeight > (Double) pairs.getValue()) {
-                        node = (Node) pairs.getKey();
-                        lowestWeight = (Double) pairs.getValue();
-                    }
-                }
+        if (path == null || current.equals(path.getNode())) {
+            path = getMostFavorableTarget(world.getNode(38,3));
         }
 
-        if (node != null) {
-            move(node);
+        NodeHeuristic parent = path.getParent();
+        while(true) {
+            if (parent.getParent() != null && !parent.getParent().getNode().equals(current)) {
+                parent = parent.getParent();
+            } else {
+                break;
+            }
         }
-        }catch(Exception ex) {
 
-        }
+        move(parent.getNode());
     }
 
     @Override
