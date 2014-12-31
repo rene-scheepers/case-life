@@ -1,7 +1,6 @@
 package classes.life;
 
 import classes.Exceptions.LocationAlreadyOccupiedException;
-import classes.enumerations.Direction;
 import classes.enumerations.LocationType;
 import classes.enumerations.State;
 import classes.interfaces.IAnimal;
@@ -21,8 +20,6 @@ public class Animal extends Life implements IAnimal {
 
     private int hunger;
 
-    private Direction direction;
-
     private int age;
 
     private World world;
@@ -31,7 +28,7 @@ public class Animal extends Life implements IAnimal {
 
     private Path path;
 
-    public Animal(World world, Genetics genetics) throws LocationAlreadyOccupiedException {
+    public Animal(World world, Genetics genetics) {
         this.world = world;
         this.genetics = genetics;
         this.energy = genetics.getStamina();
@@ -43,10 +40,6 @@ public class Animal extends Life implements IAnimal {
 
     public int getAge() {
         return age;
-    }
-
-    public Direction getDirection() {
-        return direction;
     }
 
     public int getHunger() {
@@ -78,7 +71,7 @@ public class Animal extends Life implements IAnimal {
         return weight + genetics.getLegs() * 10;
     }
 
-    private Path getMostFavorableTarget(Node target) {
+    private Path getPath(Node target) {
         SortedList<Path> openNodes = new SortedList<Path>();
         ArrayList<Path> closedNodes = new ArrayList();
 
@@ -112,9 +105,9 @@ public class Animal extends Life implements IAnimal {
 
                         float cost;
                         if (node.getLocationType().equals(LocationType.Land)) {
-                            cost = 100;
-                        } else {
                             cost = 10;
+                        } else {
+                            cost = 50;
                         }
 
                         if (current.getParent() != null) {
@@ -138,6 +131,10 @@ public class Animal extends Life implements IAnimal {
         }
 
         return null;
+    }
+
+    public boolean isAlive() {
+        return !(energy <= 0);
     }
 
     public boolean move(Node newNode) {
@@ -164,21 +161,57 @@ public class Animal extends Life implements IAnimal {
     }
 
     public void simulate() {
-        Node current = getNode();
-        if (path == null || current.equals(path.getNode())) {
-            path = getMostFavorableTarget(world.getNode(38,3));
+        if (energy <= 0) {
+            world.removeLife(this);
         }
 
-        Path parent = path.getParent();
-        while(true) {
-            if (parent.getParent() != null && !parent.getParent().getNode().equals(current)) {
-                parent = parent.getParent();
-            } else {
-                break;
+        Node current = getNode();
+//        for (Node adjacent : current.getAdjacentNodes()) {
+//            Life adjacentLife = adjacent.getHolder();
+//            if (adjacentLife instanceof Plant && adjacentLife.getEnergy() > 0) {
+//                eat(adjacentLife);
+//                //return;
+//            }
+//        }
+
+        if (path == null || current.equals(path.getNode())) {
+            Node fewd= findNearestFoodSource();
+            path = getPath(findNearestFoodSource());
+        } else {
+            Path parent = path.getParent();
+            while (true) {
+                if (parent.getParent() != null && !parent.getParent().getNode().equals(current)) {
+                    parent = parent.getParent();
+                } else {
+                    if (parent.getNode().getHolder() == null) {
+                        break;
+                    } else {
+                        break;
+                        //parent = getPath(findNearestFoodSource());
+                        //return;
+                    }
+                }
+            }
+
+            if (parent != null) {
+                move(parent.getNode());
+            }
+        }
+    }
+
+    public Node findNearestFoodSource() {
+        ArrayList<Life> living = world.getLife();
+
+        ArrayList<Life> possibleSources = new ArrayList();
+        for (Life life : living) {
+            if (life instanceof Plant && life.isAlive() && life.getEnergy() > 0) {
+                possibleSources.add(life);
             }
         }
 
-        move(parent.getNode());
+        return possibleSources.get(0).getNode();
+//        Random rand = new Random();
+//        return possibleSources.get(rand.nextInt(possibleSources.size())).getNode();
     }
 
     @Override

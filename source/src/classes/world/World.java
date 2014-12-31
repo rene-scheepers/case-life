@@ -1,7 +1,6 @@
 package classes.world;
 
 import classes.Exceptions.LocationAlreadyOccupiedException;
-import classes.enumerations.Direction;
 import classes.enumerations.LocationType;
 import classes.interfaces.ISimulate;
 import classes.life.Life;
@@ -22,31 +21,13 @@ public class World implements Serializable, ISimulate {
     private int width;
     private int height;
 
-    public World(BufferedImage image) {
+    public World(Node[][] nodes) {
         life = new ArrayList();
 
-        width = image.getWidth();
-        height = image.getHeight();
-        nodes = new Node[width][height];
+        this.nodes = nodes;
 
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                Color color = new Color(image.getRGB(x, y));
-                String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getGreen());
-
-                LocationType type;
-                if (hex.equals("#000000")) {
-                    type = LocationType.Land;
-                } else if (hex.equals("#ed1c1c")) {
-                    type = LocationType.Obstacle;
-                } else {
-                    type = LocationType.Water;
-
-                }
-
-                nodes[x][y] =new Node(x, y, type);
-            }
-        }
+        width = nodes.length;
+        height = nodes[0].length;
 
         for (int x = 0; x < nodes.length; x++) {
             for (int y =0; y < nodes[x].length; y++) {
@@ -119,7 +100,9 @@ public class World implements Serializable, ISimulate {
 
     public void simulate() {
         for (Life life : this.life) {
-            life.simulate();
+            if (life.isAlive()) {
+                life.simulate();
+            }
         }
     }
 
@@ -131,6 +114,8 @@ public class World implements Serializable, ISimulate {
     }
 
     public void removeLife(Life life) {
+        Node node = getNodeForLife(life);
+        node.unsetHolder();
         this.life.remove(life);
     }
 

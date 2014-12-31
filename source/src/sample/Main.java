@@ -5,6 +5,8 @@ import classes.enumerations.Digestion;
 import classes.enumerations.LocationType;
 import classes.life.Animal;
 import classes.life.Genetics;
+import classes.life.Life;
+import classes.life.Plant;
 import classes.world.Node;
 import classes.world.World;
 import javafx.application.Application;
@@ -40,57 +42,65 @@ public class Main extends Application {
             return;
         }
 
-        this.world = new World(image);
+        world = generateWorldFromImage(image);
 
-        Genetics genetics = new Genetics(Digestion.Carnivore, 4, 50, 100, 100, 20, 20, 20);
+        this.width = 1000;
+        this.height = 1000;
+    }
 
-        Node[][] worldNodes = world.getNodes();
-        ArrayList<Node> nodes = new ArrayList();
-        for (int x = 0; x < world.getWidth(); x++) {
-            for (int y = 0; y < world.getHeight(); y++) {
-                Node node = worldNodes[x][y];
-                if (node.getLocationType().equals(LocationType.Land)) {
-                    nodes.add(node);
+    public World generateWorldFromImage(BufferedImage image) {
+        width = image.getWidth();
+        height = image.getHeight();
+        Node[][] nodes = new Node[width][height];
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                java.awt.Color color = new java.awt.Color(image.getRGB(x, y));
+                String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
+
+                LocationType type;
+                if (hex.equals("#000000")) {
+                    type = LocationType.Water;
+                } else if (hex.equals("#ed1c1c")) {
+                    type = LocationType.Obstacle;
+                } else {
+                    type = LocationType.Land;
+                }
+
+                nodes[x][y] = new Node(x, y, type);
+            }
+        }
+
+        World world = new World(nodes);
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                java.awt.Color color = new java.awt.Color(image.getRGB(x, y));
+                String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
+
+                Life life = null;
+                if (hex.equals("#00ff00")) {
+                    life = new Plant(world, 100);
+                } else if (hex.equals("#ff6a00")) {
+                    life = new Animal(world, new Genetics(Digestion.Carnivore, 4, 50, 100, 100, 20, 20, 20));
+                } else if (hex.equals("#0026ff")) {
+                    life = new Animal(world, new Genetics(Digestion.Omnivore, 4, 50, 100, 100, 20, 20, 20));
+                } else if (hex.equals("#ff00ff")) {
+                    life = new Animal(world, new Genetics(Digestion.Herbivore, 4, 50, 100, 100, 20, 20, 20));
+                }
+
+                if (life != null) {
+                    try {
+                        world.addLife(life, nodes[x][y]);
+                    }
+                     catch (LocationAlreadyOccupiedException exception) {
+
+                     }
                 }
             }
         }
 
-        Collections.shuffle(nodes);
-
-        Node node = world.getNode(4, 4);
-
-        try {
-            Animal animal = new Animal(world, genetics);
-            Animal animal1 = new Animal(world, genetics);
-            Animal animal2 = new Animal(world, genetics);
-            Animal animal3 = new Animal(world, genetics);
-            Animal animal4 = new Animal(world, genetics);
-
-
-
-            world.addLife(animal, node);
-        } catch (Exception ex) {
-
-        }
-//        Random random = new Random();
-//        for(int i = 0; i < 1; i++) {
-//            for(Node node : nodes) {
-//                if (random.nextInt(10) > 8) {
-//                    try {
-//                        Animal animal = new Animal(world, genetics);
-//
-//                        world.addLife(animal, node);
-//                    } catch(LocationAlreadyOccupiedException exception) {
-//
-//                    }
-//                    break;
-//                }
-//            }
-//        }
-
-
-        this.width = 1000;
-        this.height = 1000;
+        return world;
     }
 
     @Override
@@ -111,19 +121,19 @@ public class Main extends Application {
 
         draw(worldCanvas);
 
-        this.simulator.setSpeed(10);
+        this.simulator.setSpeed(5);
         this.simulator.play();
     }
 
     public void draw(Canvas canvas) {
         GraphicsContext context = canvas.getGraphicsContext2D();
 
-        int drawWidth = (int)canvas.getWidth() / world.getWidth();
+        int drawWidth = (int) canvas.getWidth() / world.getWidth();
         if (drawWidth < 1) {
             drawWidth = 1;
         }
 
-        int drawHeight = (int)canvas.getHeight() / world.getHeight();
+        int drawHeight = (int) canvas.getHeight() / world.getHeight();
         if (drawHeight < 1) {
             drawHeight = 1;
         }

@@ -8,4 +8,6 @@ public interface IFood {
      * @return Return the amount of energy passed to the eater.
      */
     public int getEaten();
+
+    public int getEnergy();
 }

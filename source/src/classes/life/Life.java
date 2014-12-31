@@ -7,4 +7,7 @@ import classes.interfaces.ISimulate;
 import java.io.Serializable;
 
 abstract public class Life implements Serializable, IPosition, IFood, ISimulate {
+
+    abstract public boolean isAlive();
+
 }

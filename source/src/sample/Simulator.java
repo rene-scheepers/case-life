@@ -80,29 +80,35 @@ public class Simulator {
         }
 
         for (Life life : world.getLife()) {
-            Node node = null;
-            Color color = Color.BLACK;
-            if (life instanceof Animal) {
-                Animal animal = (Animal)life;
-                Digestion digestion = animal.getGenetics().getDigestion();
-                node = animal.getNode();
+            if (life.isAlive()) {
+                Node node = null;
+                Color color = Color.BLACK;
+                if (life instanceof Animal) {
+                    Animal animal = (Animal) life;
+                    Digestion digestion = animal.getGenetics().getDigestion();
+                    node = animal.getNode();
 
-                if (digestion.equals(Digestion.Carnivore)) {
-                    color = Color.RED;
-                } else if (digestion.equals(Digestion.Herbivore)) {
-                    color = Color.BROWN;
-                } else {
-                    color = Color.YELLOW;
+                    if (digestion.equals(Digestion.Carnivore)) {
+                        color = Color.RED;
+                    } else if (digestion.equals(Digestion.Herbivore)) {
+                        color = Color.BROWN;
+                    } else {
+                        color = Color.YELLOW;
+                    }
+                } else if (life instanceof Plant) {
+                    Plant plant = (Plant) life;
+                    node = plant.getNode();
+                    color = Color.GREEN;
                 }
-            } else if (life instanceof Plant) {
-                Plant plant = (Plant)life;
-                node = plant.getNode();
-                color = Color.GREEN;
-            }
 
-            if (node != null) {
-                context.setFill(color);
-                context.fillRect(node.getX() * drawWidth, node.getY() * drawHeight, drawWidth, drawHeight);
+                if (node != null) {
+
+                    context.setFill(color);
+                    context.fillRect(node.getX() * drawWidth, node.getY() * drawHeight, drawWidth, drawHeight);
+
+                    context.setFill(Color.BLACK);
+                    context.fillText(String.valueOf(life.getEnergy()), node.getX() * drawWidth, node.getY() * drawHeight);
+                }
             }
         }
     }
