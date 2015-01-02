@@ -6,7 +6,6 @@ public class Path implements Comparable {
     private float cost;
     private float heuristic;
     private Path parent;
-    private int depth;
 
     public Path(Node node) {
         this.node = node;
@@ -49,7 +48,6 @@ public class Path implements Comparable {
                 ", cost=" + cost +
                 ", heuristic=" + heuristic +
                 ", parent=" + parent +
-                ", depth=" + depth +
                 '}';
     }
 

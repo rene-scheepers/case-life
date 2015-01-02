@@ -176,6 +176,25 @@ public class World implements Serializable, ISimulate {
         return Math.sqrt(firstSide + secondSize);
     }
 
+    public double getManhattanDistanceBetweenLocations(Node origin, Node target) {
+        int width = Math.abs(origin.getX() - target.getX());
+
+        if (width > this.width / 2) {
+            width = Math.abs(width - this.width);
+        } else {
+            width = width + this.width;
+        }
+
+        int height = Math.abs(origin.getY() - target.getY());
+        if (height > this.width / 2) {
+            height = Math.abs(height - this.height);
+        } else {
+            height = height + this.height;
+        }
+
+        return Math.sqrt(width * width + height * height);
+    }
+
     public void removeLife(Life life) {
         Node node = getNodeForLife(life);
         node.unsetHolder();
