@@ -1,7 +1,7 @@
 package classes.world;
 
 import classes.Exceptions.LocationAlreadyOccupiedException;
-import classes.debug.PathLogger;
+
 import classes.enumerations.Digestion;
 import classes.enumerations.LocationType;
 import classes.interfaces.ISimulate;
@@ -10,8 +10,12 @@ import classes.life.Genetics;
 import classes.life.Life;
 import classes.life.Plant;
 import javafx.scene.canvas.*;
+import javafx.scene.image.Image;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -85,11 +89,11 @@ public class World implements Serializable, ISimulate {
                 if (hex.equals("#00ff00")) {
                     life = new Plant(world, 100);
                 } else if (hex.equals("#ff6a00")) {
-                   // life = new Animal(world, new Genetics(Digestion.Carnivore, 4, 50, 100, 100));
+                    life = new Animal(world, new Genetics(Digestion.Carnivore, 4, 50, 100, 100));
                 } else if (hex.equals("#0026ff")) {
-                //    life = new Animal(world, new Genetics(Digestion.Omnivore, 4, 50, 100, 100));
+                    life = new Animal(world, new Genetics(Digestion.Omnivore, 4, 50, 100, 100));
                 } else if (hex.equals("#ff00ff")) {
-                  //  life = new Animal(world, new Genetics(Digestion.Herbivore, 4, 50, 100, 100));
+                  life = new Animal(world, new Genetics(Digestion.Herbivore, 4, 50, 100, 100));
                 }
 
                 if (life != null) {
@@ -195,21 +199,26 @@ public class World implements Serializable, ISimulate {
     }
 
     public void draw(GraphicsContext context) {
-        for (int x = 0; x < nodes.length; x++) {
-            for (int y = 0; y < nodes[x].length; y++) {
-                Node node = nodes[x][y];
 
-                if (node.getLocationType().equals(LocationType.Land)) {
-                    context.setFill(javafx.scene.paint.Color.WHITE);
-                } else if (node.getLocationType().equals(LocationType.Obstacle)) {
-                    context.setFill(javafx.scene.paint.Color.LIGHTGRAY);
-                } else {
-                    context.setFill(javafx.scene.paint.Color.LIGHTBLUE);
-                }
+            Image img = new Image(getClass().getResource("resources/maps/small.png").toExternalForm());
+            context.drawImage(img, 0, 0, 1000, 1000);
 
-                context.fillRect(node.getX(), node.getY(), 1, 1);
-            }
-        }
+
+//        for (int x = 0; x < nodes.length; x++) {
+//            for (int y = 0; y < nodes[x].length; y++) {
+//                Node node = nodes[x][y];
+//
+//                if (node.getLocationType().equals(LocationType.Land)) {
+//                    context.setFill(javafx.scene.paint.Color.WHITE);
+//                } else if (node.getLocationType().equals(LocationType.Obstacle)) {
+//                    context.setFill(javafx.scene.paint.Color.LIGHTGRAY);
+//                } else {
+//                    context.setFill(javafx.scene.paint.Color.LIGHTBLUE);
+//                }
+//
+//                context.fillRect(node.getX(), node.getY(), 1, 1);
+//            }
+//        }
     }
 
 }

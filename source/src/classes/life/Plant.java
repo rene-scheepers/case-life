@@ -1,6 +1,5 @@
 package classes.life;
 
-import classes.debug.PathLogger;
 import classes.enumerations.Digestion;
 import classes.world.Node;
 import classes.world.World;

@@ -71,7 +71,7 @@ public class Main extends Application {
         world.draw(worldCanvas.getGraphicsContext2D());
 
         this.simulator.setSpeed(5);
-        this.simulator.play();
+        //this.simulator.play();
     }
 
     public static void main(String[] args) {
