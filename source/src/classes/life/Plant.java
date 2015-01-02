@@ -1,7 +1,10 @@
 package classes.life;
 
+import classes.enumerations.Digestion;
 import classes.world.Node;
 import classes.world.World;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
 public class Plant extends Life {
 
@@ -53,6 +56,25 @@ public class Plant extends Life {
             if (energy < MAX_ENERGY) {
                 energy++;
             }
+        }
+    }
+
+    public void draw(GraphicsContext context, double drawWidth, double drawHeight) {
+        if (isAlive()) {
+            Node node = getNode();
+            double width = drawWidth;
+            double height = drawHeight;
+
+            context.setFill(Color.GREEN);
+            context.fillRect(
+                    node.getX() * drawWidth + (drawWidth - width) / 2,
+                    node.getY() * drawHeight + (drawWidth - width) / 2,
+                    width,
+                    height
+            );
+
+            context.setFill(Color.BLACK);
+            context.fillText(String.valueOf(energy), node.getX() * drawWidth, node.getY() * drawHeight);
         }
     }
 

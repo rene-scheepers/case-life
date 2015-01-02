@@ -24,11 +24,13 @@ public class Simulator {
     private Timeline timeline;
     private int currentTurn = 0;
     private int speed;
+    Thread thread;
 
     public Simulator(World world, Canvas canvas) {
         this.world = world;
         this.canvas = canvas;
         speed = 1;
+        thread = new Thread();
         timeline = new Timeline();
     }
 
@@ -43,15 +45,22 @@ public class Simulator {
     public void play() {
         timeline.setRate(speed);
 
-        KeyFrame frame = new KeyFrame(Duration.seconds(1), ev -> {
+        while(true) {
+            long time =  System.currentTimeMillis();
+            long nano = System.nanoTime();
             world.simulate();
             currentTurn++;
             draw(canvas);
-        });
 
-        timeline.getKeyFrames().add(currentTurn, frame);
-        timeline.setCycleCount(Animation.INDEFINITE);
-        timeline.play();
+            time = System.currentTimeMillis() - time;
+            nano = System.nanoTime() - nano;
+            try {
+                Thread.sleep(16 - time);
+            } catch(Exception ex) {
+
+            }
+
+        }
     }
 
     public void pause() {
@@ -59,6 +68,7 @@ public class Simulator {
     }
 
     public void stop() {
+        thread.stop();
         timeline.stop(); currentTurn = 0;
     }
 
@@ -69,47 +79,18 @@ public class Simulator {
         context.setFill(Color.BLACK);
         context.fillText(String.valueOf(currentTurn), 2, 12);
 
-        int drawWidth = (int) canvas.getWidth() / world.getWidth();
+        double drawWidth = canvas.getWidth() / world.getWidth();
         if (drawWidth < 1) {
             drawWidth = 1;
         }
 
-        int drawHeight = (int) canvas.getHeight() / world.getHeight();
+        double drawHeight = canvas.getHeight() / world.getHeight();
         if (drawHeight < 1) {
             drawHeight = 1;
         }
 
         for (Life life : world.getLife()) {
-            if (life.isAlive()) {
-                Node node = null;
-                Color color = Color.BLACK;
-                if (life instanceof Animal) {
-                    Animal animal = (Animal) life;
-                    Digestion digestion = animal.getGenetics().getDigestion();
-                    node = animal.getNode();
-
-                    if (digestion.equals(Digestion.Carnivore)) {
-                        color = Color.RED;
-                    } else if (digestion.equals(Digestion.Herbivore)) {
-                        color = Color.BROWN;
-                    } else {
-                        color = Color.YELLOW;
-                    }
-                } else if (life instanceof Plant) {
-                    Plant plant = (Plant) life;
-                    node = plant.getNode();
-                    color = Color.GREEN;
-                }
-
-                if (node != null) {
-
-                    context.setFill(color);
-                    context.fillRect(node.getX() * drawWidth, node.getY() * drawHeight, drawWidth, drawHeight);
-
-                    context.setFill(Color.BLACK);
-                    context.fillText(String.valueOf(life.getEnergy()), node.getX() * drawWidth, node.getY() * drawHeight);
-                }
-            }
+            life.draw(context, drawWidth, drawHeight);
         }
     }
 

@@ -42,65 +42,10 @@ public class Main extends Application {
             return;
         }
 
-        world = generateWorldFromImage(image);
+        world = World.instantiateWorldFromImage(image);
 
-        this.width = 1000;
-        this.height = 1000;
-    }
-
-    public World generateWorldFromImage(BufferedImage image) {
-        width = image.getWidth();
-        height = image.getHeight();
-        Node[][] nodes = new Node[width][height];
-
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                java.awt.Color color = new java.awt.Color(image.getRGB(x, y));
-                String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
-
-                LocationType type;
-                if (hex.equals("#000000")) {
-                    type = LocationType.Water;
-                } else if (hex.equals("#ed1c1c")) {
-                    type = LocationType.Obstacle;
-                } else {
-                    type = LocationType.Land;
-                }
-
-                nodes[x][y] = new Node(x, y, type);
-            }
-        }
-
-        World world = new World(nodes);
-
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                java.awt.Color color = new java.awt.Color(image.getRGB(x, y));
-                String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
-
-                Life life = null;
-                if (hex.equals("#00ff00")) {
-                    life = new Plant(world, 100);
-                } else if (hex.equals("#ff6a00")) {
-                    life = new Animal(world, new Genetics(Digestion.Carnivore, 4, 50, 100, 100, 20, 20, 20));
-                } else if (hex.equals("#0026ff")) {
-                    life = new Animal(world, new Genetics(Digestion.Omnivore, 4, 50, 100, 100, 20, 20, 20));
-                } else if (hex.equals("#ff00ff")) {
-                    life = new Animal(world, new Genetics(Digestion.Herbivore, 4, 50, 100, 100, 20, 20, 20));
-                }
-
-                if (life != null) {
-                    try {
-                        world.addLife(life, nodes[x][y]);
-                    }
-                     catch (LocationAlreadyOccupiedException exception) {
-
-                     }
-                }
-            }
-        }
-
-        return world;
+        this.width = 2000;
+        this.height = 2000;
     }
 
     @Override
@@ -119,44 +64,11 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        draw(worldCanvas);
+        world.draw(worldCanvas.getGraphicsContext2D(), width, height);
 
         this.simulator.setSpeed(5);
         this.simulator.play();
     }
-
-    public void draw(Canvas canvas) {
-        GraphicsContext context = canvas.getGraphicsContext2D();
-
-        int drawWidth = (int) canvas.getWidth() / world.getWidth();
-        if (drawWidth < 1) {
-            drawWidth = 1;
-        }
-
-        int drawHeight = (int) canvas.getHeight() / world.getHeight();
-        if (drawHeight < 1) {
-            drawHeight = 1;
-        }
-
-        Node[][] nodes = world.getNodes();
-
-        for (int x = 0; x < nodes.length; x++) {
-            for (int y = 0; y < nodes[x].length; y++) {
-                Node node = nodes[x][y];
-
-                if (node.getLocationType().equals(LocationType.Land)) {
-                    context.setFill(Color.WHITE);
-                } else if (node.getLocationType().equals(LocationType.Obstacle)) {
-                    context.setFill(Color.LIGHTGRAY);
-                } else {
-                    context.setFill(Color.LIGHTBLUE);
-                }
-
-                context.fillRect(node.getX() * drawWidth, node.getY() * drawHeight, drawWidth, drawHeight);
-            }
-        }
-    }
-
 
     public static void main(String[] args) {
         launch(args);

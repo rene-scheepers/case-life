@@ -1,6 +1,7 @@
 package classes.life;
 
 import classes.Exceptions.LocationAlreadyOccupiedException;
+import classes.enumerations.Digestion;
 import classes.enumerations.LocationType;
 import classes.enumerations.State;
 import classes.interfaces.IAnimal;
@@ -8,6 +9,8 @@ import classes.interfaces.IFood;
 import classes.world.Node;
 import classes.world.Path;
 import classes.world.World;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.*;
@@ -17,8 +20,6 @@ public class Animal extends Life implements IAnimal {
     private Genetics genetics;
 
     private int energy;
-
-    private int hunger;
 
     private int age;
 
@@ -40,10 +41,6 @@ public class Animal extends Life implements IAnimal {
 
     public int getAge() {
         return age;
-    }
-
-    public int getHunger() {
-        return hunger;
     }
 
     public int getEnergy() {
@@ -212,6 +209,32 @@ public class Animal extends Life implements IAnimal {
         return possibleSources.get(0).getNode();
 //        Random rand = new Random();
 //        return possibleSources.get(rand.nextInt(possibleSources.size())).getNode();
+    }
+
+    public void draw(GraphicsContext context, double drawWidth, double drawHeight) {
+        if (isAlive()) {
+            Color color = Color.BROWN;
+            if (genetics.getDigestion().equals(Digestion.Carnivore)) {
+                color = Color.RED;
+            } else if(genetics.getDigestion().equals(Digestion.Omnivore)) {
+                color = Color.YELLOW;
+            }
+
+            Node node = getNode();
+            double width = drawWidth * 0.6;
+            double height = drawHeight * 0.6;
+
+            context.setFill(color);
+            context.fillRect(
+                    node.getX() * drawWidth + (drawWidth - width) / 2,
+                    node.getY() * drawHeight + (drawWidth - width) / 2,
+                    width,
+                    height
+            );
+
+            context.setFill(Color.BLACK);
+            context.fillText(String.valueOf(energy), node.getX() * drawWidth, node.getY() * drawHeight);
+        }
     }
 
     @Override
