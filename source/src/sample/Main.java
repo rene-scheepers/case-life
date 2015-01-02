@@ -54,20 +54,21 @@ public class Main extends Application {
 
         Canvas worldCanvas = new Canvas(width, height);
         Canvas lifeCanvas = new Canvas(width, height);
-        Canvas logCanvas = new Canvas(width, height);
+
+        worldCanvas.getGraphicsContext2D().scale(2, 2);
+        lifeCanvas.getGraphicsContext2D().scale(2, 2);
 
         simulator = new Simulator(world, lifeCanvas);
         Scene scene = new Scene(root);
 
         root.getChildren().add(worldCanvas);
         root.getChildren().add(lifeCanvas);
-        root.getChildren().add(logCanvas);
 
         primaryStage.setTitle("Hello World");
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        world.draw(worldCanvas.getGraphicsContext2D(), width, height);
+        world.draw(worldCanvas.getGraphicsContext2D());
 
         this.simulator.setSpeed(5);
         this.simulator.play();

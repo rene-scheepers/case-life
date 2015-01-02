@@ -11,6 +11,7 @@ import classes.interfaces.IFood;
 import classes.world.Node;
 import classes.world.Path;
 import classes.world.World;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -71,7 +72,7 @@ public class Animal extends Life implements IAnimal {
     }
 
     private Path getPath(Node target) throws NoPathFoundException {
-        SortedList<Path> openNodes = new SortedList<Path>();
+        SortedList<Path> openNodes = new SortedList();
         ArrayList<Path> closedNodes = new ArrayList();
 
         openNodes.add(new Path(getNode()));
@@ -235,8 +236,20 @@ public class Animal extends Life implements IAnimal {
         throw new NoFoodSourceFoundException();
     }
 
-    public void draw(GraphicsContext context, double drawWidth, double drawHeight) {
+    public void draw(GraphicsContext context) {
         if (isAlive()) {
+            Canvas canvas = context.getCanvas();
+
+            double drawWidth = canvas.getWidth() / world.getWidth();
+            if (drawWidth < 1) {
+                drawWidth = 1;
+            }
+
+            double drawHeight = canvas.getHeight() / world.getHeight();
+            if (drawHeight < 1) {
+                drawHeight = 1;
+            }
+
             Color color = Color.BROWN;
             if (genetics.getDigestion().equals(Digestion.Carnivore)) {
                 color = Color.RED;

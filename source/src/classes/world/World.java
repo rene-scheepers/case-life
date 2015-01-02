@@ -1,6 +1,7 @@
 package classes.world;
 
 import classes.Exceptions.LocationAlreadyOccupiedException;
+import classes.debug.PathLogger;
 import classes.enumerations.Digestion;
 import classes.enumerations.LocationType;
 import classes.interfaces.ISimulate;
@@ -84,11 +85,11 @@ public class World implements Serializable, ISimulate {
                 if (hex.equals("#00ff00")) {
                     life = new Plant(world, 100);
                 } else if (hex.equals("#ff6a00")) {
-                    life = new Animal(world, new Genetics(Digestion.Carnivore, 4, 50, 100, 100));
+                   // life = new Animal(world, new Genetics(Digestion.Carnivore, 4, 50, 100, 100));
                 } else if (hex.equals("#0026ff")) {
-                    life = new Animal(world, new Genetics(Digestion.Omnivore, 4, 50, 100, 100));
+                //    life = new Animal(world, new Genetics(Digestion.Omnivore, 4, 50, 100, 100));
                 } else if (hex.equals("#ff00ff")) {
-                    life = new Animal(world, new Genetics(Digestion.Herbivore, 4, 50, 100, 100));
+                  //  life = new Animal(world, new Genetics(Digestion.Herbivore, 4, 50, 100, 100));
                 }
 
                 if (life != null) {
@@ -157,9 +158,7 @@ public class World implements Serializable, ISimulate {
 
     public void simulate() {
         for (Life life : this.life) {
-            if (life.isAlive()) {
-                life.simulate();
-            }
+            life.simulate();
         }
     }
 
@@ -195,19 +194,7 @@ public class World implements Serializable, ISimulate {
         this.life.remove(life);
     }
 
-    public void draw(GraphicsContext contextt) {
-        Canvas canvas = context.getCanvas();
-
-        double drawWidth = canvas.getWidth() / width;
-        if (drawWidth < 1) {
-            drawWidth =
-        }
-
-        double drawHeight = canvas.getHeight() / height;
-        if (drawHeight < 1) {
-            drawHeight = 1;
-        }
-
+    public void draw(GraphicsContext context) {
         for (int x = 0; x < nodes.length; x++) {
             for (int y = 0; y < nodes[x].length; y++) {
                 Node node = nodes[x][y];
@@ -220,7 +207,7 @@ public class World implements Serializable, ISimulate {
                     context.setFill(javafx.scene.paint.Color.LIGHTBLUE);
                 }
 
-                context.fillRect(node.getX() * drawWidth, node.getY() * drawHeight, drawWidth, drawHeight);
+                context.fillRect(node.getX(), node.getY(), 1, 1);
             }
         }
     }

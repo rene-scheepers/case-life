@@ -9,6 +9,6 @@ public interface ISimulate {
 
     public void simulate();
 
-    public void draw(GraphicsContext context, double width, double height);
+    public void draw(GraphicsContext context);
 
 }

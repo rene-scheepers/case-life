@@ -50,6 +50,7 @@ public class Simulator {
             currentTurn++;
             System.out.println(currentTurn);
             draw(canvas);
+            stop();
         });
 
         timeline.getKeyFrames().add(currentTurn, frame);
@@ -80,7 +81,6 @@ public class Simulator {
     }
 
     public void stop() {
-        thread.stop();
         timeline.stop(); currentTurn = 0;
     }
 
@@ -91,18 +91,9 @@ public class Simulator {
         context.setFill(Color.BLACK);
         context.fillText(String.valueOf(currentTurn), 2, 12);
 
-        double drawWidth = canvas.getWidth() / world.getWidth();
-        if (drawWidth < 1) {
-            drawWidth = 1;
-        }
-
-        double drawHeight = canvas.getHeight() / world.getHeight();
-        if (drawHeight < 1) {
-            drawHeight = 1;
-        }
 
         for (Life life : world.getLife()) {
-                life.draw(context, drawWidth, drawHeight);
+            life.draw(context);
         }
     }
 
