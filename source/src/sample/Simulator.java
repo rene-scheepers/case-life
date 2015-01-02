@@ -102,7 +102,7 @@ public class Simulator {
         }
 
         for (Life life : world.getLife()) {
-            life.draw(context, drawWidth, drawHeight);
+                life.draw(context, drawWidth, drawHeight);
         }
     }
 

@@ -34,7 +34,7 @@ public class Main extends Application {
     private World world;
 
     public Main() {
-        File file = new File("resources/maps/small.png");
+        File file = new File("resources/maps/Darwin map(empty).png");
         BufferedImage image;
         try {
             image = ImageIO.read(file);
@@ -54,11 +54,14 @@ public class Main extends Application {
 
         Canvas worldCanvas = new Canvas(width, height);
         Canvas lifeCanvas = new Canvas(width, height);
+        Canvas logCanvas = new Canvas(width, height);
+
         simulator = new Simulator(world, lifeCanvas);
         Scene scene = new Scene(root);
 
         root.getChildren().add(worldCanvas);
         root.getChildren().add(lifeCanvas);
+        root.getChildren().add(logCanvas);
 
         primaryStage.setTitle("Hello World");
         primaryStage.setScene(scene);

@@ -9,16 +9,10 @@ import classes.life.Genetics;
 import classes.life.Life;
 import classes.life.Plant;
 import javafx.scene.canvas.*;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.paint.*;
 
-import java.awt.*;
-import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 
 public class World implements Serializable, ISimulate {
 
@@ -201,13 +195,15 @@ public class World implements Serializable, ISimulate {
         this.life.remove(life);
     }
 
-    public void draw(GraphicsContext context, double drawWidth, double drawHeight) {
-        drawWidth /= width;
+    public void draw(GraphicsContext contextt) {
+        Canvas canvas = context.getCanvas();
+
+        double drawWidth = canvas.getWidth() / width;
         if (drawWidth < 1) {
-            drawWidth = 1;
+            drawWidth =
         }
 
-        drawHeight /= height;
+        double drawHeight = canvas.getHeight() / height;
         if (drawHeight < 1) {
             drawHeight = 1;
         }

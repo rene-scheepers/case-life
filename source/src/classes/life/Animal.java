@@ -80,7 +80,7 @@ public class Animal extends Life implements IAnimal {
 
             for (Node node : current.getNode().getAdjacentNodes()) {
                 if (node.equals(target)) {
-                    Path targetPath = new Path(target, 0, 0);
+                    Path targetPath = new Path(target, current.getCost(), 0);
                     targetPath.setParent(current);
                     return targetPath;
                 }
@@ -194,9 +194,10 @@ public class Animal extends Life implements IAnimal {
 
         if (path == null) {
             try {
+                //throw new NoFoodSourceFoundException();
                 path = findNearestFoodSource();
             } catch(NoFoodSourceFoundException exception) {
-
+                return;
             }
         } else {
             Node next = getNextNodeInPath();
@@ -212,7 +213,6 @@ public class Animal extends Life implements IAnimal {
                         eat(life);
                     }
                 } else {
-
                     path = null;
                 }
             }
@@ -222,26 +222,17 @@ public class Animal extends Life implements IAnimal {
     public Path findNearestFoodSource() throws NoFoodSourceFoundException {
         ArrayList<Life> living = world.getLife();
 
-        SortedList<Path> possibleSources = new SortedList();
         for (Life life : living) {
             if (life instanceof Plant && life.isAlive() && life.getEnergy() > 0) {
                 try {
-                    Path path = getPath(life.getNode());
-                    System.out.println(path);
-                    possibleSources.add(path);
+                    return getPath(life.getNode());
                 } catch(NoPathFoundException exception) {
 
                 }
             }
         }
 
-        if (possibleSources.getSize() > 0) {
-            System.out.println();
-            System.out.println(possibleSources.getFirst());
-            return possibleSources.getFirst();
-        } else {
-            throw new NoFoodSourceFoundException();
-        }
+        throw new NoFoodSourceFoundException();
     }
 
     public void draw(GraphicsContext context, double drawWidth, double drawHeight) {
@@ -265,8 +256,8 @@ public class Animal extends Life implements IAnimal {
                     height
             );
 
-            context.setFill(Color.BLACK);
-            context.fillText(String.valueOf(energy), node.getX() * drawWidth, node.getY() * drawHeight);
+//            context.setFill(Color.BLACK);
+//            context.fillText(String.valueOf(energy), node.getX() * drawWidth, node.getY() * drawHeight);
         }
     }
 

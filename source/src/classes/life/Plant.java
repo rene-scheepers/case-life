@@ -16,6 +16,7 @@ public class Plant extends Life {
     private int timesDied;
     private int timesEaten;
     private World world;
+    private boolean redraw = true;
 
     public Plant(World world, int energy) {
         this.world = world;
@@ -60,7 +61,7 @@ public class Plant extends Life {
     }
 
     public void draw(GraphicsContext context, double drawWidth, double drawHeight) {
-        if (isAlive()) {
+        if (isAlive() && redraw) {
             Node node = getNode();
             double width = drawWidth;
             double height = drawHeight;
@@ -73,8 +74,9 @@ public class Plant extends Life {
                     height
             );
 
-            context.setFill(Color.BLACK);
-            context.fillText(String.valueOf(energy), node.getX() * drawWidth, node.getY() * drawHeight);
+//            context.setFill(Color.BLACK);
+//            context.fillText(String.valueOf(energy), node.getX() * drawWidth, node.getY() * drawHeight);
+            redraw = false;
         }
     }
 
