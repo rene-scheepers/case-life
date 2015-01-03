@@ -159,14 +159,14 @@ public class Animal extends Life implements IAnimal {
         }
 
         if (newNode.getHolder() != null || newNode.getLocationType().equals(LocationType.Obstacle)) {
-            this.energy /= 2;
+            System.out.println("COLLISION " + newNode);
+            //this.energy /= 2;
             return false;
         } else {
             //energy -= genetics.getLegs();
             try {
                 newNode.setHolder(this);
                 current.unsetHolder();
-                state = State.Moving;
             } catch (LocationAlreadyOccupiedException exception) {
                 return false;
             }
@@ -183,6 +183,10 @@ public class Animal extends Life implements IAnimal {
 
     public boolean isFoodSource(Life life) {
         if (!life.isAlive() || life.getEnergy() < 1) {
+            return false;
+        }
+
+        if (life.equals(this)) {
             return false;
         }
 
@@ -222,7 +226,11 @@ public class Animal extends Life implements IAnimal {
                         path = null;
                     }
                 } else {
-                    move(next);
+                    if (nodeIsTraversable(next)) {
+                        move(next);
+                    } else {
+                        path = null;
+                    }
                 }
 
             } else {
@@ -248,16 +256,8 @@ public class Animal extends Life implements IAnimal {
             Collections.sort(sources, new Comparator<Node>() {
                 @Override
                 public int compare(Node o1, Node o2) {
-                    double distance1 = 0;
-                    double distance2 = 0;
-
-                    if (o1 != null) {
-                        distance1 = world.getDiagonalDistance(current, o1);
-                    }
-
-                    if (o1 != null) {
-                        distance2 = world.getDiagonalDistance(current, o2);
-                    }
+                        double distance1 = world.getDiagonalDistance(current, o1);
+                        double distance2 = world.getDiagonalDistance(current, o2);
 
                     return Double.compare(distance1, distance2);
                 }
