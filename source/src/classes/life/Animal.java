@@ -243,7 +243,7 @@ public class Animal extends Life implements IAnimal {
      * @return TRUE if the node can move onto the node.
      */
     public boolean nodeIsTraversable(Node node) {
-        if (node.equals(LocationType.Obstacle) || node.getHolder() != null) {
+        if (node.getLocationType().equals(LocationType.Obstacle) || node.getHolder() != null) {
             return false;
         }
         return true;

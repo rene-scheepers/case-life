@@ -84,8 +84,8 @@ public class Simulator extends Thread {
         context.setFill(Color.BLACK);
         context.fillText(String.valueOf(currentTurn), 2, 12);
 
-        for (Life life : world.getLives()) {
-            life.draw(context);
+        for (Object life : world.getLives().toArray()) {
+            ((Life)life).draw(context);
         }
     }
 
