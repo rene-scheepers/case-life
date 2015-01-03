@@ -34,7 +34,7 @@ public class Main extends Application {
     private World world;
 
     public Main() {
-        File file = new File("resources/maps/Darwin map(empty).png");
+        File file = new File("resources/maps/Small.png");
         BufferedImage image;
         try {
             image = ImageIO.read(file);
@@ -55,8 +55,8 @@ public class Main extends Application {
         Canvas worldCanvas = new Canvas(width, height);
         Canvas lifeCanvas = new Canvas(width, height);
 
-        worldCanvas.getGraphicsContext2D().scale(2, 2);
-        lifeCanvas.getGraphicsContext2D().scale(2, 2);
+        worldCanvas.getGraphicsContext2D().scale(width / world.getWidth(), height / world.getHeight());
+        lifeCanvas.getGraphicsContext2D().scale(width / world.getWidth(), height / world.getHeight());
 
         simulator = new Simulator(world, lifeCanvas);
         Scene scene = new Scene(root);
@@ -71,7 +71,7 @@ public class Main extends Application {
         world.draw(worldCanvas.getGraphicsContext2D());
 
         this.simulator.setSpeed(5);
-        //this.simulator.play();
+        this.simulator.play();
     }
 
     public static void main(String[] args) {

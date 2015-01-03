@@ -59,24 +59,16 @@ public class Plant extends Life {
 
     public void draw(GraphicsContext context) {
         if (isAlive()) {
-            Canvas canvas = context.getCanvas();
-
-            double drawWidth = canvas.getWidth() / world.getWidth();
-            if (drawWidth < 1) {
-                drawWidth = 1;
-            }
-
-            double drawHeight = canvas.getHeight() / world.getHeight();
-            if (drawHeight < 1) {
-                drawHeight = 1;
-            }
-
             Node node = getNode();
 
-            context.setFill(Color.GREEN);
+            if (energy == 0) {
+                context.setFill(Color.WHEAT);
+            } else {
+                context.setFill(Color.GREEN);
+            }
             context.fillRect(
-                    node.getX() * world.getWidth(),
-                    node.getY() * world.getHeight(),
+                    node.getX(),
+                    node.getY(),
                     1,
                     1
             );

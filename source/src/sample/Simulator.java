@@ -23,7 +23,7 @@ public class Simulator {
     private World world;
     private Timeline timeline;
     private int currentTurn = 0;
-    private int speed;
+    private double speed;
     Thread thread;
 
     public Simulator(World world, Canvas canvas) {
@@ -34,7 +34,7 @@ public class Simulator {
         timeline = new Timeline();
     }
 
-    public void setSpeed(int speed) {
+    public void setSpeed(double speed) {
         this.speed = speed;
     }
 
@@ -50,10 +50,9 @@ public class Simulator {
             currentTurn++;
             System.out.println(currentTurn);
             draw(canvas);
-            stop();
         });
 
-        timeline.getKeyFrames().add(currentTurn, frame);
+        timeline.getKeyFrames().add(frame);
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
 //        timeline.setRate(speed);

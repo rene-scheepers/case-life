@@ -14,9 +14,7 @@ import javafx.scene.image.Image;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
 
 public class World implements Serializable, ISimulate {
@@ -166,30 +164,11 @@ public class World implements Serializable, ISimulate {
         }
     }
 
-    public double getDistanceBetweenLocations(Node node1, Node node2) {
-        double firstSide = Math.abs(Math.pow(node1.getX() - node2.getX(), 2));
-        double secondSize = Math.abs(Math.pow(node1.getY() - node2.getY(), 2));
-
-        return Math.sqrt(firstSide + secondSize);
-    }
-
-    public double getManhattanDistanceBetweenLocations(Node origin, Node target) {
-        int width = Math.abs(origin.getX() - target.getX());
-
-        if (width > this.width / 2) {
-            width = Math.abs(width - this.width);
-        } else {
-            width = width + this.width;
-        }
-
+    public double getDiagonalDistance(Node origin, Node target) {
+        int width = Math.abs(origin.getX() - target.getX()) ;
         int height = Math.abs(origin.getY() - target.getY());
-        if (height > this.width / 2) {
-            height = Math.abs(height - this.height);
-        } else {
-            height = height + this.height;
-        }
 
-        return Math.sqrt(width * width + height * height);
+        return Math.max(width, height);
     }
 
     public void removeLife(Life life) {
@@ -200,25 +179,32 @@ public class World implements Serializable, ISimulate {
 
     public void draw(GraphicsContext context) {
 
-            Image img = new Image(getClass().getResource("resources/maps/small.png").toExternalForm());
-            context.drawImage(img, 0, 0, 1000, 1000);
-
-
-//        for (int x = 0; x < nodes.length; x++) {
-//            for (int y = 0; y < nodes[x].length; y++) {
-//                Node node = nodes[x][y];
+//        try {
+//            InputStream str = new FileInputStream("resources/maps/Darwin map(empty).png");
+//            Image img = new Image(str);
+//            context.drawImage(img, 0, 0, 1000, 1000);
+//        } catch(Exception ex) {
 //
-//                if (node.getLocationType().equals(LocationType.Land)) {
-//                    context.setFill(javafx.scene.paint.Color.WHITE);
-//                } else if (node.getLocationType().equals(LocationType.Obstacle)) {
-//                    context.setFill(javafx.scene.paint.Color.LIGHTGRAY);
-//                } else {
-//                    context.setFill(javafx.scene.paint.Color.LIGHTBLUE);
-//                }
-//
-//                context.fillRect(node.getX(), node.getY(), 1, 1);
-//            }
 //        }
+//            Image img = new Image("resources/maps/small.png");
+
+
+
+        for (int x = 0; x < nodes.length; x++) {
+            for (int y = 0; y < nodes[x].length; y++) {
+                Node node = nodes[x][y];
+
+                if (node.getLocationType().equals(LocationType.Land)) {
+                    context.setFill(javafx.scene.paint.Color.WHITE);
+                } else if (node.getLocationType().equals(LocationType.Obstacle)) {
+                    context.setFill(javafx.scene.paint.Color.LIGHTGRAY);
+                } else {
+                    context.setFill(javafx.scene.paint.Color.LIGHTBLUE);
+                }
+
+                context.fillRect(node.getX(), node.getY(), 1, 1);
+            }
+        }
     }
 
 }
