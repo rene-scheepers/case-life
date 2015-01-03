@@ -71,6 +71,8 @@ public class Animal extends Life implements IAnimal {
         return weight + genetics.getLegs() * 10;
     }
 
+    private int wait;
+
     private Path getPath(Node target) throws NoPathFoundException {
         SortedList<Path> openNodes = new SortedList();
         ArrayList<Node> closedNodes = new ArrayList();
@@ -152,6 +154,10 @@ public class Animal extends Life implements IAnimal {
             return false;
         }
 
+        if (!current.getAdjacentNodes().contains(newNode)) {
+            return false;
+        }
+
         if (newNode.getHolder() != null || newNode.getLocationType().equals(LocationType.Obstacle)) {
             this.energy /= 2;
             return false;
@@ -170,17 +176,19 @@ public class Animal extends Life implements IAnimal {
 
     private Node getNextNodeInPath() {
         Path path = this.path;
-        while (true) {
-            if (path.getParent() == null ||
-                    path.getParent().getNode().equals(getNode()) ||
-                    !nodeIsTraversable(path.getParent().getNode())) {
-                break;
-            }
+        ArrayList<Node> nodes = new ArrayList();
+
+        while (path.getParent() != null) {
+            nodes.add(path.getNode());
 
             path = path.getParent();
         }
 
-        return path.getNode();
+        if (nodes.size() > 2) {
+            return nodes.get(nodes.size() - 1);
+        } else {
+            return null;
+        }
     }
 
     public boolean nodeIsTraversable(Node node) {
@@ -195,28 +203,43 @@ public class Animal extends Life implements IAnimal {
             world.removeLife(this);
         }
 
+        if (wait > 0) {
+            wait--;
+            return;
+        }
+
         if (path == null) {
             try {
                 path = findNearestFoodSource();
-                System.out.println(path);
+                if (path == null) {
+
+                    wait = 2;
+                }
             } catch (NoFoodSourceFoundException exception) {
-                return;
+                wait = 2;
             }
         } else {
             Node next = getNextNodeInPath();
+            Node current = getNode();
             if (nodeIsTraversable(next)) {
                 move(next);
+                if (current.equals(getNode())) {
+                    System.out.println(current);
+                    System.out.println(next);
+                }
             } else {
-                Node current = getNode();
+
                 if (next.getHolder() instanceof Plant) {
                     Life life = next.getHolder();
                     if (life.getEnergy() == 0 || !life.isAlive()) {
                         path = null;
                     } else {
                         eat(life);
+                        wait = 2;
                     }
                 } else {
                     path = null;
+                    wait = 2;
                 }
             }
         }
@@ -248,7 +271,7 @@ public class Animal extends Life implements IAnimal {
             try {
                 return getPath(sources.get(rand.nextInt(sources.size())));
             } catch (Exception ex){
-                throw new NoFoodSourceFoundException();
+                return null;
             }
         }
 

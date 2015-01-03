@@ -70,7 +70,7 @@ public class Main extends Application {
 
         world.draw(worldCanvas.getGraphicsContext2D());
 
-        this.simulator.setSpeed(5);
+        this.simulator.setSpeed(1);
         this.simulator.play();
     }
 

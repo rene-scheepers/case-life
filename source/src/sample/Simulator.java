@@ -55,24 +55,6 @@ public class Simulator {
         timeline.getKeyFrames().add(frame);
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
-//        timeline.setRate(speed);
-//
-//        while(true) {
-//            long time =  System.currentTimeMillis();
-//            long nano = System.nanoTime();
-//            world.simulate();
-//            currentTurn++;
-//            draw(canvas);
-//
-//            time = System.currentTimeMillis() - time;
-//            nano = System.nanoTime() - nano;
-//            try {
-//                Thread.sleep(16 - time);
-//            } catch(Exception ex) {
-//
-//            }
-//
-//        }
     }
 
     public void pause() {
