@@ -66,6 +66,10 @@ public class Plant extends Life {
             } else {
                 context.setFill(Color.GREEN);
             }
+
+
+            context.setFill(Color.rgb(0, energy > 255 ? 255 : energy, 0));
+
             context.fillRect(
                     node.getX(),
                     node.getY(),

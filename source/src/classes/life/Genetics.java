@@ -14,13 +14,16 @@ public class Genetics extends Object {
 
     private int strength;
 
+    private String name;
+
 //    private float reproductionThreshold;
 //
 //    private float swimmingThreshold;
 //
 //    private float movementThreshold;
 
-    public Genetics(Digestion digestion, int legs, float reproductionCost, int stamina, int strength) {
+    public Genetics(String name, Digestion digestion, int legs, float reproductionCost, int stamina, int strength) {
+        this.name = name;
         this.digestion = digestion;
         this.legs = legs;
         this.reproductionCost = reproductionCost;

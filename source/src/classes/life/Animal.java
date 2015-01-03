@@ -183,13 +183,32 @@ public class Animal extends Life implements IAnimal {
         return true;
     }
 
+    public boolean isFoodSource(Life life) {
+        if (!life.isAlive() || life.getEnergy() < 1) {
+            return false;
+        }
+
+        Digestion digestion = genetics.getDigestion();
+
+        if (life instanceof Plant) {
+            if (digestion.equals(Digestion.Omnivore) || digestion.equals(Digestion.Herbivore)) {
+                return true;
+            }
+        } else if (life instanceof Animal) {
+            if (digestion.equals(Digestion.Omnivore) || digestion.equals(Digestion.Carnivore)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public void simulate() {
         if (energy <= 0) {
             world.removeLife(this);
         }
 
         Node current = getNode();
-
         if (path == null) {
             path = findNearestFoodSource();
         } else {
@@ -199,9 +218,16 @@ public class Animal extends Life implements IAnimal {
                 if (holder == null) {
                     path = null;
                 } else {
-                    if (holder instanceof Plant && holder.getEnergy() > 0) {
+                    if (isFoodSource(holder)) {
                         eat(holder);
                     } else {
+                        for (Node adjacent : current.getAdjacentNodes()) {
+                            Life adjacentHolder = adjacent.getHolder();
+                            if (adjacentHolder != null && isFoodSource(adjacentHolder)) {
+                                eat(adjacentHolder);
+                                break;
+                            }
+                        }
                         path = null;
                     }
                 }
@@ -209,6 +235,7 @@ public class Animal extends Life implements IAnimal {
                 path = null;
             } else {
                 int movementLeft = getSpeed();
+                movementLeft = 1;
                 while(movementLeft > 0 && nodeIsTraversable(next)) {
                     move(next);
                     next = path.getNextStep(getNode());
@@ -224,11 +251,10 @@ public class Animal extends Life implements IAnimal {
 
         List<Node> sources = new ArrayList();
         for (Life life : living) {
-            if (life instanceof Plant && life.isAlive() && life.getEnergy() > 0) {
+            if (isFoodSource(life)) {
                 sources.add(life.getNode());
             }
         }
-
 
         Collections.sort(sources, new Comparator<Node>() {
             @Override
@@ -267,9 +293,6 @@ public class Animal extends Life implements IAnimal {
                     0.6,
                     0.6
             );
-
-            context.setFill(Color.BLACK);
-            //context.fillText(String.valueOf(energy), node.getX() * drawWidth, node.getY() * drawHeight);
         }
     }
 
@@ -290,7 +313,10 @@ public class Animal extends Life implements IAnimal {
 
     @Override
     public int getEaten() {
+        System.out.println("i get eaten ofzo");
+        int energyEaten = energy;
+        energy = 0;
         world.removeLife(this);
-        return 0;
+        return energyEaten;
     }
 }

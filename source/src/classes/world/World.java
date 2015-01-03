@@ -87,11 +87,11 @@ public class World implements Serializable, ISimulate {
                 if (hex.equals("#00ff00")) {
                     life = new Plant(world, 100);
                 } else if (hex.equals("#ff6a00")) {
-                    life = new Animal(world, new Genetics(Digestion.Carnivore, 4, 50, 100, 100));
+                    life = new Animal(world, new Genetics("Hond", Digestion.Carnivore, 4, 50, 100, 100));
                 } else if (hex.equals("#0026ff")) {
-                    life = new Animal(world, new Genetics(Digestion.Omnivore, 4, 50, 100, 100));
+                    life = new Animal(world, new Genetics("Hond", Digestion.Omnivore, 4, 50, 100, 100));
                 } else if (hex.equals("#ff00ff")) {
-                  life = new Animal(world, new Genetics(Digestion.Herbivore, 4, 50, 100, 100));
+                    life = new Animal(world, new Genetics("Hond", Digestion.Herbivore, 4, 50, 100, 100));
                 }
 
                 if (life != null) {
@@ -160,8 +160,11 @@ public class World implements Serializable, ISimulate {
 
     public void simulate() {
         for (Life life : this.life) {
-            life.simulate();
+            if (life.isAlive()) {
+                life.simulate();
+            }
         }
+
     }
 
     public double getDiagonalDistance(Node origin, Node target) {
@@ -174,22 +177,9 @@ public class World implements Serializable, ISimulate {
     public void removeLife(Life life) {
         Node node = getNodeForLife(life);
         node.unsetHolder();
-        this.life.remove(life);
     }
 
     public void draw(GraphicsContext context) {
-
-//        try {
-//            InputStream str = new FileInputStream("resources/maps/Darwin map(empty).png");
-//            Image img = new Image(str);
-//            context.drawImage(img, 0, 0, 1000, 1000);
-//        } catch(Exception ex) {
-//
-//        }
-//            Image img = new Image("resources/maps/small.png");
-
-
-
         for (int x = 0; x < nodes.length; x++) {
             for (int y = 0; y < nodes[x].length; y++) {
                 Node node = nodes[x][y];
