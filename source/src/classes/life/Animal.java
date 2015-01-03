@@ -160,10 +160,10 @@ public class Animal extends Life implements IAnimal {
 
         if (newNode.getHolder() != null || newNode.getLocationType().equals(LocationType.Obstacle)) {
             System.out.println("COLLISION " + newNode);
-            //this.energy /= 2;
+            this.energy /= 2;
             return false;
         } else {
-            //energy -= genetics.getLegs();
+            energy -= genetics.getLegs();
             try {
                 newNode.setHolder(this);
                 current.unsetHolder();

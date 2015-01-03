@@ -34,7 +34,7 @@ public class Main extends Application {
     private World world;
 
     public Main() {
-        File file = new File("resources/maps/small.png");
+        File file = new File("resources/maps/medium.png");
         BufferedImage image;
         try {
             image = ImageIO.read(file);
