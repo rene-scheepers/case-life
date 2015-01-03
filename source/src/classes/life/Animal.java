@@ -116,7 +116,6 @@ public class Animal extends Life implements IAnimal {
                     }
                 }
 
-
                 if (!alreadyWalked) {
                     double heuristic = world.getDiagonalDistance(node, target);
 
@@ -150,11 +149,10 @@ public class Animal extends Life implements IAnimal {
     }
 
     public boolean move(Node newNode) {
-        Node current = getNode();
-
         if (newNode == null) {
             return false;
         }
+        Node current = getNode();
 
         if (!current.getAdjacentNodes().contains(newNode)) {
             return false;
@@ -164,7 +162,7 @@ public class Animal extends Life implements IAnimal {
             this.energy /= 2;
             return false;
         } else {
-            energy -= genetics.getLegs();
+            //energy -= genetics.getLegs();
             try {
                 newNode.setHolder(this);
                 current.unsetHolder();
@@ -208,68 +206,68 @@ public class Animal extends Life implements IAnimal {
             world.removeLife(this);
         }
 
-        Node current = getNode();
+        if (genetics.getDigestion().equals(Digestion.Carnivore)) {
+            Animal animal = this;
+        }
+
         if (path == null) {
             path = findNearestFoodSource();
         } else {
-            Node next = path.getNextStep(current);
-            Life holder = next.getHolder();
-            if (path.getLastNode().equals(next)) {
-                if (holder == null) {
-                    path = null;
-                } else {
-                    if (isFoodSource(holder)) {
-                        eat(holder);
+            if (path.hasNext()) {
+                Node next = path.next();
+                if (!path.hasNext()) {
+                    if (next.getHolder() != null && isFoodSource(next.getHolder())) {
+                        eat(next.getHolder());
                     } else {
-                        for (Node adjacent : current.getAdjacentNodes()) {
-                            Life adjacentHolder = adjacent.getHolder();
-                            if (adjacentHolder != null && isFoodSource(adjacentHolder)) {
-                                eat(adjacentHolder);
-                                break;
-                            }
-                        }
                         path = null;
                     }
-                }
-            } else if (!nodeIsTraversable(next)) {
-                path = null;
-            } else {
-                int movementLeft = getSpeed();
-                movementLeft = 1;
-                while(movementLeft > 0 && nodeIsTraversable(next)) {
+                } else {
                     move(next);
-                    next = path.getNextStep(getNode());
-                    movementLeft--;
                 }
+
+            } else {
+                path = null;
             }
         }
     }
 
     public Path findNearestFoodSource() {
         Node current = getNode();
-        ArrayList<Life> living = world.getLife();
+        if (current == null) {
+            return null;
+        }
 
         List<Node> sources = new ArrayList();
-        for (Life life : living) {
+        for (Life life : world.getLife()) {
             if (isFoodSource(life)) {
                 sources.add(life.getNode());
             }
         }
 
-        Collections.sort(sources, new Comparator<Node>() {
-            @Override
-            public int compare(Node o1, Node o2) {
-                double distance1 = world.getDiagonalDistance(current, o1);
-                double distance2 = world.getDiagonalDistance(current, o2);
+        if (sources.size() > 0) {
+            Collections.sort(sources, new Comparator<Node>() {
+                @Override
+                public int compare(Node o1, Node o2) {
+                    double distance1 = 0;
+                    double distance2 = 0;
 
-                return Double.compare(distance1, distance2);
-            }
-        });
+                    if (o1 != null) {
+                        distance1 = world.getDiagonalDistance(current, o1);
+                    }
 
-        for (Node source : sources) {
-            Path path = getPath(source);
-            if (path != null) {
-                return path;
+                    if (o1 != null) {
+                        distance2 = world.getDiagonalDistance(current, o2);
+                    }
+
+                    return Double.compare(distance1, distance2);
+                }
+            });
+
+            for (Node source : sources) {
+                Path path = getPath(source);
+                if (path != null) {
+                    return path;
+                }
             }
         }
         return null;

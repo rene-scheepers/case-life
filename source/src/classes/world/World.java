@@ -164,7 +164,6 @@ public class World implements Serializable, ISimulate {
                 life.simulate();
             }
         }
-
     }
 
     public double getDiagonalDistance(Node origin, Node target) {

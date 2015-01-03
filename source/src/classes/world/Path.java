@@ -1,15 +1,11 @@
 package classes.world;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.function.Consumer;
 
-/**
- * Created by Rene on 3-1-2015.
- */
-public class Path implements Comparable {
+public class Path implements Comparable, ListIterator<Node> {
 
+    private ListIterator<Node> iterator;
     private List<Node> steps = new ArrayList();
     private double cost;
 
@@ -27,10 +23,11 @@ public class Path implements Comparable {
         for(NodeHeuristic node : nodes) {
             steps.add(node.getNode());
         }
-    }
 
-    public Node getLastNode() {
-        return steps.get(steps.size() - 1);
+        iterator = steps.listIterator();
+        if (iterator.hasNext()) {
+            iterator.next();
+        }
     }
 
     public double getCost() {
@@ -39,15 +36,6 @@ public class Path implements Comparable {
 
     public int getSize() {
         return steps.size();
-    }
-
-
-    public Node getNextStep(Node node) {
-        int index = steps.indexOf(node) + 1;
-        if (index < steps.size()) {
-            return steps.get(index);
-        }
-        return null;
     }
 
     public boolean contains(NodeHeuristic node) {
@@ -61,5 +49,55 @@ public class Path implements Comparable {
         } else {
             return 0;
         }
+    }
+
+    @Override
+    public boolean hasNext() {
+        return iterator.hasNext();
+    }
+
+    @Override
+    public Node next() {
+        return iterator.next();
+    }
+
+    @Override
+    public boolean hasPrevious() {
+        return iterator.hasPrevious();
+    }
+
+    @Override
+    public Node previous() {
+        return iterator.previous();
+    }
+
+    @Override
+    public int nextIndex() {
+        return iterator.nextIndex();
+    }
+
+    @Override
+    public int previousIndex() {
+        return iterator.previousIndex();
+    }
+
+    @Override
+    public void remove() {
+        iterator.remove();
+    }
+
+    @Override
+    public void set(Node node) {
+        iterator.set(node);
+    }
+
+    @Override
+    public void add(Node node) {
+        iterator.add(node);
+    }
+
+    @Override
+    public void forEachRemaining(Consumer<? super Node> action) {
+        iterator.forEachRemaining(action);
     }
 }

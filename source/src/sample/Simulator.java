@@ -58,7 +58,6 @@ public class Simulator extends Thread {
     public synchronized void start() {
         // Load content here.
 
-
         isPlaying = true;
         super.start();
     }
@@ -82,26 +81,8 @@ public class Simulator extends Thread {
             } catch(Exception ex) {
                 System.out.println(ex.toString());
             }
-
         }
     }
-
-//    public void play() {
-//        timeline.setRate(speed);
-//
-//        KeyFrame frame = new KeyFrame(Duration.seconds(1), ev -> {
-//            world.simulate();
-//            currentTurn++;
-//            System.out.println(currentTurn);
-//            draw(canvas);
-//        });
-//
-//        timeline.getKeyFrames().add(frame);
-//        timeline.setCycleCount(Animation.INDEFINITE);
-//        timeline.play();
-//
-//
-//    }
 
     public void pause() {
         isPlaying = false;
