@@ -1,26 +1,10 @@
 package sample;
 
-import classes.enumerations.Digestion;
-import classes.life.Animal;
 import classes.life.Life;
-import classes.life.Plant;
-import classes.world.Node;
 import classes.world.World;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.util.Duration;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Simulator extends Thread {
 
@@ -100,7 +84,7 @@ public class Simulator extends Thread {
         context.setFill(Color.BLACK);
         context.fillText(String.valueOf(currentTurn), 2, 12);
 
-        for (Life life : world.getLife()) {
+        for (Life life : world.getLives()) {
             life.draw(context);
         }
     }

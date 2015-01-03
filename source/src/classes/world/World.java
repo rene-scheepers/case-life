@@ -3,6 +3,7 @@ package classes.world;
 import classes.Exceptions.LocationAlreadyOccupiedException;
 
 import classes.enumerations.Digestion;
+import classes.enumerations.Gender;
 import classes.enumerations.LocationType;
 import classes.interfaces.ISimulate;
 import classes.life.Animal;
@@ -10,16 +11,15 @@ import classes.life.Genetics;
 import classes.life.Life;
 import classes.life.Plant;
 import javafx.scene.canvas.*;
-import javafx.scene.image.Image;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class World implements Serializable, ISimulate {
 
-    private ArrayList<Life> life;
+    private ArrayList<Life> lives;
 
     private Node[][] nodes;
 
@@ -27,7 +27,7 @@ public class World implements Serializable, ISimulate {
     private int height;
 
     private World(Node[][] nodes) {
-        life = new ArrayList();
+        lives = new ArrayList();
 
         this.nodes = nodes;
 
@@ -78,6 +78,7 @@ public class World implements Serializable, ISimulate {
 
         World world = new World(nodes);
 
+        Random random = new Random();
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 java.awt.Color color = new java.awt.Color(image.getRGB(x, y));
@@ -87,11 +88,11 @@ public class World implements Serializable, ISimulate {
                 if (hex.equals("#00ff00")) {
                     life = new Plant(world, 100);
                 } else if (hex.equals("#ff6a00")) {
-                    life = new Animal(world, new Genetics("Hond", Digestion.Carnivore, 4, 50, 100, 100));
+                    //lives = new Animal(world, new Genetics("Hond", Digestion.Carnivore, 4, 80, 400, 100, 100), random.nextBoolean() ? Gender.Male : Gender.Female);
                 } else if (hex.equals("#0026ff")) {
-                    life = new Animal(world, new Genetics("Hond", Digestion.Omnivore, 4, 50, 100, 100));
+                    life = new Animal(world, new Genetics("Hond", Digestion.Omnivore, 4, 80, 400, 100, 300), random.nextBoolean() ? Gender.Male : Gender.Female);
                 } else if (hex.equals("#ff00ff")) {
-                    life = new Animal(world, new Genetics("Hond", Digestion.Herbivore, 4, 50, 100, 100));
+                    life = new Animal(world, new Genetics("Hond", Digestion.Herbivore, 4, 80, 400, 100, 300), random.nextBoolean() ? Gender.Male : Gender.Female);
                 }
 
                 if (life != null) {
@@ -127,8 +128,8 @@ public class World implements Serializable, ISimulate {
         return nodes;
     }
 
-    public ArrayList<Life> getLife() {
-        return life;
+    public ArrayList<Life> getLives() {
+        return lives;
     }
 
     public int getHeight() {
@@ -154,15 +155,13 @@ public class World implements Serializable, ISimulate {
     }
 
     public void addLife(Life life, Node node) throws LocationAlreadyOccupiedException {
-        this.life.add(life);
+        lives.add(life);
         node.setHolder(life);
     }
 
     public void simulate() {
-        for (Life life : this.life) {
-            if (life.isAlive()) {
-                life.simulate();
-            }
+        for (int i = 0; i < lives.size(); i++) {
+            lives.get(i).simulate();
         }
     }
 
@@ -174,8 +173,7 @@ public class World implements Serializable, ISimulate {
     }
 
     public void removeLife(Life life) {
-        Node node = getNodeForLife(life);
-        node.unsetHolder();
+        lives.remove(life);
     }
 
     public void draw(GraphicsContext context) {

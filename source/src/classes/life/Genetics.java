@@ -8,7 +8,7 @@ public class Genetics extends Object {
 
     private int legs;
 
-    private float reproductionCost;
+    private double reproductionCost;
 
     private int stamina;
 
@@ -16,22 +16,30 @@ public class Genetics extends Object {
 
     private String name;
 
-//    private float reproductionThreshold;
+    private float reproductionThreshold;
 //
 //    private float swimmingThreshold;
 //
 //    private float movementThreshold;
 
-    public Genetics(String name, Digestion digestion, int legs, float reproductionCost, int stamina, int strength) {
+    public Genetics(String name, Digestion digestion, int legs, double reproductionCost, int stamina, int strength, float reproductionThreshold) {
         this.name = name;
         this.digestion = digestion;
         this.legs = legs;
         this.reproductionCost = reproductionCost;
         this.stamina = stamina;
         this.strength = strength;
-//        this.reproductionThreshold = reproductionThreshold;
+        this.reproductionThreshold = reproductionThreshold;
 //        this.swimmingThreshold = swimmingThreshold;
 //        this.movementThreshold = movementThreshold;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public float getReproductionThreshold() {
+        return reproductionThreshold;
     }
 
     public Digestion getDigestion() {
@@ -42,7 +50,7 @@ public class Genetics extends Object {
         return legs;
     }
 
-    public float getReproductionCost() {
+    public double getReproductionCost() {
         return reproductionCost;
     }
 

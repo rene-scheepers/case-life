@@ -1,9 +1,8 @@
 package classes.life;
 
 import classes.Exceptions.LocationAlreadyOccupiedException;
-import classes.Exceptions.NoFoodSourceFoundException;
-import classes.Exceptions.NoPathFoundException;
 import classes.enumerations.Digestion;
+import classes.enumerations.Gender;
 import classes.enumerations.LocationType;
 import classes.enumerations.State;
 import classes.interfaces.IAnimal;
@@ -14,11 +13,12 @@ import classes.world.Path;
 import classes.world.World;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.*;
 
 public class Animal extends Life implements IAnimal {
+
+    private Gender gender;
 
     private Genetics genetics;
 
@@ -32,12 +32,27 @@ public class Animal extends Life implements IAnimal {
 
     private Path path;
 
-    public Animal(World world, Genetics genetics) {
+    public Animal(World world, Genetics genetics, Gender gender) {
         this.world = world;
+        this.gender = gender;
         this.genetics = genetics;
         this.energy = genetics.getStamina();
     }
 
+    /**
+     * Gender
+     *
+     * @return The gender of this animal.
+     */
+    public Gender getGender() {
+        return gender;
+    }
+
+    /**
+     * Gets the node on which the animal is currently positioned.
+     *
+     * @return The node on which the animal is located.
+     */
     public Node getNode() {
         return world.getNodeForLife(this);
     }
@@ -46,18 +61,49 @@ public class Animal extends Life implements IAnimal {
         return age;
     }
 
+    /**
+     * Hunger
+     * Hunger is the current(energy) percentage of the total possible(stamina).
+     *
+     * @return The current hunger percentage.
+     */
+    public float getHunger() {
+        return (float)energy / (float)genetics.getStamina() * 100;
+    }
+
+    /**
+     * Energy
+     *
+     * @return
+     */
     public int getEnergy() {
         return energy;
     }
 
+    /**
+     * The genetics of this specific animal.
+     *
+     * @return
+     */
     public Genetics getGenetics() {
         return genetics;
     }
 
+    /**
+     * What the animal is currently doing.
+     *
+     * @return
+     */
     public State getState() {
         return state;
     }
 
+    /**
+     * Speed
+     * @TODO WRITE THIS.
+     *
+     * @return The amount of nodes an animal can move in a single turn.
+     */
     public int getSpeed() {
         int speed = getWeight() / 50;
 
@@ -68,6 +114,12 @@ public class Animal extends Life implements IAnimal {
         return speed;
     }
 
+    /**
+     * Weight
+     * The weight is Energy - Strength + Legs * 10.
+     *
+     * @return Returns the weight of the animal.
+     */
     public int getWeight() {
         int weight = energy - genetics.getStrength();
         if (weight < 0) {
@@ -79,6 +131,12 @@ public class Animal extends Life implements IAnimal {
 
     private int wait;
 
+    /**
+     * Gets the A* Path for the animal.
+     *
+     * @param target The target node.
+     * @return The path with the steps to follow to reach the target.
+     */
     private Path getPath(Node target) {
         SortedList<NodeHeuristic> openNodes = new SortedList();
         ArrayList<Node> closedNodes = new ArrayList();
@@ -144,10 +202,13 @@ public class Animal extends Life implements IAnimal {
         return null;
     }
 
-    public boolean isAlive() {
-        return !(energy <= 0);
-    }
-
+    /**
+     * Moves the animal onto the new node.
+     *
+     * @param newNode The neighbouring node, where the animal must move towards.
+     *
+     * @return TRUE if the animal did indeed move.
+     */
     public boolean move(Node newNode) {
         if (newNode == null) {
             return false;
@@ -159,7 +220,6 @@ public class Animal extends Life implements IAnimal {
         }
 
         if (newNode.getHolder() != null || newNode.getLocationType().equals(LocationType.Obstacle)) {
-            System.out.println("COLLISION " + newNode);
             this.energy /= 2;
             return false;
         } else {
@@ -174,6 +234,14 @@ public class Animal extends Life implements IAnimal {
         }
     }
 
+    /**
+     * Checks if the animal can move onto the node.
+     * Checks if the node is an Obstacle or other life is on the node.
+     *
+     * @param node
+     *
+     * @return TRUE if the node can move onto the node.
+     */
     public boolean nodeIsTraversable(Node node) {
         if (node.equals(LocationType.Obstacle) || node.getHolder() != null) {
             return false;
@@ -181,11 +249,44 @@ public class Animal extends Life implements IAnimal {
         return true;
     }
 
-    public boolean isFoodSource(Life life) {
-        if (!life.isAlive() || life.getEnergy() < 1) {
+    /**
+     * Check if the animal can mate with the given animal.
+     * @param otherAnimal The animal to check the possibility with.
+     * @return TRUE if the animal can mate with the other animal.
+     */
+    public boolean canReproduceWith(Animal otherAnimal) {
+        if (energy - genetics.getReproductionCost() < 1) {
             return false;
         }
 
+        if (!otherAnimal.getGender().equals(gender)) {
+            if (otherAnimal.getGenetics().getName().equals(genetics.getName())) {
+
+                for(Node adjacent : otherAnimal.getNode().getAdjacentNodes()) {
+                    if (otherAnimal.nodeIsTraversable(adjacent)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean canReproduceWith(Life otherLife) {
+        if (otherLife instanceof Animal) {
+            return canReproduceWith(((Animal) otherLife));
+        }
+        return false;
+    }
+
+    /**
+     * Check if the given Interface is a food source for this animal.
+     *
+     * @param life The possible food source.
+     *
+     * @return TRUE if the given parameter is a valid food sources.
+     */
+    public boolean isFoodSource(Life life) {
         if (life.equals(this)) {
             return false;
         }
@@ -205,23 +306,52 @@ public class Animal extends Life implements IAnimal {
         return false;
     }
 
+    /**
+     * Simulates a turn for the animal.
+     */
     public void simulate() {
         if (energy <= 0) {
             world.removeLife(this);
         }
 
-        if (genetics.getDigestion().equals(Digestion.Carnivore)) {
-            Animal animal = this;
+        if (getHunger() < 1) {
+            System.out.println(energy);
         }
-
+        //System.out.println(getHunger());
         if (path == null) {
-            path = findNearestFoodSource();
+            if (gender.equals(Gender.Male) && genetics.getReproductionThreshold() > getHunger()) {
+                Random random = new Random();
+                if (random.nextBoolean()) {
+                    path = findNearestReproductionSource();
+                } else {
+                    path = findNearestFoodSource();
+                }
+            } else {
+                path = findNearestFoodSource();
+            }
         } else {
             if (path.hasNext()) {
                 Node next = path.next();
                 if (!path.hasNext()) {
-                    if (next.getHolder() != null && isFoodSource(next.getHolder())) {
-                        eat(next.getHolder());
+                    if (next.getHolder() != null) {
+                        Life holder = next.getHolder();
+                        if (holder != null) {
+                            if (isFoodSource(holder)) {
+                                eat(holder);
+                            }
+                            else if(canReproduceWith(holder) && gender.equals(Gender.Male)) {
+                                Animal animal = (Animal)holder;
+                                if (animal.canReproduceWith(this) && animal.reproduce(this)) {
+                                    energy -= genetics.getReproductionCost();
+                                    path = null;
+                                } else {
+                                    path = null;
+                                }
+                            } else {
+                                path = null;
+                            }
+                        }
+
                     } else {
                         path = null;
                     }
@@ -239,14 +369,18 @@ public class Animal extends Life implements IAnimal {
         }
     }
 
+
+    /**
+     * Finds the nearest path to a food source.
+     * This path is the closest to the animal not the fastest path.
+     *
+     * @return Returns NULL
+     */
     public Path findNearestFoodSource() {
         Node current = getNode();
-        if (current == null) {
-            return null;
-        }
 
         List<Node> sources = new ArrayList();
-        for (Life life : world.getLife()) {
+        for (Life life : world.getLives()) {
             if (isFoodSource(life)) {
                 sources.add(life.getNode());
             }
@@ -273,42 +407,123 @@ public class Animal extends Life implements IAnimal {
         return null;
     }
 
-    public void draw(GraphicsContext context) {
-        if (isAlive()) {
-            Color color = Color.BROWN;
-            if (genetics.getDigestion().equals(Digestion.Carnivore)) {
-                color = Color.RED;
-            } else if (genetics.getDigestion().equals(Digestion.Omnivore)) {
-                color = Color.YELLOW;
+    public Path findNearestReproductionSource() {
+        Node current = getNode();
+
+        List<Node> sources = new ArrayList();
+        for (Life life : world.getLives()) {
+            if (canReproduceWith(life)) {
+                sources.add(life.getNode());
             }
-
-            Node node = getNode();
-
-            context.setFill(color);
-            context.fillRect(
-                    node.getX() + 0.2,
-                    node.getY() + 0.2,
-                    0.6,
-                    0.6
-            );
         }
+
+        if (sources.size() > 0) {
+            Collections.sort(sources, new Comparator<Node>() {
+                @Override
+                public int compare(Node o1, Node o2) {
+                    double distance1 = world.getDiagonalDistance(current, o1);
+                    double distance2 = world.getDiagonalDistance(current, o2);
+
+                    return Double.compare(distance1, distance2);
+                }
+            });
+
+            for (Node source : sources) {
+                Path path = getPath(source);
+                if (path != null) {
+                    return path;
+                }
+            }
+        }
+        return null;
     }
 
+    /**
+     * Draws the Animal to the Context.
+     *
+     * @param context
+     */
+    public void draw(GraphicsContext context) {
+        Color color = Color.BROWN;
+        if (genetics.getDigestion().equals(Digestion.Carnivore)) {
+            color = Color.RED;
+        } else if (genetics.getDigestion().equals(Digestion.Omnivore)) {
+            color = Color.YELLOW;
+        }
+
+        Node node = getNode();
+
+        context.setFill(color);
+        context.fillRect(
+                node.getX() + 0.2,
+                node.getY() + 0.2,
+                0.6,
+                0.6
+        );
+
+    }
+
+    /**
+     * Eat the food. Adding the energy to itself.
+     *
+     * @param food The food to be eaten.
+     *
+     * @return
+     */
     @Override
     public boolean eat(IFood food) {
         int energy = food.getEaten();
+
         this.energy += energy;
+
+        if (this.energy > genetics.getStamina()) {
+            this.energy = genetics.getStamina();
+        }
 
         state = State.Eating;
 
         return true;
     }
 
+    /**
+     * Reproduces with another animal.
+     *
+     * @param animal
+     * @return
+     */
     @Override
     public boolean reproduce(Animal animal) {
-        return true;
+        if (getHunger() > genetics.getReproductionThreshold()) {
+            return false;
+        }
+
+        if (!canReproduceWith(animal)) {
+            return false;
+        }
+
+        Genetics dna = new Genetics(genetics.getName(), genetics.getDigestion(), genetics.getLegs(), genetics.getReproductionCost(), genetics.getStamina(), genetics.getStrength(), genetics.getReproductionThreshold());
+//        Animal child = ;
+
+        Node node = getNode();
+        for (Node adjacent : node.getAdjacentNodes()) {
+            if (nodeIsTraversable(adjacent)) {
+                try {
+                    world.addLife(new Animal(world, dna, Gender.Male), adjacent);
+                    energy -= genetics.getReproductionCost();
+                    return true;
+                } catch (Exception exception) {
+
+                }
+            }
+        }
+        return false;
     }
 
+    /**
+     * The animals get eaten and killed.
+     *
+     * @return Returns the amount of energy possible for absorbtion.
+     */
     @Override
     public int getEaten() {
         System.out.println("i get eaten ofzo");
