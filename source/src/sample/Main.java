@@ -34,7 +34,7 @@ public class Main extends Application {
     private World world;
 
     public Main() {
-        File file = new File("resources/maps/Small.png");
+        File file = new File("resources/maps/small.png");
         BufferedImage image;
         try {
             image = ImageIO.read(file);
@@ -44,8 +44,8 @@ public class Main extends Application {
 
         world = World.instantiateWorldFromImage(image);
 
-        this.width = 2000;
-        this.height = 2000;
+        this.width = 1000;
+        this.height = 1000;
     }
 
     @Override
@@ -58,7 +58,7 @@ public class Main extends Application {
         worldCanvas.getGraphicsContext2D().scale(width / world.getWidth(), height / world.getHeight());
         lifeCanvas.getGraphicsContext2D().scale(width / world.getWidth(), height / world.getHeight());
 
-        simulator = new Simulator(world, lifeCanvas);
+//        simulator = new Simulator(world, lifeCanvas);
         Scene scene = new Scene(root);
 
         root.getChildren().add(worldCanvas);
@@ -68,10 +68,15 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
+        // Draw world background.
         world.draw(worldCanvas.getGraphicsContext2D());
 
-        this.simulator.setSpeed(1);
-        this.simulator.play();
+        simulator = new Simulator(world, lifeCanvas.getGraphicsContext2D(), width, height);
+        simulator.start();
+        primaryStage.setOnCloseRequest((ev) -> simulator.interrupt());
+
+//        this.simulator.setSpeed(1);
+//        this.simulator.play();
     }
 
     public static void main(String[] args) {
