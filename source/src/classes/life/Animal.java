@@ -9,9 +9,9 @@ import classes.enumerations.State;
 import classes.interfaces.IAnimal;
 import classes.interfaces.IFood;
 import classes.world.Node;
+import classes.world.NodeHeuristic;
 import classes.world.Path;
 import classes.world.World;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -59,7 +59,13 @@ public class Animal extends Life implements IAnimal {
     }
 
     public int getSpeed() {
-        throw new NotImplementedException();
+        int speed = getWeight() / 50;
+
+        if (speed < 1) {
+            speed = 1;
+        }
+
+        return speed;
     }
 
     public int getWeight() {
@@ -74,19 +80,18 @@ public class Animal extends Life implements IAnimal {
     private int wait;
 
     private Path getPath(Node target) throws NoPathFoundException {
-        SortedList<Path> openNodes = new SortedList();
+        SortedList<NodeHeuristic> openNodes = new SortedList();
         ArrayList<Node> closedNodes = new ArrayList();
 
-        int count = 0;
-        openNodes.add(new Path(getNode()));
+        openNodes.add(new NodeHeuristic(getNode()));
         while (openNodes.getSize() >= 1) {
-            Path current = openNodes.getFirst();
-
-            for (Node node : current.getNode().getAdjacentNodes()) {
+            NodeHeuristic current = openNodes.getFirst();
+            Node currentNode = current.getNode();
+            for (Node node : currentNode.getAdjacentNodes()) {
                 if (node.equals(target)) {
-                    Path targetPath = new Path(target, current.getCost(), 0);
-                    targetPath.setParent(current);
-                    return targetPath;
+                    NodeHeuristic targetNodeHeuristic = new NodeHeuristic(target, current.getCost(), 0);
+                    targetNodeHeuristic.setParent(current);
+                    return new Path(targetNodeHeuristic);
                 }
 
                 if (node.getLocationType().equals(LocationType.Obstacle)) {
@@ -103,7 +108,7 @@ public class Animal extends Life implements IAnimal {
                 }
 
                 if (!alreadyWalked) {
-                    for (Path walkableNode : openNodes.getObjects()) {
+                    for (NodeHeuristic walkableNode : openNodes.getObjects()) {
                         if (walkableNode.getNode().equals(node)) {
                             alreadyWalked = true;
                             break;
@@ -113,22 +118,20 @@ public class Animal extends Life implements IAnimal {
 
 
                 if (!alreadyWalked) {
-                    Double distance = world.getDiagonalDistance(node, target);
+                    double heuristic = world.getDiagonalDistance(node, target);
 
-                    float heuristic = distance.floatValue();
-
-                    float cost;
+                    double cost;
                     if (node.getLocationType().equals(LocationType.Land)) {
-                        cost = 2;
+                        cost = 10;
                     } else {
-                        cost = 3;
+                        cost = 15;
                     }
 
                     if (current.getParent() != null) {
                         cost += current.getCost();
                     }
 
-                    Path adjacent = new Path(node, cost, heuristic * cost);
+                    NodeHeuristic adjacent = new NodeHeuristic(node, cost, heuristic * cost);
                     adjacent.setParent(current);
                     openNodes.add(adjacent);
                 }
@@ -136,7 +139,6 @@ public class Animal extends Life implements IAnimal {
             }
 
             closedNodes.add(current.getNode());
-            count++;
             openNodes.remove(current);
         }
 
@@ -162,7 +164,7 @@ public class Animal extends Life implements IAnimal {
             this.energy /= 2;
             return false;
         } else {
-            //energy -= genetics.getLegs();
+            energy -= genetics.getLegs();
             try {
                 newNode.setHolder(this);
                 current.unsetHolder();
@@ -171,23 +173,6 @@ public class Animal extends Life implements IAnimal {
                 return false;
             }
             return true;
-        }
-    }
-
-    private Node getNextNodeInPath() {
-        Path path = this.path;
-        ArrayList<Node> nodes = new ArrayList();
-
-        while (path.getParent() != null) {
-            nodes.add(path.getNode());
-
-            path = path.getParent();
-        }
-
-        if (nodes.size() > 2) {
-            return nodes.get(nodes.size() - 1);
-        } else {
-            return null;
         }
     }
 
@@ -203,87 +188,69 @@ public class Animal extends Life implements IAnimal {
             world.removeLife(this);
         }
 
-        if (wait > 0) {
-            wait--;
-            return;
-        }
+        Node current = getNode();
 
         if (path == null) {
-            try {
-                path = findNearestFoodSource();
-                if (path == null) {
-
-                    wait = 2;
-                }
-            } catch (NoFoodSourceFoundException exception) {
-                wait = 2;
-            }
+            path = findNearestFoodSource();
         } else {
-            Node next = getNextNodeInPath();
-            Node current = getNode();
-            if (nodeIsTraversable(next)) {
-                move(next);
-                if (current.equals(getNode())) {
-                    System.out.println(current);
-                    System.out.println(next);
-                }
-            } else {
-
-                if (next.getHolder() instanceof Plant) {
-                    Life life = next.getHolder();
-                    if (life.getEnergy() == 0 || !life.isAlive()) {
-                        path = null;
-                    } else {
-                        eat(life);
-                        wait = 2;
-                    }
-                } else {
+            Node next = path.getNextStep(current);
+            Life holder = next.getHolder();
+            if (path.getLastNode().equals(next)) {
+                if (holder == null) {
                     path = null;
-                    wait = 2;
+                } else {
+                    if (holder instanceof Plant && holder.getEnergy() > 0) {
+                        eat(holder);
+                    } else {
+                        path = null;
+                    }
+                }
+            } else if (!nodeIsTraversable(next)) {
+                path = null;
+            } else {
+                int movementLeft = getSpeed();
+                while(movementLeft > 0 && nodeIsTraversable(next)) {
+                    move(next);
+                    next = path.getNextStep(getNode());
+                    movementLeft--;
                 }
             }
         }
     }
 
-    public Path findNearestFoodSource() throws NoFoodSourceFoundException {
+    public Path findNearestFoodSource() {
         Node current = getNode();
         ArrayList<Life> living = world.getLife();
 
-        List<Node> sources = new ArrayList();
+        SortedList<Path> sources = new SortedList<>();
         for (Life life : living) {
             if (life instanceof Plant && life.isAlive() && life.getEnergy() > 0) {
-                sources.add(life.getNode());
+                try {
+                    sources.add(getPath(life.getNode()));
+                } catch(Exception ex) {
+
+                }
             }
         }
 
-        Collections.sort(sources, new Comparator<Node>() {
-            @Override
-            public int compare(Node o1, Node o2) {
-                double distance1 = world.getDiagonalDistance(current, o1);
-                double distance2 = world.getDiagonalDistance(current, o2);
 
-                return Double.compare(distance1, distance2);
-            }
-        });
-
-        Random rand = new Random();
-        while(true) {
-            try {
-                return getPath(sources.get(rand.nextInt(sources.size())));
-            } catch (Exception ex){
-                return null;
-            }
-        }
-
-//        for (Node node : sources) {
-//            try {
-//                return getPath(node);
-//            } catch (NoPathFoundException exception) {
+//        Collections.sort(sources, new Comparator<Node>() {
+//            @Override
+//            public int compare(Node o1, Node o2) {
+//                double distance1 = world.getDiagonalDistance(current, o1);
+//                double distance2 = world.getDiagonalDistance(current, o2);
 //
+//                return Double.compare(distance1, distance2);
 //            }
-//        }
+//        });
 
-        //
+        return sources.getFirst();
+//
+//        try {
+//            return getPath(sources.get(0));
+//        } catch(Exception ex) {
+//            return null;
+//        }
     }
 
     public void draw(GraphicsContext context) {

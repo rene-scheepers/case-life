@@ -1,68 +1,65 @@
 package classes.world;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+/**
+ * Created by Rene on 3-1-2015.
+ */
 public class Path implements Comparable {
 
-    private Node node;
-    private float cost;
-    private float heuristic;
-    private Path parent;
+    private List<Node> steps = new ArrayList();
+    private double cost;
 
-    public Path(Node node) {
-        this.node = node;
+    public Path(NodeHeuristic path) {
+        ArrayList<NodeHeuristic> nodes = new ArrayList();
+        nodes.add(path);
+        cost = path.getTotal();
+        while(path.getParent() != null) {
+            nodes.add(path.getParent());
+            path = path.getParent();
+        }
+
+        Collections.reverse(nodes);
+
+        for(NodeHeuristic node : nodes) {
+            steps.add(node.getNode());
+        }
     }
 
-    public Path(Node node, float cost, float heuristic) {
-        this.node = node;
-        this.cost = cost;
-        this.heuristic = heuristic;
+    public Node getLastNode() {
+        return steps.get(steps.size() - 1);
     }
 
-    public Node getNode() {
-        return node;
-    }
-
-    public void setParent(Path node) {
-        parent = node;
-    }
-
-    public Path getParent() {
-        return parent;
-    }
-
-    public float getCost() {
+    public double getCost() {
         return cost;
     }
 
-    public float getHeuristic() {
-        return heuristic;
+    public int getSize() {
+        return steps.size();
     }
 
-    public float getTotal() {
-        return cost + heuristic;
-    }
 
-    @Override
-    public String toString() {
-        return "Path{" +
-                "node=" + node +
-                ", cost=" + cost +
-                ", heuristic=" + heuristic +
-                ", parent=" + parent +
-                '}';
-    }
-
-    @Override
-    public int compareTo(Object other) {
-        if (other instanceof Path) {
-            Path otherNode = (Path)other;
-
-            if (getTotal() < otherNode.getTotal()) {
-                return -1;
-            } else if(getTotal() > otherNode.getTotal()) {
-                return 1;
-            }
+    public Node getNextStep(Node node) {
+        int index = steps.indexOf(node) + 1;
+        if (index < steps.size()) {
+            return steps.get(index);
         }
+        return null;
+    }
 
-        return 0;
+    public boolean contains(NodeHeuristic node) {
+        return steps.contains(node);
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if (o instanceof Path) {
+            return Double.compare(cost, ((Path)o).getCost());
+        } else {
+            return 0;
+        }
     }
 }

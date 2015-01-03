@@ -46,7 +46,7 @@ public class World implements Serializable, ISimulate {
                 node.addAdjacentNode(getNode(x + 1, y));
 
                 node.addAdjacentNode(getNode(x - 1,y - 1));
-                node.addAdjacentNode(getNode(x,y - 1));
+                node.addAdjacentNode(getNode(x, y - 1));
                 node.addAdjacentNode(getNode(x + 1,y - 1));
             }
         }
