@@ -79,7 +79,7 @@ public class Animal extends Life implements IAnimal {
 
     private int wait;
 
-    private Path getPath(Node target) throws NoPathFoundException {
+    private Path getPath(Node target) {
         SortedList<NodeHeuristic> openNodes = new SortedList();
         ArrayList<Node> closedNodes = new ArrayList();
 
@@ -142,7 +142,7 @@ public class Animal extends Life implements IAnimal {
             openNodes.remove(current);
         }
 
-        throw new NoPathFoundException();
+        return null;
     }
 
     public boolean isAlive() {
@@ -222,35 +222,31 @@ public class Animal extends Life implements IAnimal {
         Node current = getNode();
         ArrayList<Life> living = world.getLife();
 
-        SortedList<Path> sources = new SortedList<>();
+        List<Node> sources = new ArrayList();
         for (Life life : living) {
             if (life instanceof Plant && life.isAlive() && life.getEnergy() > 0) {
-                try {
-                    sources.add(getPath(life.getNode()));
-                } catch(Exception ex) {
-
-                }
+                sources.add(life.getNode());
             }
         }
 
 
-//        Collections.sort(sources, new Comparator<Node>() {
-//            @Override
-//            public int compare(Node o1, Node o2) {
-//                double distance1 = world.getDiagonalDistance(current, o1);
-//                double distance2 = world.getDiagonalDistance(current, o2);
-//
-//                return Double.compare(distance1, distance2);
-//            }
-//        });
+        Collections.sort(sources, new Comparator<Node>() {
+            @Override
+            public int compare(Node o1, Node o2) {
+                double distance1 = world.getDiagonalDistance(current, o1);
+                double distance2 = world.getDiagonalDistance(current, o2);
 
-        return sources.getFirst();
-//
-//        try {
-//            return getPath(sources.get(0));
-//        } catch(Exception ex) {
-//            return null;
-//        }
+                return Double.compare(distance1, distance2);
+            }
+        });
+
+        for (Node source : sources) {
+            Path path = getPath(source);
+            if (path != null) {
+                return path;
+            }
+        }
+        return null;
     }
 
     public void draw(GraphicsContext context) {
