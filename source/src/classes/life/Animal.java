@@ -314,14 +314,10 @@ public class Animal extends Life implements IAnimal {
             world.removeLife(this);
         }
 
-        if (getHunger() < 1) {
-            System.out.println(energy);
-        }
-        //System.out.println(getHunger());
         if (path == null) {
             if (gender.equals(Gender.Male) && genetics.getReproductionThreshold() > getHunger()) {
                 Random random = new Random();
-                if (random.nextBoolean()) {
+                if (random.nextInt(100) < 5) {
                     path = findNearestReproductionSource();
                 } else {
                     path = findNearestFoodSource();
@@ -341,7 +337,8 @@ public class Animal extends Life implements IAnimal {
                             }
                             else if(canReproduceWith(holder) && gender.equals(Gender.Male)) {
                                 Animal animal = (Animal)holder;
-                                if (animal.canReproduceWith(this) && animal.reproduce(this)) {
+                                boolean reproducted = animal.reproduce(this);
+                                if (reproducted) {
                                     energy -= genetics.getReproductionCost();
                                     path = null;
                                 } else {
@@ -377,8 +374,6 @@ public class Animal extends Life implements IAnimal {
      * @return Returns NULL
      */
     public Path findNearestFoodSource() {
-        Node current = getNode();
-
         List<Node> sources = new ArrayList();
         for (Life life : world.getLives()) {
             if (isFoodSource(life)) {
@@ -387,6 +382,7 @@ public class Animal extends Life implements IAnimal {
         }
 
         if (sources.size() > 0) {
+            Node current = getNode();
             Collections.sort(sources, new Comparator<Node>() {
                 @Override
                 public int compare(Node o1, Node o2) {
@@ -501,20 +497,23 @@ public class Animal extends Life implements IAnimal {
             return false;
         }
 
+        Random random = new Random();
         Genetics dna = new Genetics(genetics.getName(), genetics.getDigestion(), genetics.getLegs(), genetics.getReproductionCost(), genetics.getStamina(), genetics.getStrength(), genetics.getReproductionThreshold());
-//        Animal child = ;
+        Animal child = new Animal(world, dna, random.nextBoolean() ? Gender.Male : Gender.Female);
 
         Node node = getNode();
         for (Node adjacent : node.getAdjacentNodes()) {
-            if (nodeIsTraversable(adjacent)) {
+            if (!nodeIsTraversable(adjacent)) {
+                continue;
+            }
                 try {
-                    world.addLife(new Animal(world, dna, Gender.Male), adjacent);
+                    world.addLife(child, adjacent);
                     energy -= genetics.getReproductionCost();
                     return true;
                 } catch (Exception exception) {
 
                 }
-            }
+
         }
         return false;
     }
