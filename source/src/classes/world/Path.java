@@ -8,11 +8,16 @@ public class Path implements Comparable, ListIterator<Node> {
     private ListIterator<Node> iterator;
     private List<Node> steps = new ArrayList();
     private double cost;
+    private Node target;
 
     public Path(NodeHeuristic path) {
         ArrayList<NodeHeuristic> nodes = new ArrayList();
         nodes.add(path);
+
         cost = path.getTotal();
+        target = path.getNode();
+        target.addPathsLeadingHere(this);
+
         while(path.getParent() != null) {
             nodes.add(path.getParent());
             path = path.getParent();
@@ -28,6 +33,10 @@ public class Path implements Comparable, ListIterator<Node> {
         if (iterator.hasNext()) {
             iterator.next();
         }
+    }
+
+    public Node getTarget() {
+        return target;
     }
 
     public double getCost() {

@@ -9,6 +9,6 @@ public interface IAnimal {
 
     public boolean move(Node newNode);
 
-    public boolean reproduce(Animal animal);
+    public boolean propagate(Animal animal);
 
 }

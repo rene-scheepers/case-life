@@ -88,11 +88,11 @@ public class World implements Serializable, ISimulate {
                 if (hex.equals("#00ff00")) {
                     life = new Plant(world, 100);
                 } else if (hex.equals("#ff6a00")) {
-                    life = new Animal(world, new Genetics("Hond", Digestion.Carnivore, 4, 80, 400, 100, 100), random.nextBoolean() ? Gender.Male : Gender.Female);
+                    life = new Animal(world, new Genetics("T-REX", Digestion.Carnivore, 4, 95, 400, 100, 100), random.nextBoolean() ? Gender.Male : Gender.Female);
                 } else if (hex.equals("#0026ff")) {
-                    life = new Animal(world, new Genetics("Hond", Digestion.Omnivore, 4, 80, 400, 100, 100), random.nextBoolean() ? Gender.Male : Gender.Female);
+                    life = new Animal(world, new Genetics("Hond", Digestion.Omnivore, 4, 95, 400, 100, 100), random.nextBoolean() ? Gender.Male : Gender.Female);
                 } else if (hex.equals("#ff00ff")) {
-                    life = new Animal(world, new Genetics("Hond", Digestion.Herbivore, 4, 80, 400, 100, 100), random.nextBoolean() ? Gender.Male : Gender.Female);
+                    life = new Animal(world, new Genetics("Hond", Digestion.Herbivore, 4, 95, 400, 100, 100), random.nextBoolean() ? Gender.Male : Gender.Female);
                 }
 
                 if (life != null) {

@@ -257,27 +257,31 @@ public class Animal extends Life implements IAnimal {
      * @param otherAnimal The animal to check the possibility with.
      * @return TRUE if the animal can mate with the other animal.
      */
-    public boolean canReproduceWith(Animal otherAnimal) {
+    public boolean canPropagateWith(Animal otherAnimal) {
         if (energy - genetics.getReproductionCost() < 1) {
             return false;
         }
 
-        if (!otherAnimal.getGender().equals(gender)) {
-            if (otherAnimal.getGenetics().getName().equals(genetics.getName())) {
+        if (otherAnimal.getGender().equals(gender)) {
+            return false;
+        }
 
-                for(Node adjacent : otherAnimal.getNode().getAdjacentNodes()) {
-                    if (otherAnimal.nodeIsTraversable(adjacent)) {
-                        return true;
-                    }
-                }
+        if (otherAnimal.getGenetics().getName() == genetics.getName()) {
+            return false;
+        }
+
+        for(Node adjacent : otherAnimal.getNode().getAdjacentNodes()) {
+            if (otherAnimal.nodeIsTraversable(adjacent)) {
+                return true;
             }
         }
+
         return false;
     }
 
-    public boolean canReproduceWith(Life otherLife) {
+    public boolean canPropagateWith(Life otherLife) {
         if (otherLife instanceof Animal) {
-            return canReproduceWith(((Animal) otherLife));
+            return canPropagateWith(((Animal) otherLife));
         }
         return false;
     }
@@ -302,6 +306,10 @@ public class Animal extends Life implements IAnimal {
             }
         } else if (life instanceof Animal) {
             if (digestion.equals(Digestion.Omnivore) || digestion.equals(Digestion.Carnivore)) {
+                if (genetics.getName() == ((Animal) life).getGenetics().getName()) {
+                    return false;
+                }
+
                 return true;
             }
         }
@@ -318,11 +326,9 @@ public class Animal extends Life implements IAnimal {
         }
 
         if (path == null || recalculatePathInTurns < 1) {
-            if (gender.equals(Gender.Male) && genetics.getReproductionThreshold() > getHunger()) {
-                Random random = new Random();
-                if (random.nextInt(100) < 5) {
-                    path = findNearestReproductionSource();
-                } else {
+            if (false && gender.equals(Gender.Male) && genetics.getReproductionThreshold() > getHunger()) {
+                path = findNearestPropagator();
+                if (path == null) {
                     path = findNearestFoodSource();
                 }
             } else {
@@ -353,6 +359,11 @@ public class Animal extends Life implements IAnimal {
                         if (isFoodSource(holder)) {
                             eat(holder);
                         } else {
+                            if (canPropagateWith(holder) && false) {
+                                if (propagate((Animal) holder)) {
+                                    energy -= genetics.getReproductionCost();
+                                }
+                            }
                             path = null;
                         }
                     }
@@ -382,8 +393,16 @@ public class Animal extends Life implements IAnimal {
             Collections.sort(sources, new Comparator<Node>() {
                 @Override
                 public int compare(Node o1, Node o2) {
+
+                    System.out.println(o1.getPathsLeadingHere().size());
                     Double distance1 = world.getDiagonalDistance(current, o1) - o1.getHolder().getEnergy() * 0.1;
+                    if (o1.getPathsLeadingHere().size() > 0) {
+                        distance1 += 1000;
+                    }
                     Double distance2 = world.getDiagonalDistance(current, o2) - o2.getHolder().getEnergy() * 0.1;
+                    if (o2.getPathsLeadingHere().size() > 0) {
+                        distance2 += 1000;
+                    }
                     return Double.compare(distance1, distance2);
                 }
             });
@@ -398,12 +417,12 @@ public class Animal extends Life implements IAnimal {
         return null;
     }
 
-    public Path findNearestReproductionSource() {
+    public Path findNearestPropagator() {
         Node current = getNode();
 
         List<Node> sources = new ArrayList();
         for (Life life : world.getLives()) {
-            if (canReproduceWith(life)) {
+            if (canPropagateWith(life)) {
                 sources.add(life.getNode());
             }
         }
@@ -426,6 +445,76 @@ public class Animal extends Life implements IAnimal {
             }
         }
         return null;
+    }
+
+    /**
+     * Eat the food. Adding the energy to itself.
+     *
+     * @param food The food to be eaten.
+     *
+     * @return
+     */
+    @Override
+    public boolean eat(IFood food) {
+        int energy = food.getEaten();
+
+        this.energy += energy;
+
+        if (this.energy > genetics.getStamina()) {
+            this.energy = genetics.getStamina();
+        }
+
+        state = State.Eating;
+
+        return true;
+    }
+
+    /**
+     * Reproduces with another animal.
+     *
+     * @param animal
+     * @return
+     */
+    @Override
+    public boolean propagate(Animal animal) {
+        if (!canPropagateWith(animal)) {
+            return false;
+        }
+
+        Random random = new Random();
+        Genetics dna = new Genetics(genetics.getName(), genetics.getDigestion(), genetics.getLegs(), genetics.getReproductionCost(), genetics.getStamina(), genetics.getStrength(), genetics.getReproductionThreshold());
+        Animal child = new Animal(world, dna, random.nextBoolean() ? Gender.Male : Gender.Female);
+
+        Node node = animal.getNode();
+        for (Node adjacent : node.getAdjacentNodes()) {
+            if (!child.nodeIsTraversable(adjacent)) {
+                continue;
+            }
+
+            try {
+                world.addLife(child, adjacent);
+                System.out.println("NEW ANIMAL");
+                energy -= genetics.getReproductionCost();
+                return true;
+            } catch (Exception exception) {
+
+            }
+        }
+        return false;
+    }
+
+    /**
+     * The animals get eaten and killed.
+     *
+     * @return Returns the amount of energy possible for absorbtion.
+     */
+    @Override
+    public int getEaten() {
+        System.out.println("i get eaten ofzo");
+        int energyEaten = energy;
+        energy = 0;
+        world.removeLife(this);
+        return energyEaten;
     }
 
     /**
@@ -460,78 +549,5 @@ public class Animal extends Life implements IAnimal {
                     0.4
             );
         }
-    }
-
-    /**
-     * Eat the food. Adding the energy to itself.
-     *
-     * @param food The food to be eaten.
-     *
-     * @return
-     */
-    @Override
-    public boolean eat(IFood food) {
-        int energy = food.getEaten();
-
-        this.energy += energy;
-
-        if (this.energy > genetics.getStamina()) {
-            this.energy = genetics.getStamina();
-        }
-
-        state = State.Eating;
-
-        return true;
-    }
-
-    /**
-     * Reproduces with another animal.
-     *
-     * @param animal
-     * @return
-     */
-    @Override
-    public boolean reproduce(Animal animal) {
-        if (getHunger() > genetics.getReproductionThreshold()) {
-            return false;
-        }
-
-        if (!canReproduceWith(animal)) {
-            return false;
-        }
-
-        Random random = new Random();
-        Genetics dna = new Genetics(genetics.getName(), genetics.getDigestion(), genetics.getLegs(), genetics.getReproductionCost(), genetics.getStamina(), genetics.getStrength(), genetics.getReproductionThreshold());
-        Animal child = new Animal(world, dna, random.nextBoolean() ? Gender.Male : Gender.Female);
-
-        Node node = animal.getNode();
-        for (Node adjacent : node.getAdjacentNodes()) {
-            if (child.nodeIsTraversable(adjacent)) {
-                continue;
-            }
-
-            try {
-                world.addLife(child, adjacent);
-                energy -= genetics.getReproductionCost();
-                return true;
-            } catch (Exception exception) {
-
-            }
-        }
-        return false;
-    }
-
-    /**
-     * The animals get eaten and killed.
-     *
-     * @return Returns the amount of energy possible for absorbtion.
-     */
-    @Override
-    public int getEaten() {
-        System.out.println("i get eaten ofzo");
-        int energyEaten = energy;
-        energy = 0;
-        world.removeLife(this);
-        return energyEaten;
     }
 }
