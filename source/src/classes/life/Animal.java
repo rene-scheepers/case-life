@@ -32,6 +32,8 @@ public class Animal extends Life implements IAnimal {
 
     private Path path;
 
+    private int recalculatePathInTurns = 10;
+
     public Animal(World world, Genetics genetics, Gender gender) {
         this.world = world;
         this.gender = gender;
@@ -220,6 +222,7 @@ public class Animal extends Life implements IAnimal {
         }
 
         if (newNode.getHolder() != null || newNode.getLocationType().equals(LocationType.Obstacle)) {
+            System.out.println("COLLISION");
             this.energy /= 2;
             return false;
         } else {
@@ -287,7 +290,7 @@ public class Animal extends Life implements IAnimal {
      * @return TRUE if the given parameter is a valid food sources.
      */
     public boolean isFoodSource(Life life) {
-        if (life.equals(this)) {
+        if (life.equals(this) || life.getEnergy() <= 0) {
             return false;
         }
 
@@ -314,7 +317,7 @@ public class Animal extends Life implements IAnimal {
             world.removeLife(this);
         }
 
-        if (path == null) {
+        if (path == null || recalculatePathInTurns < 1) {
             if (gender.equals(Gender.Male) && genetics.getReproductionThreshold() > getHunger()) {
                 Random random = new Random();
                 if (random.nextInt(100) < 5) {
@@ -325,43 +328,36 @@ public class Animal extends Life implements IAnimal {
             } else {
                 path = findNearestFoodSource();
             }
-        } else {
-            if (path.hasNext()) {
-                Node next = path.next();
-                if (!path.hasNext()) {
-                    if (next.getHolder() != null) {
-                        Life holder = next.getHolder();
-                        if (holder != null) {
-                            if (isFoodSource(holder)) {
-                                eat(holder);
-                            }
-                            else if(canReproduceWith(holder) && gender.equals(Gender.Male)) {
-                                Animal animal = (Animal)holder;
-                                boolean reproducted = animal.reproduce(this);
-                                if (reproducted) {
-                                    energy -= genetics.getReproductionCost();
-                                    path = null;
-                                } else {
-                                    path = null;
-                                }
-                            } else {
-                                path = null;
-                            }
-                        }
 
-                    } else {
-                        path = null;
-                    }
-                } else {
+            recalculatePathInTurns = 5;
+        } else {
+            Node next;
+            if (path.hasNext()) {
+                next = path.next();
+                if (path.hasNext()) {
                     if (nodeIsTraversable(next)) {
                         move(next);
+                        recalculatePathInTurns--;
                     } else {
                         path = null;
                     }
                 }
-
             } else {
-                path = null;
+                next = path.last();
+                if (nodeIsTraversable(next)) {
+                    move(next);
+                    path = null;
+                } else {
+                    Life holder = next.getHolder();
+                    if (holder != null) {
+                        if (isFoodSource(holder)) {
+                            eat(holder);
+                        } else {
+                            path = null;
+                        }
+                    }
+                }
+
             }
         }
     }
@@ -386,9 +382,8 @@ public class Animal extends Life implements IAnimal {
             Collections.sort(sources, new Comparator<Node>() {
                 @Override
                 public int compare(Node o1, Node o2) {
-                        double distance1 = world.getDiagonalDistance(current, o1);
-                        double distance2 = world.getDiagonalDistance(current, o2);
-
+                    Double distance1 = world.getDiagonalDistance(current, o1) - o1.getHolder().getEnergy() * 0.1;
+                    Double distance2 = world.getDiagonalDistance(current, o2) - o2.getHolder().getEnergy() * 0.1;
                     return Double.compare(distance1, distance2);
                 }
             });
@@ -417,9 +412,8 @@ public class Animal extends Life implements IAnimal {
             Collections.sort(sources, new Comparator<Node>() {
                 @Override
                 public int compare(Node o1, Node o2) {
-                    double distance1 = world.getDiagonalDistance(current, o1);
-                    double distance2 = world.getDiagonalDistance(current, o2);
-
+                    Double distance1 = world.getDiagonalDistance(current, o1);
+                    Double distance2 = world.getDiagonalDistance(current, o2);
                     return Double.compare(distance1, distance2);
                 }
             });
@@ -451,12 +445,21 @@ public class Animal extends Life implements IAnimal {
 
         context.setFill(color);
         context.fillRect(
-                node.getX() + 0.2,
-                node.getY() + 0.2,
-                0.6,
-                0.6
+                node.getX() + 0.1,
+                node.getY() + 0.1,
+                0.8,
+                0.8
         );
 
+        if (gender.equals(Gender.Female)) {
+            context.setFill(Color.WHITE);
+            context.fillRect(
+                    node.getX() + 0.3,
+                    node.getY() + 0.3,
+                    0.4,
+                    0.4
+            );
+        }
     }
 
     /**
@@ -501,19 +504,19 @@ public class Animal extends Life implements IAnimal {
         Genetics dna = new Genetics(genetics.getName(), genetics.getDigestion(), genetics.getLegs(), genetics.getReproductionCost(), genetics.getStamina(), genetics.getStrength(), genetics.getReproductionThreshold());
         Animal child = new Animal(world, dna, random.nextBoolean() ? Gender.Male : Gender.Female);
 
-        Node node = getNode();
+        Node node = animal.getNode();
         for (Node adjacent : node.getAdjacentNodes()) {
-            if (!nodeIsTraversable(adjacent)) {
+            if (child.nodeIsTraversable(adjacent)) {
                 continue;
             }
-                try {
-                    world.addLife(child, adjacent);
-                    energy -= genetics.getReproductionCost();
-                    return true;
-                } catch (Exception exception) {
 
-                }
+            try {
+                world.addLife(child, adjacent);
+                energy -= genetics.getReproductionCost();
+                return true;
+            } catch (Exception exception) {
 
+            }
         }
         return false;
     }

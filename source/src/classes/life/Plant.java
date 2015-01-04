@@ -11,7 +11,8 @@ public class Plant extends Life {
 
     public static final int RESPAWN_TIME = 100;
     public static final int TIMES_EATEN_BEFORE_DEAD = 10;
-    public static final int MAX_ENERGY = 300;
+    public static final int REGENERATION = 1;
+    public static final int MAX_ENERGY = 100;
 
     private int energy;
     private int timesDied;
@@ -52,7 +53,7 @@ public class Plant extends Life {
             timesDied = 0;
 
             if (energy < MAX_ENERGY) {
-                energy++;
+                energy+= REGENERATION;
             }
         }
     }
@@ -67,8 +68,7 @@ public class Plant extends Life {
                 context.setFill(Color.GREEN);
             }
 
-
-            context.setFill(Color.rgb(0, energy > 255 ? 255 : energy, 0));
+            context.setFill(Color.rgb(0, 255 * energy / MAX_ENERGY, 0));
 
             context.fillRect(
                     node.getX(),

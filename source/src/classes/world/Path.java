@@ -42,6 +42,14 @@ public class Path implements Comparable, ListIterator<Node> {
         return steps.contains(node);
     }
 
+    public Node last() {
+        return steps.get(steps.size() - 1);
+    }
+
+    public Node first() {
+        return steps.get(0);
+    }
+
     @Override
     public int compareTo(Object o) {
         if (o instanceof Path) {
