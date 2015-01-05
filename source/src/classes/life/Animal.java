@@ -38,7 +38,7 @@ public class Animal extends Life implements IAnimal {
         this.world = world;
         this.gender = gender;
         this.genetics = genetics;
-        this.energy = genetics.getStamina();
+        this.energy = (int) (genetics.getStamina() * 0.5);
     }
 
     /**
@@ -70,7 +70,7 @@ public class Animal extends Life implements IAnimal {
      * @return The current hunger percentage.
      */
     public float getHunger() {
-        return (float)energy / (float)genetics.getStamina() * 100;
+        return Math.abs((float) energy / (float) genetics.getStamina() * 100);
     }
 
     /**
@@ -102,9 +102,9 @@ public class Animal extends Life implements IAnimal {
 
     /**
      * Speed
-     * @TODO WRITE THIS.
      *
      * @return The amount of nodes an animal can move in a single turn.
+     * @TODO WRITE THIS.
      */
     public int getSpeed() {
         int speed = getWeight() / 50;
@@ -154,6 +154,10 @@ public class Animal extends Life implements IAnimal {
                     return new Path(targetNodeHeuristic);
                 }
 
+//                if (node.getPathsLeadingHere().size() > 0) {
+//                    continue;
+//                }
+
                 if (node.getLocationType().equals(LocationType.Obstacle)) {
                     continue;
                 }
@@ -177,20 +181,27 @@ public class Animal extends Life implements IAnimal {
                 }
 
                 if (!alreadyWalked) {
-                    double heuristic = world.getDiagonalDistance(node, target);
-
+                    double heuristic;
                     double cost;
+
                     if (node.getLocationType().equals(LocationType.Land)) {
                         cost = 10;
                     } else {
-                        cost = 15;
+                        cost = 20;
                     }
+
+                    // If the tile is diagonal from the current tile the cost should be multiplied by 1.4.
+                    if (node.getX() != currentNode.getX() && node.getY() != currentNode.getY()) {
+                        cost = Math.round(cost * 1.4);
+                    }
+
+                    heuristic = world.getDiagonalDistance(node, target) * cost;
 
                     if (current.getParent() != null) {
                         cost += current.getCost();
                     }
 
-                    NodeHeuristic adjacent = new NodeHeuristic(node, cost, heuristic * cost);
+                    NodeHeuristic adjacent = new NodeHeuristic(node, cost, heuristic);
                     adjacent.setParent(current);
                     openNodes.add(adjacent);
                 }
@@ -208,32 +219,33 @@ public class Animal extends Life implements IAnimal {
      * Moves the animal onto the new node.
      *
      * @param newNode The neighbouring node, where the animal must move towards.
-     *
      * @return TRUE if the animal did indeed move.
      */
     public boolean move(Node newNode) {
         if (newNode == null) {
             return false;
         }
+
         Node current = getNode();
+        if (current.equals(newNode)) {
+            return false;
+        }
+
+        if (!nodeIsTraversable(newNode)) {
+            return false;
+        }
 
         if (!current.getAdjacentNodes().contains(newNode)) {
             return false;
         }
 
-        if (newNode.getHolder() != null || newNode.getLocationType().equals(LocationType.Obstacle)) {
-            System.out.println("COLLISION");
-            this.energy /= 2;
-            return false;
-        } else {
-            energy -= genetics.getLegs();
-            try {
-                newNode.setHolder(this);
-                current.unsetHolder();
-            } catch (LocationAlreadyOccupiedException exception) {
-                return false;
-            }
+        energy -= genetics.getLegs();
+        try {
+            newNode.setHolder(this);
+            current.unsetHolder();
             return true;
+        } catch (LocationAlreadyOccupiedException exception) {
+            return false;
         }
     }
 
@@ -242,7 +254,6 @@ public class Animal extends Life implements IAnimal {
      * Checks if the node is an Obstacle or other life is on the node.
      *
      * @param node
-     *
      * @return TRUE if the node can move onto the node.
      */
     public boolean nodeIsTraversable(Node node) {
@@ -254,6 +265,7 @@ public class Animal extends Life implements IAnimal {
 
     /**
      * Check if the animal can mate with the given animal.
+     *
      * @param otherAnimal The animal to check the possibility with.
      * @return TRUE if the animal can mate with the other animal.
      */
@@ -266,11 +278,11 @@ public class Animal extends Life implements IAnimal {
             return false;
         }
 
-        if (otherAnimal.getGenetics().getName() == genetics.getName()) {
+        if (otherAnimal.getGenetics().getName() != genetics.getName()) {
             return false;
         }
 
-        for(Node adjacent : otherAnimal.getNode().getAdjacentNodes()) {
+        for (Node adjacent : otherAnimal.getNode().getAdjacentNodes()) {
             if (otherAnimal.nodeIsTraversable(adjacent)) {
                 return true;
             }
@@ -290,7 +302,6 @@ public class Animal extends Life implements IAnimal {
      * Check if the given Interface is a food source for this animal.
      *
      * @param life The possible food source.
-     *
      * @return TRUE if the given parameter is a valid food sources.
      */
     public boolean isFoodSource(Life life) {
@@ -325,50 +336,58 @@ public class Animal extends Life implements IAnimal {
             world.removeLife(this);
         }
 
-        if (path == null || recalculatePathInTurns < 1) {
-            if (false && gender.equals(Gender.Male) && genetics.getReproductionThreshold() > getHunger()) {
+        if (path == null || recalculatePathInTurns < 1 || !path.hasNext()) {
+            if (gender.equals(Gender.Male) && genetics.getReproductionThreshold() < getHunger()) {
                 path = findNearestPropagator();
                 if (path == null) {
                     path = findNearestFoodSource();
                 }
-            } else {
+            } else if (getHunger() < 900) {
                 path = findNearestFoodSource();
             }
 
             recalculatePathInTurns = 5;
-        } else {
-            Node next;
-            if (path.hasNext()) {
-                next = path.next();
-                if (path.hasNext()) {
-                    if (nodeIsTraversable(next)) {
-                        move(next);
-                        recalculatePathInTurns--;
-                    } else {
-                        path = null;
-                    }
+        }
+
+        Node current = getNode();
+        if (true) {
+            for (Node adjacent : current.getAdjacentNodes()) {
+                if (adjacent.getHolder() == null) {
+                    continue;
                 }
-            } else {
-                next = path.last();
-                if (nodeIsTraversable(next)) {
-                    move(next);
-                    path = null;
-                } else {
-                    Life holder = next.getHolder();
-                    if (holder != null) {
-                        if (isFoodSource(holder)) {
-                            eat(holder);
-                        } else {
-                            if (canPropagateWith(holder) && false) {
-                                if (propagate((Animal) holder)) {
-                                    energy -= genetics.getReproductionCost();
-                                }
+
+                if (isFoodSource(adjacent.getHolder()) && getHunger() < 1000) {
+                    eat(adjacent.getHolder());
+                    return;
+                }
+
+                if (gender.equals(Gender.Male)) {
+                    if (genetics.getReproductionThreshold() < getHunger()) {
+                        if (canPropagateWith(adjacent.getHolder())) {
+                            if (propagate((Animal) adjacent.getHolder())) {
+                                energy -= genetics.getReproductionCost();
+                                return;
                             }
-                            path = null;
                         }
                     }
                 }
+            }
+        }
 
+        if (path == null) {
+//            List<Node> adjacentNodes = new ArrayList(current.getAdjacentNodes());
+//            Collections.shuffle(adjacentNodes);
+//            for (Node adjacent : adjacentNodes) {
+//                if (move(adjacent)) {
+//                    return;
+//                }
+//            }
+        } else if (path.hasNext()) {
+            Node next = path.next();
+            if (move(next)) {
+                recalculatePathInTurns--;
+            } else {
+                path = null;
             }
         }
     }
@@ -384,7 +403,9 @@ public class Animal extends Life implements IAnimal {
         List<Node> sources = new ArrayList();
         for (Life life : world.getLives()) {
             if (isFoodSource(life)) {
-                sources.add(life.getNode());
+                if (life.getNode().getPathsLeadingHere().size() < 1 || true) {
+                    sources.add(life.getNode());
+                }
             }
         }
 
@@ -393,16 +414,14 @@ public class Animal extends Life implements IAnimal {
             Collections.sort(sources, new Comparator<Node>() {
                 @Override
                 public int compare(Node o1, Node o2) {
-
-                    System.out.println(o1.getPathsLeadingHere().size());
                     Double distance1 = world.getDiagonalDistance(current, o1) - o1.getHolder().getEnergy() * 0.1;
-                    if (o1.getPathsLeadingHere().size() > 0) {
-                        distance1 += 1000;
-                    }
+//                    if (o1.getPathsLeadingHere().size() > 0) {
+//                        distance1 += 1000;
+//                    }
                     Double distance2 = world.getDiagonalDistance(current, o2) - o2.getHolder().getEnergy() * 0.1;
-                    if (o2.getPathsLeadingHere().size() > 0) {
-                        distance2 += 1000;
-                    }
+//                    if (o2.getPathsLeadingHere().size() > 0) {
+//                        distance2 += 1000;
+//                    }
                     return Double.compare(distance1, distance2);
                 }
             });
@@ -451,7 +470,6 @@ public class Animal extends Life implements IAnimal {
      * Eat the food. Adding the energy to itself.
      *
      * @param food The food to be eaten.
-     *
      * @return
      */
     @Override
@@ -482,10 +500,11 @@ public class Animal extends Life implements IAnimal {
         }
 
         Random random = new Random();
-        Genetics dna = new Genetics(genetics.getName(), genetics.getDigestion(), genetics.getLegs(), genetics.getReproductionCost(), genetics.getStamina(), genetics.getStrength(), genetics.getReproductionThreshold());
+        Genetics dna = Genetics.getPropagatingGenetics(this.getGenetics(), animal.getGenetics());
         Animal child = new Animal(world, dna, random.nextBoolean() ? Gender.Male : Gender.Female);
 
-        Node node = animal.getNode();
+        System.out.println(dna);
+        Node node = getNode();
         for (Node adjacent : node.getAdjacentNodes()) {
             if (!child.nodeIsTraversable(adjacent)) {
                 continue;
@@ -523,7 +542,7 @@ public class Animal extends Life implements IAnimal {
      * @param context
      */
     public void draw(GraphicsContext context) {
-        Color color = Color.BROWN;
+        Color color = Color.color(1, 0, 1, getHunger() / 100);
         if (genetics.getDigestion().equals(Digestion.Carnivore)) {
             color = Color.RED;
         } else if (genetics.getDigestion().equals(Digestion.Omnivore)) {
@@ -531,6 +550,7 @@ public class Animal extends Life implements IAnimal {
         }
 
         Node node = getNode();
+        context.setFill(Color.BLACK);
 
         context.setFill(color);
         context.fillRect(
@@ -541,13 +561,15 @@ public class Animal extends Life implements IAnimal {
         );
 
         if (gender.equals(Gender.Female)) {
-            context.setFill(Color.WHITE);
-            context.fillRect(
-                    node.getX() + 0.3,
-                    node.getY() + 0.3,
-                    0.4,
-                    0.4
-            );
+            context.setFill(Color.BLUE);
+        } else {
+            context.setFill(Color.RED);
         }
+        context.fillRect(
+                node.getX() + 0.3,
+                node.getY() + 0.3,
+                0.4,
+                0.4
+        );
     }
 }
