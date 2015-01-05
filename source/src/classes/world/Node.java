@@ -71,10 +71,6 @@ public class Node {
 
     @Override
     public String toString() {
-        if (holder != null) {
-            return String.format("X: %s, Y: %s, Type: %s, Holder: %s", x, y, type.name(), holder.toString());
-        } else {
-            return String.format("X: %s, Y: %s, Type: %s, Holder: %s", x, y, type.name(), "null");
-        }
+        return String.format("X: %s, Y: %s, Type: %s, Holder: %s", x, y, type.name(), (holder != null ? holder.toString() : "null"));
     }
 }

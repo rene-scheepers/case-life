@@ -32,6 +32,8 @@ public class Main extends Application {
     private int width;
     private int height;
     private World world;
+    private Stage primaryStage;
+    private Scene scene;
 
     public Main() {
         File file = new File("resources/maps/small.png");
@@ -50,18 +52,24 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        this.primaryStage = primaryStage;
+
+        // Initialize window.
         Pane root = new Pane();
 
         Canvas worldCanvas = new Canvas(width, height);
         Canvas lifeCanvas = new Canvas(width, height);
+        Canvas uiCanvas = new Canvas(width, height);
 
         worldCanvas.getGraphicsContext2D().scale(width / world.getWidth(), height / world.getHeight());
         lifeCanvas.getGraphicsContext2D().scale(width / world.getWidth(), height / world.getHeight());
 
         Scene scene = new Scene(root);
+        this.scene = scene;
 
         root.getChildren().add(worldCanvas);
         root.getChildren().add(lifeCanvas);
+        root.getChildren().add(uiCanvas);
 
         primaryStage.setTitle("Hello World");
         primaryStage.setScene(scene);
@@ -71,11 +79,19 @@ public class Main extends Application {
         world.draw(worldCanvas.getGraphicsContext2D());
 
         // Run game.
-        simulator = new Simulator(world, lifeCanvas.getGraphicsContext2D(), width, height);
-        simulator.setSpeed(5);
+        simulator = new Simulator(world, lifeCanvas.getGraphicsContext2D(), uiCanvas.getGraphicsContext2D(), width, height);
+        simulator.registerKeys(this);
+        simulator.setSpeed(15);
         simulator.start();
-
         primaryStage.setOnCloseRequest((ev) -> simulator.interrupt());
+    }
+
+    public Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
+    public Scene getScene() {
+        return scene;
     }
 
     public static void main(String[] args) {
