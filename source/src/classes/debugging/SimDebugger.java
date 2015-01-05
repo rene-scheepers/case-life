@@ -6,6 +6,7 @@ import javafx.scene.text.Font;
 
 import java.util.*;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 /**
  * Created by Rene on 05-01-2015.
@@ -29,14 +30,18 @@ public class SimDebugger {
         statistics.put(newKey, statistic);
     }
 
-    public static void addStatistic(String name, Callable<String> displayedValue) {
-        addStatistic(new DebugStatistic(name, displayedValue));
+    public static void addDebugValue(String name, Callable<String> displayedValue) {
+        addStatistic(new DebugValue(name, displayedValue));
     }
 
-    public static void setStatistic(String name, String value) {
+    public static void setDebugValue(String name, String value) {
         if (!statistics.containsKey(name))
-            statistics.put(name, new DebugStatistic(name, null));
-        statistics.get(name).setDisplayedValue(() -> value);
+            statistics.put(name, new DebugValue(name, null));
+        ((DebugValue)statistics.get(name)).setDisplayedValue(() -> value);
+    }
+
+    public static void addDebugGraph(String name) {
+        addStatistic(new DebugGraph(name));
     }
 
     public static void draw(GraphicsContext context) {
@@ -44,13 +49,19 @@ public class SimDebugger {
         context.setFont(new Font(fontSize));
         context.setFill(Color.BLACK);
 
-        // Draw all statistics.
+        // Draw all DebugValue statistics.
         int i = 0;
-        for (DebugStatistic stat : statistics.values()) {
-            context.fillText(stat.displayText() , 2, fontSize * (i + 1) + (verticalPixelOffset * i));
+        for (DebugStatistic stat : statistics.values().stream().filter((s) -> s.getClass() == DebugValue.class && !s.isHidden()).collect(Collectors.toList())) {
+            context.fillText(((DebugValue)stat).displayText() , 2, fontSize * (i + 1) + (verticalPixelOffset * i));
             i++;
         }
-
         context.restore();
+
+        // Draw all DebugGraph statistics.
+        i = 0;
+        for (DebugStatistic stat : statistics.values().stream().filter((s) -> s.getClass() == DebugGraph.class && !s.isHidden()).collect(Collectors.toList())) {
+            ((DebugGraph)stat).draw(context, DebugGraph.WIDTH * (i + 1) + (20 * (i + 1)), 10);
+            i++;
+        }
     }
 }

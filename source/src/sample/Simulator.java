@@ -53,10 +53,14 @@ public class Simulator extends Thread {
         // Load content here.
 
         // Load debugger information.
-        SimDebugger.addStatistic("Frames", () -> String.valueOf(currentTurn));
-        SimDebugger.addStatistic("Target FPS", () -> String.valueOf(speed));
-        SimDebugger.addStatistic("Simulate elapsed", () -> String.valueOf(perfSimulateMs) + " (ms)");
-        SimDebugger.addStatistic("Draw elapsed", () -> String.valueOf(perfDrawMs) + " (ms)");
+        SimDebugger.addDebugValue("Frames", () -> String.valueOf(currentTurn));
+        SimDebugger.addDebugValue("Target FPS", () -> String.valueOf(speed));
+        SimDebugger.addDebugValue("Simulate elapsed", () -> String.valueOf(perfSimulateMs) + " (ms)");
+        SimDebugger.addDebugValue("Draw elapsed", () -> String.valueOf(perfDrawMs) + " (ms)");
+        SimDebugger.setDebugValue("FPS", null);
+
+        SimDebugger.addDebugGraph("FPS");
+        SimDebugger.addDebugGraph("Simulate elapsed");
 
         isPlaying = true;
         super.start();
@@ -80,7 +84,7 @@ public class Simulator extends Thread {
 
             currentFPS++;
             if (System.currentTimeMillis() - 1000 >= startFPSCountTime) {
-                SimDebugger.setStatistic("Actual FPS", String.valueOf(currentFPS));
+                SimDebugger.setDebugValue("FPS", String.valueOf(currentFPS));
                 startFPSCountTime = System.currentTimeMillis();
                 currentFPS = 0;
             }
