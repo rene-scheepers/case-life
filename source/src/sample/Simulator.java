@@ -1,20 +1,14 @@
 package sample;
 
-import classes.debugging.DebugStatistic;
 import classes.debugging.SimDebugger;
 import classes.life.Life;
 import classes.world.World;
-import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
-
-import java.awt.event.KeyEvent;
 
 public class Simulator extends Thread {
 
@@ -28,6 +22,9 @@ public class Simulator extends Thread {
     private int currentTurn = 0;
     private int width;
     private int height;
+
+    private double perfSimulateMs;
+    private double perfDrawMs;
 
     /**
      * Desired speed in FPS.
@@ -58,6 +55,8 @@ public class Simulator extends Thread {
         // Load debugger information.
         SimDebugger.addStatistic("Frames", () -> String.valueOf(currentTurn));
         SimDebugger.addStatistic("Target FPS", () -> String.valueOf(speed));
+        SimDebugger.addStatistic("Simulate elapsed", () -> String.valueOf(perfSimulateMs) + " (ms)");
+        SimDebugger.addStatistic("Draw elapsed", () -> String.valueOf(perfDrawMs) + " (ms)");
 
         isPlaying = true;
         super.start();
@@ -68,12 +67,23 @@ public class Simulator extends Thread {
      */
     @Override
     public void run() {
+        // FPS counter.
+        int currentFPS = 0;
+        long startFPSCountTime = System.currentTimeMillis();
+
         while(isPlaying && !isInterrupted()) {
             long time =  System.currentTimeMillis();
 
             if (!isPaused) simulate();
             draw(lifeContext);
             if (!isPaused) currentTurn++;
+
+            currentFPS++;
+            if (System.currentTimeMillis() - 1000 >= startFPSCountTime) {
+                SimDebugger.setStatistic("Actual FPS", String.valueOf(currentFPS));
+                startFPSCountTime = System.currentTimeMillis();
+                currentFPS = 0;
+            }
 
             time = System.currentTimeMillis() - time;
             try {
@@ -89,7 +99,9 @@ public class Simulator extends Thread {
      * Update logic being executed each frame.
      */
     private void simulate() {
+        long perfStart = System.currentTimeMillis();
         world.simulate();
+        perfSimulateMs = System.currentTimeMillis() - perfStart;
     }
 
     /**
@@ -98,6 +110,8 @@ public class Simulator extends Thread {
      */
     private void draw(GraphicsContext context) {
         Platform.runLater(() -> {
+            long perfStart = System.currentTimeMillis();
+
             context.clearRect(0, 0, width, height);
             uiContext.clearRect(0, 0, width, height);
 
@@ -120,6 +134,8 @@ public class Simulator extends Thread {
             for (Object life : world.getLives().toArray()) {
                 ((Life)life).draw(context);
             }
+
+            perfDrawMs = System.currentTimeMillis() - perfStart;
         });
     }
 
