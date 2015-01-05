@@ -149,7 +149,7 @@ public class Animal extends Life implements IAnimal {
             Node currentNode = current.getNode();
             for (Node node : currentNode.getAdjacentNodes()) {
                 if (node.equals(target)) {
-                    NodeHeuristic targetNodeHeuristic = new NodeHeuristic(target, current.getCost(), 0);
+                    NodeHeuristic targetNodeHeuristic = new NodeHeuristic(node, current.getCost(), 0);
                     targetNodeHeuristic.setParent(current);
                     return new Path(targetNodeHeuristic);
                 }
@@ -336,7 +336,7 @@ public class Animal extends Life implements IAnimal {
             world.removeLife(this);
         }
 
-        if (path == null || recalculatePathInTurns < 1 || !path.hasNext()) {
+        if (path == null || recalculatePathInTurns < 1) {
             if (gender.equals(Gender.Male) && genetics.getReproductionThreshold() < getHunger()) {
                 path = findNearestPropagator();
                 if (path == null) {
@@ -345,51 +345,31 @@ public class Animal extends Life implements IAnimal {
             } else if (getHunger() < 900) {
                 path = findNearestFoodSource();
             }
-
             recalculatePathInTurns = 5;
-        }
-
-        Node current = getNode();
-        if (true) {
-            for (Node adjacent : current.getAdjacentNodes()) {
-                if (adjacent.getHolder() == null) {
-                    continue;
-                }
-
-                if (isFoodSource(adjacent.getHolder()) && getHunger() < 1000) {
-                    eat(adjacent.getHolder());
-                    return;
-                }
-
-                if (gender.equals(Gender.Male)) {
-                    if (genetics.getReproductionThreshold() < getHunger()) {
-                        if (canPropagateWith(adjacent.getHolder())) {
-                            if (propagate((Animal) adjacent.getHolder())) {
-                                energy -= genetics.getReproductionCost();
-                                return;
-                            }
-                        }
+        } else if (path.getCurrent().equals(path.getTarget())) {
+            Life holder = path.getCurrent().getHolder();
+            if (holder != null) {
+                if (isFoodSource(holder)) {
+                    eat(holder);
+                } else {
+                    if (canPropagateWith(holder) && propagate((Animal) holder)) {
+                        energy -= genetics.getReproductionCost();
                     }
+
+                    path = null;
+                }
+            } else {
+                if (!move(path.getCurrent())) {
+                    path = null;
                 }
             }
-        }
-
-        if (path == null) {
-//            List<Node> adjacentNodes = new ArrayList(current.getAdjacentNodes());
-//            Collections.shuffle(adjacentNodes);
-//            for (Node adjacent : adjacentNodes) {
-//                if (move(adjacent)) {
-//                    return;
-//                }
-//            }
         } else if (path.hasNext()) {
             Node next = path.next();
             if (move(next)) {
                 recalculatePathInTurns--;
-            } else {
-                path = null;
             }
         }
+
     }
 
 
@@ -403,9 +383,7 @@ public class Animal extends Life implements IAnimal {
         List<Node> sources = new ArrayList();
         for (Life life : world.getLives()) {
             if (isFoodSource(life)) {
-                if (life.getNode().getPathsLeadingHere().size() < 1 || true) {
-                    sources.add(life.getNode());
-                }
+                sources.add(life.getNode());
             }
         }
 

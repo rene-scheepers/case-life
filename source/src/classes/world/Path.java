@@ -9,6 +9,7 @@ public class Path implements Comparable, ListIterator<Node> {
     private List<Node> steps = new ArrayList();
     private double cost;
 
+    private int currentIndex = 0;
     private Node target;
 
     public Path(NodeHeuristic path) {
@@ -17,23 +18,26 @@ public class Path implements Comparable, ListIterator<Node> {
 
         cost = path.getTotal();
         target = path.getNode();
-        target.addPathsLeadingHere(this);
 
-        while(path.getParent() != null) {
+        while (path.getParent() != null) {
             nodes.add(path.getParent());
             path = path.getParent();
         }
 
         Collections.reverse(nodes);
 
-        for(NodeHeuristic node : nodes) {
+        for (NodeHeuristic node : nodes) {
             steps.add(node.getNode());
         }
 
         iterator = steps.listIterator();
         if (iterator.hasNext()) {
-            iterator.next();
+            next();
         }
+    }
+
+    public Node getCurrent() {
+        return steps.get(currentIndex);
     }
 
     public Node getTarget() {
@@ -63,7 +67,7 @@ public class Path implements Comparable, ListIterator<Node> {
     @Override
     public int compareTo(Object o) {
         if (o instanceof Path) {
-            return Double.compare(cost, ((Path)o).getCost());
+            return Double.compare(cost, ((Path) o).getCost());
         } else {
             return 0;
         }
@@ -76,6 +80,7 @@ public class Path implements Comparable, ListIterator<Node> {
 
     @Override
     public Node next() {
+        currentIndex = iterator.nextIndex();
         return iterator.next();
     }
 
@@ -86,6 +91,7 @@ public class Path implements Comparable, ListIterator<Node> {
 
     @Override
     public Node previous() {
+        currentIndex = iterator.previousIndex();
         return iterator.previous();
     }
 

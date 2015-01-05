@@ -10,7 +10,6 @@ public class Node {
 
     private int x;
     private int y;
-    private ArrayList<Path> pathsLeadingHere = new ArrayList();
 
     private LocationType type;
     private ArrayList<Node> adjacentNodes = new ArrayList();
@@ -21,14 +20,6 @@ public class Node {
         this.x = x;
         this.y = y;
         this.type = type;
-    }
-
-    public void addPathsLeadingHere(Path path) {
-        pathsLeadingHere.add(path);
-    }
-
-    public ArrayList<Path> getPathsLeadingHere() {
-        return pathsLeadingHere;
     }
 
     public void addAdjacentNode(Node node) {
