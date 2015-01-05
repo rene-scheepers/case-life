@@ -1,6 +1,6 @@
 package classes.life;
 
-import classes.Exceptions.LocationAlreadyOccupiedException;
+import classes.exceptions.LocationAlreadyOccupiedException;
 import classes.enumerations.Digestion;
 import classes.enumerations.Gender;
 import classes.enumerations.LocationType;

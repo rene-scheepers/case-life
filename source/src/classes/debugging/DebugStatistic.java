@@ -33,7 +33,7 @@ public class DebugStatistic {
 
     public String displayText() {
         try {
-            return getName() + ": " + displayedValue.call();
+            return getName() + ": " + (displayedValue != null ? displayedValue.call() : "NULL FUNCTION");
         } catch (Exception e) {
             return getName() + ": ERROR RETRIEVING VALUE.";
         }

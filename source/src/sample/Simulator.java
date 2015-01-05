@@ -1,5 +1,6 @@
 package sample;
 
+import classes.debugging.DebugStatistic;
 import classes.debugging.SimDebugger;
 import classes.life.Life;
 import classes.world.World;
@@ -102,11 +103,6 @@ public class Simulator extends Thread {
 
             /// Debug UI.
             uiContext.setFill(Color.BLACK);
-//            // Frame count.
-//            uiContext.fillText("Frames: " + String.valueOf(currentTurn), 2, 12);
-//            // Target FPS.
-//            uiContext.fillText("Target FPS: " + String.valueOf(speed), 2, 24 + 2);
-
             SimDebugger.draw(uiContext);
 
             // UI.

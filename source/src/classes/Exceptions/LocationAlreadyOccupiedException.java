@@ -1,4 +1,4 @@
-package classes.Exceptions;
+package classes.exceptions;
 
 /**
  * Created by Rene on 29-12-2014.

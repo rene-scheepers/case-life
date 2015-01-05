@@ -1,19 +1,9 @@
 package sample;
 
-import classes.Exceptions.LocationAlreadyOccupiedException;
-import classes.enumerations.Digestion;
-import classes.enumerations.LocationType;
-import classes.life.Animal;
-import classes.life.Genetics;
-import classes.life.Life;
-import classes.life.Plant;
-import classes.world.Node;
 import classes.world.World;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.paint.Color;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
@@ -21,10 +11,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Random;
 
 public class Main extends Application {
 
