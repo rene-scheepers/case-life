@@ -1,4 +1,6 @@
-package classes.world;
+package classes.world.pathfinding;
+
+import classes.world.Node;
 
 import java.util.*;
 import java.util.function.Consumer;

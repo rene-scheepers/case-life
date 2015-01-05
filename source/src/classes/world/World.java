@@ -10,6 +10,7 @@ import classes.life.Animal;
 import classes.life.Genetics;
 import classes.life.Life;
 import classes.life.Plant;
+import classes.world.pathfinding.AStarPathfinder;
 import javafx.scene.canvas.*;
 
 import java.awt.image.BufferedImage;
@@ -25,6 +26,7 @@ public class World implements Serializable, ISimulate {
 
     private int width;
     private int height;
+    private AStarPathfinder pathfinder;
 
     private World(Node[][] nodes) {
         lives = new ArrayList();
@@ -51,6 +53,11 @@ public class World implements Serializable, ISimulate {
             }
         }
 
+        pathfinder = new AStarPathfinder();
+    }
+
+    public AStarPathfinder getPathfinder() {
+        return pathfinder;
     }
 
     public static World instantiateWorldFromImage(BufferedImage image) {
@@ -92,22 +99,22 @@ public class World implements Serializable, ISimulate {
                         break;
                     case "FF6A00":
                         // MALE Carnivore
-                        life = new Animal(world, new Genetics("T-REX", Digestion.Carnivore, 4, 95, 400, 100, 90), Gender.Male);
+                        life = new Animal(world, world.getPathfinder(), new Genetics("T-REX", Digestion.Carnivore, 4, 95, 400, 100, 90), Gender.Male);
                         break;
                     case "#0026ff":
                         // MALE Omnivore
-                        life = new Animal(world, new Genetics("OTHER", Digestion.Omnivore, 4, 95, 400, 100, 90), Gender.Male);
+                        life = new Animal(world, world.getPathfinder(), new Genetics("OTHER", Digestion.Omnivore, 4, 95, 400, 100, 90), Gender.Male);
                         break;
                     case "#ff00ff":
                         // MALE Herbivore
-                        life = new Animal(world, new Genetics("Hond", Digestion.Herbivore, 4, 95, 400, 100, 90), Gender.Male);
+                        life = new Animal(world, world.getPathfinder(), new Genetics("Hond", Digestion.Herbivore, 4, 95, 400, 100, 90), Gender.Male);
                         break;
                     case "something":
                         break;
                     case "something_else":
                         break;
                     case "#ee00ff":
-                        life = new Animal(world, new Genetics("Hond", Digestion.Herbivore, 4, 95, 400, 100, 90), Gender.Female);
+                        life = new Animal(world, world.getPathfinder(), new Genetics("Hond", Digestion.Herbivore, 4, 95, 400, 100, 90), Gender.Female);
                         break;
                 }
 

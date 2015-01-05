@@ -1,4 +1,6 @@
-package classes.world;
+package classes.world.pathfinding;
+
+import classes.world.Node;
 
 public class NodeHeuristic implements Comparable {
 

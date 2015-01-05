@@ -23,8 +23,10 @@ public class Simulator extends Thread {
     private int width;
     private int height;
 
-    private double perfSimulateMs;
-    private double perfDrawMs;
+    private double perfomanceSimulateMs;
+    private double totalSimulateMs;
+    private double performanceAverageSimulateMs;
+    private double perfomanceDrawMs;
 
     /**
      * Desired speed in FPS.
@@ -51,12 +53,12 @@ public class Simulator extends Thread {
     @Override
     public synchronized void start() {
         // Load content here.
-
         // Load debugger information.
+        SimDebugger.addStatistic("Simulate elapsed", () -> String.valueOf(perfomanceSimulateMs) + " (ms)");
+        SimDebugger.addStatistic("Average simulate", () -> String.valueOf(performanceAverageSimulateMs) + " (ms)");
         SimDebugger.addStatistic("Frames", () -> String.valueOf(currentTurn));
+        SimDebugger.addStatistic("Draw elapsed", () -> String.valueOf(perfomanceDrawMs) + " (ms)");
         SimDebugger.addStatistic("Target FPS", () -> String.valueOf(speed));
-        SimDebugger.addStatistic("Simulate elapsed", () -> String.valueOf(perfSimulateMs) + " (ms)");
-        SimDebugger.addStatistic("Draw elapsed", () -> String.valueOf(perfDrawMs) + " (ms)");
 
         isPlaying = true;
         super.start();
@@ -101,7 +103,10 @@ public class Simulator extends Thread {
     private void simulate() {
         long perfStart = System.currentTimeMillis();
         world.simulate();
-        perfSimulateMs = System.currentTimeMillis() - perfStart;
+        perfomanceSimulateMs = System.currentTimeMillis() - perfStart;
+
+        totalSimulateMs += perfomanceSimulateMs;
+        performanceAverageSimulateMs = Math.round(totalSimulateMs / currentTurn * 10) / 10;
     }
 
     /**
@@ -135,7 +140,7 @@ public class Simulator extends Thread {
                 ((Life)life).draw(context);
             }
 
-            perfDrawMs = System.currentTimeMillis() - perfStart;
+            perfomanceDrawMs = System.currentTimeMillis() - perfStart;
         });
     }
 
