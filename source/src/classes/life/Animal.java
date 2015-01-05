@@ -7,9 +7,10 @@ import classes.enumerations.LocationType;
 import classes.enumerations.State;
 import classes.interfaces.IAnimal;
 import classes.interfaces.IFood;
+import classes.interfaces.IPathfinder;
 import classes.world.Node;
-import classes.world.NodeHeuristic;
-import classes.world.Path;
+import classes.world.pathfinding.NodeHeuristic;
+import classes.world.pathfinding.Path;
 import classes.world.World;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -34,11 +35,29 @@ public class Animal extends Life implements IAnimal {
 
     private int recalculatePathInTurns = 10;
 
-    public Animal(World world, Genetics genetics, Gender gender) {
+    private IPathfinder pathfinder;
+
+    private HashMap<Node, Double> valueMap = new HashMap();
+
+    public Animal(World world, IPathfinder pathfinder, Genetics genetics, Gender gender) {
         this.world = world;
+        this.pathfinder = pathfinder;
         this.gender = gender;
         this.genetics = genetics;
         this.energy = (int) (genetics.getStamina() * 0.5);
+
+        Node[][] nodes = world.getNodes();
+        for(int x = 0; x < nodes.length; x++) {
+            for(int y = 0; y < nodes[x].length;y++) {
+                Node node = nodes[x][y];
+
+                if (node.getLocationType().equals(LocationType.Land)) {
+                    valueMap.put(node, new Double(10));
+                } else if (node.getLocationType().equals(LocationType.Water)) {
+                    valueMap.put(node, new Double(20));
+                }
+            }
+        }
     }
 
     /**
@@ -133,6 +152,19 @@ public class Animal extends Life implements IAnimal {
 
     private int wait;
 
+    private HashMap<Node, Double> getMostRecentValueMap() {
+        HashMap<Node, Double> recentMap = new HashMap();
+        Iterator iterator = valueMap.entrySet().iterator();
+        while(iterator.hasNext()) {
+            Map.Entry<Node, Double> entry = (Map.Entry<Node, Double>)iterator.next();
+            if (nodeIsTraversable(entry.getKey())) {
+                recentMap.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        return recentMap;
+    }
+
     /**
      * Gets the A* Path for the animal.
      *
@@ -140,71 +172,7 @@ public class Animal extends Life implements IAnimal {
      * @return The path with the steps to follow to reach the target.
      */
     private Path getPath(Node target) {
-        SortedList<NodeHeuristic> openNodes = new SortedList();
-        ArrayList<Node> closedNodes = new ArrayList();
-
-        openNodes.add(new NodeHeuristic(getNode()));
-        while (openNodes.getSize() >= 1) {
-            NodeHeuristic current = openNodes.getFirst();
-            Node currentNode = current.getNode();
-            for (Node node : currentNode.getAdjacentNodes()) {
-                if (node.equals(target)) {
-                    NodeHeuristic targetNodeHeuristic = new NodeHeuristic(node, current.getCost(), 0);
-                    targetNodeHeuristic.setParent(current);
-                    return new Path(targetNodeHeuristic);
-                }
-
-                if (!nodeIsTraversable(node)) {
-                    continue;
-                }
-
-                boolean alreadyWalked = false;
-                if (closedNodes.contains(node)) {
-                    alreadyWalked = true;
-                }
-
-                if (!alreadyWalked) {
-                    for (NodeHeuristic walkableNode : openNodes.getObjects()) {
-                        if (walkableNode.getNode().equals(node)) {
-                            alreadyWalked = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (!alreadyWalked) {
-                    double heuristic;
-                    double cost;
-
-                    if (node.getLocationType().equals(LocationType.Land)) {
-                        cost = 10;
-                    } else {
-                        cost = 20;
-                    }
-
-                    // If the tile is diagonal from the current tile the cost should be multiplied by 1.4.
-                    if (node.getX() != currentNode.getX() && node.getY() != currentNode.getY()) {
-                        cost = Math.round(cost * 1.4);
-                    }
-
-                    heuristic = world.getDiagonalDistance(node, target) * cost;
-
-                    if (current.getParent() != null) {
-                        cost += current.getCost();
-                    }
-
-                    NodeHeuristic adjacent = new NodeHeuristic(node, cost, heuristic);
-                    adjacent.setParent(current);
-                    openNodes.add(adjacent);
-                }
-
-            }
-
-            closedNodes.add(current.getNode());
-            openNodes.remove(current);
-        }
-
-        return null;
+        return pathfinder.getPath(getMostRecentValueMap(), getNode(), target);
     }
 
     /**
@@ -333,11 +301,13 @@ public class Animal extends Life implements IAnimal {
                 path = findNearestPropagator();
                 if (path == null) {
                     path = findNearestFoodSource();
+                    pathfinder.registerPath(path);
                 }
             } else if (getHunger() < 900) {
                 path = findNearestFoodSource();
+                pathfinder.registerPath(path);
             }
-            recalculatePathInTurns = 5;
+            recalculatePathInTurns = 500000;
         } else if (path.getCurrent().equals(path.getTarget())) {
             Life holder = path.getCurrent().getHolder();
             if (holder != null) {
@@ -348,10 +318,12 @@ public class Animal extends Life implements IAnimal {
                         energy -= genetics.getReproductionCost();
                     }
 
+                    pathfinder.unRegisterPath(path);
                     path = null;
                 }
             } else {
                 if (!move(path.getCurrent())) {
+                    pathfinder.unRegisterPath(path);
                     path = null;
                 }
             }
@@ -375,7 +347,23 @@ public class Animal extends Life implements IAnimal {
         List<Node> sources = new ArrayList();
         for (Life life : world.getLives()) {
             if (isFoodSource(life)) {
-                sources.add(life.getNode());
+                boolean registerd = false;
+                for (int i = 0; i < pathfinder.getRegisteredPaths().size(); i++) {
+                    Path path = pathfinder.getRegisteredPaths().get(i);
+                    if (path == null) {
+                        pathfinder.unRegisterPath(path);
+                    } else {
+                        if (life.getNode().equals(path.getTarget())) {
+                            registerd = true;
+                            break;
+                        }
+                    }
+                }
+
+
+                if (!registerd) {
+                    sources.add(life.getNode());
+                }
             }
         }
 
@@ -443,7 +431,7 @@ public class Animal extends Life implements IAnimal {
      * @return
      */
     @Override
-    public boolean eat(IFood food) {
+    public boolean eat(IFood food) {        
         int energy = food.getEaten();
 
         this.energy += energy;
@@ -471,7 +459,7 @@ public class Animal extends Life implements IAnimal {
 
         Random random = new Random();
         Genetics dna = Genetics.getPropagatingGenetics(this.getGenetics(), animal.getGenetics());
-        Animal child = new Animal(world, dna, random.nextBoolean() ? Gender.Male : Gender.Female);
+        Animal child = new Animal(world, pathfinder, dna, random.nextBoolean() ? Gender.Male : Gender.Female);
 
         System.out.println(dna);
         Node node = getNode();
