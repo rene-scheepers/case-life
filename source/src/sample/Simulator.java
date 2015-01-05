@@ -54,11 +54,11 @@ public class Simulator extends Thread {
     public synchronized void start() {
         // Load content here.
         // Load debugger information.
-        SimDebugger.addStatistic("Simulate elapsed", () -> String.valueOf(perfomanceSimulateMs) + " (ms)");
-        SimDebugger.addStatistic("Average simulate", () -> String.valueOf(performanceAverageSimulateMs) + " (ms)");
-        SimDebugger.addStatistic("Frames", () -> String.valueOf(currentTurn));
-        SimDebugger.addStatistic("Draw elapsed", () -> String.valueOf(perfomanceDrawMs) + " (ms)");
-        SimDebugger.addStatistic("Target FPS", () -> String.valueOf(speed));
+        SimDebugger.addDebugValue("Simulate elapsed", () -> String.valueOf(perfomanceSimulateMs) + " (ms)");
+        SimDebugger.addDebugValue("Average simulate", () -> String.valueOf(performanceAverageSimulateMs) + " (ms)");
+        SimDebugger.addDebugValue("Frames", () -> String.valueOf(currentTurn));
+        SimDebugger.addDebugValue("Draw elapsed", () -> String.valueOf(perfomanceDrawMs) + " (ms)");
+        SimDebugger.addDebugValue("Target FPS", () -> String.valueOf(speed));
 
         isPlaying = true;
         super.start();
