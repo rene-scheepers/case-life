@@ -29,7 +29,6 @@ public class Node {
     }
 
     public ArrayList<Path> getPathsLeadingHere() {
-        pathsLeadingHere.removeAll(Collections.singleton(null));
         return pathsLeadingHere;
     }
 

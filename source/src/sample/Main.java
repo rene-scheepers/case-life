@@ -81,7 +81,7 @@ public class Main extends Application {
         // Run game.
         simulator = new Simulator(world, lifeCanvas.getGraphicsContext2D(), uiCanvas.getGraphicsContext2D(), width, height);
         simulator.registerKeys(this);
-        simulator.setSpeed(15);
+        simulator.setSpeed(60);
         simulator.start();
         primaryStage.setOnCloseRequest((ev) -> simulator.interrupt());
     }

@@ -9,10 +9,10 @@ import javafx.scene.paint.Color;
 
 public class Plant extends Life {
 
-    public static final int RESPAWN_TIME = 100;
-    public static final int TIMES_EATEN_BEFORE_DEAD = 10;
-    public static final int REGENERATION = 1;
-    public static final int MAX_ENERGY = 100;
+    private static final int RESPAWN_TIME = 100;
+    private static final int TIMES_EATEN_BEFORE_DEAD = 10;
+    private static final int REGENERATION = 1;
+    private static final int MAX_ENERGY = 100;
 
     private int energy;
     private int timesDied;

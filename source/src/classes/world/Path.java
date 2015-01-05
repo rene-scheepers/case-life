@@ -8,6 +8,7 @@ public class Path implements Comparable, ListIterator<Node> {
     private ListIterator<Node> iterator;
     private List<Node> steps = new ArrayList();
     private double cost;
+
     private Node target;
 
     public Path(NodeHeuristic path) {
