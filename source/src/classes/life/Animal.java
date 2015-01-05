@@ -154,15 +154,7 @@ public class Animal extends Life implements IAnimal {
                     return new Path(targetNodeHeuristic);
                 }
 
-//                if (node.getPathsLeadingHere().size() > 0) {
-//                    continue;
-//                }
-
-                if (node.getLocationType().equals(LocationType.Obstacle)) {
-                    continue;
-                }
-
-                if (node.getHolder() != null) {
+                if (!nodeIsTraversable(node)) {
                     continue;
                 }
 
