@@ -477,17 +477,16 @@ public class Animal extends Life implements IAnimal {
     }
 
     public void draw(GraphicsContext context, int offsetX, int offsetY) {
-        Color color = Color.color(1, 0, 1, getHunger() / 100);
+        Color color;
         if (genetics.getDigestion().equals(Digestion.Carnivore)) {
             color = Color.RED;
         } else if (genetics.getDigestion().equals(Digestion.Omnivore)) {
             color = Color.YELLOW;
+        } else {
+            color = Color.color(1, 0, 1, getHunger() / 100);
         }
 
         Node node = getNode();
-        context.setFill(Color.BLACK);
-
-
         int x = node.getX() - offsetX;
         int y = node.getY() - offsetY;
 

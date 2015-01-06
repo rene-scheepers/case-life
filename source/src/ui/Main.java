@@ -49,6 +49,7 @@ public class Main extends Application {
         Scene scene = new Scene(root);
         this.scene = scene;
         primaryStage.setScene(scene);
+        primaryStage.setTitle("Ecosystem simulation");
 
         restart();
         primaryStage.show();
