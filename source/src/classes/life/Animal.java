@@ -329,10 +329,13 @@ public class Animal extends Life implements IAnimal {
                     pathfinder.registerPath(path);
                 }
             } else if (getHunger() < 900) {
+                if (path != null) {
+                    pathfinder.unRegisterPath(path);
+                }
                 path = findNearestFoodSource();
                 pathfinder.registerPath(path);
             }
-            recalculatePathInTurns = 500000;
+            recalculatePathInTurns = 5;
         } else if (path.getCurrent().equals(path.getTarget())) {
             Life holder = path.getCurrent().getHolder();
             if (holder != null) {

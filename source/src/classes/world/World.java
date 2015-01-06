@@ -97,7 +97,7 @@ public class World implements Serializable, ISimulate {
                         // Plant
                         life = new Plant(world, 100);
                         break;
-                    case "FF6A00":
+                    case "#ff6a00":
                         // MALE Carnivore
                         life = new Animal(world, world.getPathfinder(), new Genetics("T-REX", Digestion.Carnivore, 4, 95, 400, 100, 90), Gender.Male);
                         break;

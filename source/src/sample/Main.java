@@ -22,7 +22,7 @@ public class Main extends Application {
     private Scene scene;
 
     public Main() {
-        File file = new File("resources/maps/medium.png");
+        File file = new File("resources/maps/small.png");
         BufferedImage image;
         try {
             image = ImageIO.read(file);
@@ -67,7 +67,7 @@ public class Main extends Application {
         // Run game.
         simulator = new Simulator(world, lifeCanvas.getGraphicsContext2D(), uiCanvas.getGraphicsContext2D(), width, height);
         simulator.registerKeys(this);
-        simulator.setSpeed(60);
+        simulator.setSpeed(5);
         simulator.start();
         primaryStage.setOnCloseRequest((ev) -> simulator.interrupt());
     }
