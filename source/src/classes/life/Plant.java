@@ -52,11 +52,7 @@ public class Plant extends Life {
         }
     }
 
-    public void draw(GraphicsContext context) {
-
-    }
-
-    public void draw(GraphicsContext context, int centerX, int centerY) {
+    public void draw(GraphicsContext context, int offsetX, int offsetY) {
         Node node = getNode();
 
         if (energy == 0) {
@@ -65,13 +61,11 @@ public class Plant extends Life {
             context.setFill(Color.GREEN);
         }
 
-
-
         context.setFill(Color.rgb(0, 255 * energy / MAX_ENERGY, 0));
 
         context.fillRect(
-                node.getX() - centerX,
-                node.getY() - centerY,
+                node.getX() - offsetX,
+                node.getY() - offsetY,
                 1,
                 1
         );

@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 public class Simulator extends Thread {
 
     private GraphicsContext uiContext;
-    private GraphicsContext lifeContext;
     private GraphicsContext worldContext;
 
     private Life following;
@@ -43,11 +42,10 @@ public class Simulator extends Thread {
      */
     private double speed;
 
-    public Simulator(World world, GraphicsContext worldContext, GraphicsContext lifeContext, GraphicsContext uiContext, int width, int height) {
+    public Simulator(World world, GraphicsContext worldContext, GraphicsContext uiContext, int width, int height) {
         this.world = world;
         this.worldContext = worldContext;
         this.uiContext = uiContext;
-        this.lifeContext = lifeContext;
         this.width = width;
         this.height = height;
 
@@ -90,7 +88,7 @@ public class Simulator extends Thread {
             long time =  System.currentTimeMillis();
 
             if (!isPaused) simulate();
-            draw(lifeContext);
+            draw();
             if (!isPaused) currentTurn++;
 
             currentFPS++;
@@ -131,9 +129,8 @@ public class Simulator extends Thread {
 
     /**
      * Draw logic being executed each frame.
-     * @param context Context used for drawing the game.
      */
-    private void draw(GraphicsContext context) {
+    private void draw() {
         Platform.runLater(() -> {
             /// Debug UI.
             uiContext.clearRect(0, 0, width, height);
@@ -142,7 +139,7 @@ public class Simulator extends Thread {
             // Measure performance.
             long perfStart = System.nanoTime();
 
-            context.clearRect(0, 0, width, height);
+            worldContext.clearRect(0, 0, width, height);
 
             // UI.
             if (isPaused) {
@@ -167,11 +164,6 @@ public class Simulator extends Thread {
             int offsetY = center.getY() - world.getHeight() / 2;
 
             world.draw(worldContext, offsetX, offsetY);
-
-            /// Draw game mechanics.
-            for (Object life : lives.toArray()) {
-                ((Life)life).draw(context, offsetX, offsetY);
-            }
 
             perfomanceDrawMs = (System.nanoTime() - perfStart) / 1000000.0;
             SimDebugger.<DebugGraph>getDebugObject("DRAW").addValue(perfomanceDrawMs);

@@ -204,7 +204,6 @@ public class World implements Serializable, ISimulate {
 
     public void draw(GraphicsContext context, int centerX, int centerY) {
         context.clearRect(0, 0, width, height);
-
         for (int x = 0; x < nodes.length; x++) {
             for (int y = 0; y < nodes[x].length; y++) {
                 Node node = getNode(x + centerX, y + centerY);
@@ -215,6 +214,10 @@ public class World implements Serializable, ISimulate {
                     context.setFill(javafx.scene.paint.Color.LIGHTGRAY);
                 } else {
                     context.setFill(javafx.scene.paint.Color.LIGHTBLUE);
+                }
+
+                if (node.getHolder() != null) {
+                    node.getHolder().draw(context, centerX, centerY);
                 }
 
                 context.fillRect(x, y, 1, 1);

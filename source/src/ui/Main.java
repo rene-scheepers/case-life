@@ -96,7 +96,7 @@ public class Main extends Application {
         //world.draw(worldCanvas.getGraphicsContext2D(), world.getNode(50,50));
 
         // Run game.
-        simulator = new Simulator(world, worldCanvas.getGraphicsContext2D(), lifeCanvas.getGraphicsContext2D(), uiCanvas.getGraphicsContext2D(), width, height);
+        simulator = new Simulator(world, worldCanvas.getGraphicsContext2D(), uiCanvas.getGraphicsContext2D(), width, height);
         simulator.registerKeys(this);
         simulator.setSpeed(60);
         simulator.start();
