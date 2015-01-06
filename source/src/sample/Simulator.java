@@ -1,5 +1,6 @@
 package sample;
 
+import classes.debugging.DebugGraph;
 import classes.debugging.SimDebugger;
 import classes.life.Life;
 import classes.world.World;
@@ -56,9 +57,12 @@ public class Simulator extends Thread {
         // Load debugger information.
         SimDebugger.addDebugValue("Simulate elapsed", () -> String.valueOf(perfomanceSimulateMs) + " (ms)");
         SimDebugger.addDebugValue("Average simulate", () -> String.valueOf(performanceAverageSimulateMs) + " (ms)");
-        SimDebugger.addDebugValue("Frames", () -> String.valueOf(currentTurn));
         SimDebugger.addDebugValue("Draw elapsed", () -> String.valueOf(perfomanceDrawMs) + " (ms)");
+        SimDebugger.addDebugValue("Frames", () -> String.valueOf(currentTurn));
         SimDebugger.addDebugValue("Target FPS", () -> String.valueOf(speed));
+
+        SimDebugger.addDebugGraph("FPS_");
+        DebugGraph graph = SimDebugger.getDebugObject("FPS_");
 
         isPlaying = true;
         super.start();
@@ -83,6 +87,7 @@ public class Simulator extends Thread {
             currentFPS++;
             if (System.currentTimeMillis() - 1000 >= startFPSCountTime) {
                 SimDebugger.setDebugValue("FPS", String.valueOf(currentFPS));
+                SimDebugger.<DebugGraph>getDebugObject("FPS_").addValue(currentFPS);
                 startFPSCountTime = System.currentTimeMillis();
                 currentFPS = 0;
             }

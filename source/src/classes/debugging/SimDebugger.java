@@ -14,12 +14,11 @@ import java.util.stream.Collectors;
 public class SimDebugger {
     private static Map<String, DebugStatistic> statistics;
     public static double fontSize;
-    public static int verticalPixelOffset;
+    public static final int VERTICAL_PIXEL_OFFSET = 4;
 
     static {
         statistics = new LinkedHashMap<>();
         fontSize = 12;
-        verticalPixelOffset = 2;
     }
 
     public static void addStatistic(DebugStatistic statistic) {
@@ -44,6 +43,12 @@ public class SimDebugger {
         addStatistic(new DebugGraph(name));
     }
 
+    public static <T> T getDebugObject(String name) {
+        if (statistics.containsKey(name))
+            return (T)statistics.get(name);
+        return null;
+    }
+
     public static void draw(GraphicsContext context) {
         context.save();
         context.setFont(new Font(fontSize));
@@ -52,16 +57,21 @@ public class SimDebugger {
         // Draw all DebugValue statistics.
         int i = 0;
         for (DebugStatistic stat : statistics.values().stream().filter((s) -> s.getClass() == DebugValue.class && !s.isHidden()).collect(Collectors.toList())) {
-            context.fillText(((DebugValue)stat).displayText() , 2, fontSize * (i + 1) + (verticalPixelOffset * i));
+            context.fillText(((DebugValue)stat).displayText() , 2, fontSize * (i + 1) + (VERTICAL_PIXEL_OFFSET * i));
             i++;
         }
         context.restore();
 
+        context.save();
+        context.setFont(new Font(fontSize));
+        context.setFill(Color.BLACK);
+
         // Draw all DebugGraph statistics.
         i = 0;
         for (DebugStatistic stat : statistics.values().stream().filter((s) -> s.getClass() == DebugGraph.class && !s.isHidden()).collect(Collectors.toList())) {
-            ((DebugGraph)stat).draw(context, DebugGraph.WIDTH * (i + 1) + (20 * (i + 1)), 10);
+            ((DebugGraph)stat).draw(context, DebugGraph.BOX_WIDTH * (i + 1) + (20 * (i + 1)), 10);
             i++;
         }
+        context.restore();
     }
 }

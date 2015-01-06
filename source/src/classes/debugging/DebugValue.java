@@ -3,7 +3,7 @@ package classes.debugging;
 import java.util.concurrent.Callable;
 
 /**
- * Created by Anton on 1/5/2015.
+ * Created by Rene on 1/5/2015.
  */
 public class DebugValue extends DebugStatistic {
     private Callable<String> displayedValue;
