@@ -22,7 +22,7 @@ public class Main extends Application {
     private Scene scene;
 
     public Main() {
-        File file = new File("resources/maps/small.png");
+        File file = new File("resources/maps/medium.png");
         BufferedImage image;
         try {
             image = ImageIO.read(file);

@@ -153,16 +153,30 @@ public class Animal extends Life implements IAnimal {
     private int wait;
 
     private HashMap<Node, Double> getMostRecentValueMap() {
-        HashMap<Node, Double> recentMap = new HashMap();
-        Iterator iterator = valueMap.entrySet().iterator();
-        while(iterator.hasNext()) {
-            Map.Entry<Node, Double> entry = (Map.Entry<Node, Double>)iterator.next();
-            if (nodeIsTraversable(entry.getKey())) {
-                recentMap.put(entry.getKey(), entry.getValue());
-            }
-        }
+        return valueMap;
+//        HashMap<Node, Double> recentMap = new HashMap(valueMap);
+//        Iterator iterator = recentMap.entrySet().iterator();
+//        while(iterator.hasNext()) {
+//            Map.Entry<Node, Double> entry = (Map.Entry<Node, Double>)iterator.next();
+//            Node node = entry.getKey();
+//            if (nodeIsTraversable(node)) {
+//                recentMap.put(node, entry.getValue());
+//            } else {
+////                for (Node adjacent : node.getAdjacentNodes()) {
+////                    if (nodeIsTraversable(adjacent)) {
+////                        Double cost = recentMap.get(adjacent);
+////                        if (cost == null) {
+////                            continue;
+////                        }
+////
+////                        recentMap.put(adjacent, cost - cost);
+////                    }
+////                }
+//            }
+//
+//        }
 
-        return recentMap;
+//        return recentMap;
     }
 
     /**
@@ -172,7 +186,18 @@ public class Animal extends Life implements IAnimal {
      * @return The path with the steps to follow to reach the target.
      */
     private Path getPath(Node target) {
-        return pathfinder.getPath(getMostRecentValueMap(), getNode(), target);
+        long time = System.currentTimeMillis();
+        Path path =pathfinder.getPath(getMostRecentValueMap(), getNode(), target);
+        long timeTaken = System.currentTimeMillis() - time;
+        if (timeTaken > 1000) {
+            System.out.println(valueMap.size());
+            System.out.println(getNode());
+            System.out.println(target);
+            System.out.println("");
+            energy -= energy;
+
+        }
+        return path;
     }
 
     /**
@@ -297,7 +322,7 @@ public class Animal extends Life implements IAnimal {
         }
 
         if (path == null || recalculatePathInTurns < 1) {
-            if (gender.equals(Gender.Male) && genetics.getReproductionThreshold() < getHunger()) {
+            if (false&&gender.equals(Gender.Male) && genetics.getReproductionThreshold() < getHunger()) {
                 path = findNearestPropagator();
                 if (path == null) {
                     path = findNearestFoodSource();
@@ -431,7 +456,7 @@ public class Animal extends Life implements IAnimal {
      * @return
      */
     @Override
-    public boolean eat(IFood food) {        
+    public boolean eat(IFood food) {
         int energy = food.getEaten();
 
         this.energy += energy;
