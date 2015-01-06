@@ -482,6 +482,10 @@ public class Animal extends Life implements IAnimal {
      * @param context
      */
     public void draw(GraphicsContext context) {
+
+    }
+
+    public void draw(GraphicsContext context, int centerX, int centerY) {
         Color color = Color.color(1, 0, 1, getHunger() / 100);
         if (genetics.getDigestion().equals(Digestion.Carnivore)) {
             color = Color.RED;
@@ -492,10 +496,14 @@ public class Animal extends Life implements IAnimal {
         Node node = getNode();
         context.setFill(Color.BLACK);
 
+
+        int x = node.getX() - centerX;
+        int y = node.getY() - centerY;
+
         context.setFill(color);
         context.fillRect(
-                node.getX() + 0.1,
-                node.getY() + 0.1,
+                x + 0.1,
+                y + 0.1,
                 0.8,
                 0.8
         );
@@ -506,8 +514,8 @@ public class Animal extends Life implements IAnimal {
             context.setFill(Color.RED);
         }
         context.fillRect(
-                node.getX() + 0.3,
-                node.getY() + 0.3,
+                x + 0.3,
+                y +  0.3,
                 0.4,
                 0.4
         );

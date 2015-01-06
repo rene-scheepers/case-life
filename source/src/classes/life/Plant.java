@@ -25,10 +25,6 @@ public class Plant extends Life {
         return energy;
     }
 
-    public boolean isAlive() {
-        return true;
-    }
-
     public Node getNode() {
         return world.getNodeForLife(this);
     }
@@ -51,30 +47,34 @@ public class Plant extends Life {
             timesDied = 0;
 
             if (energy < MAX_ENERGY) {
-                energy+= REGENERATION;
+                energy += REGENERATION;
             }
         }
     }
 
     public void draw(GraphicsContext context) {
-        if (isAlive()) {
-            Node node = getNode();
 
-            if (energy == 0) {
-                context.setFill(Color.WHEAT);
-            } else {
-                context.setFill(Color.GREEN);
-            }
+    }
 
-            context.setFill(Color.rgb(0, 255 * energy / MAX_ENERGY, 0));
+    public void draw(GraphicsContext context, int centerX, int centerY) {
+        Node node = getNode();
 
-            context.fillRect(
-                    node.getX(),
-                    node.getY(),
-                    1,
-                    1
-            );
+        if (energy == 0) {
+            context.setFill(Color.WHEAT);
+        } else {
+            context.setFill(Color.GREEN);
         }
+
+
+
+        context.setFill(Color.rgb(0, 255 * energy / MAX_ENERGY, 0));
+
+        context.fillRect(
+                node.getX() - centerX,
+                node.getY() - centerY,
+                1,
+                1
+        );
     }
 
 }

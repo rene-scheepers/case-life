@@ -22,16 +22,15 @@ public class AStarPathfinder implements IPathfinder {
             NodeHeuristic current = openNodes.getFirst();
             Node currentNode = current.getNode();
             for (Node node : currentNode.getAdjacentNodes()) {
-                double cost = valueMap[node.getX()][node.getY()];
-
-                if (cost < 0) {
-                    continue;
-                }
-
                 if (node.equals(target)) {
                     NodeHeuristic targetNodeHeuristic = new NodeHeuristic(node, current.getCost(), 0);
                     targetNodeHeuristic.setParent(current);
                     return new Path(targetNodeHeuristic);
+                }
+
+                double cost = valueMap[node.getX()][node.getY()];
+                if (cost < 0) {
+                    continue;
                 }
                 
                 if (node.getHolder() != null) {
