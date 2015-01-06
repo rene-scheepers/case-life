@@ -1,15 +1,9 @@
 package classes.life;
 
 import classes.exceptions.LocationAlreadyOccupiedException;
-import classes.enumerations.Digestion;
-import classes.enumerations.Gender;
-import classes.enumerations.LocationType;
-import classes.enumerations.State;
-import classes.interfaces.IAnimal;
-import classes.interfaces.IFood;
-import classes.interfaces.IPathfinder;
+import classes.world.LocationType;
+import classes.world.pathfinding.IPathfinder;
 import classes.world.Node;
-import classes.world.pathfinding.NodeHeuristic;
 import classes.world.pathfinding.Path;
 import classes.world.World;
 import javafx.scene.canvas.GraphicsContext;
@@ -28,8 +22,6 @@ public class Animal extends Life implements IAnimal {
     private int age;
 
     private World world;
-
-    private State state;
 
     private Path path;
 
@@ -108,15 +100,6 @@ public class Animal extends Life implements IAnimal {
      */
     public Genetics getGenetics() {
         return genetics;
-    }
-
-    /**
-     * What the animal is currently doing.
-     *
-     * @return
-     */
-    public State getState() {
-        return state;
     }
 
     /**
@@ -467,9 +450,6 @@ public class Animal extends Life implements IAnimal {
         if (this.energy > genetics.getStamina()) {
             this.energy = genetics.getStamina();
         }
-
-        state = State.Eating;
-
         return true;
     }
 

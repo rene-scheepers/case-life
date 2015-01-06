@@ -2,10 +2,9 @@ package classes.world;
 
 import classes.exceptions.LocationAlreadyOccupiedException;
 
-import classes.enumerations.Digestion;
-import classes.enumerations.Gender;
-import classes.enumerations.LocationType;
-import classes.interfaces.ISimulate;
+import classes.life.Digestion;
+import classes.life.Gender;
+import classes.ISimulate;
 import classes.life.Animal;
 import classes.life.Genetics;
 import classes.life.Life;
@@ -99,7 +98,7 @@ public class World implements Serializable, ISimulate {
                         break;
                     case "#ff6a00":
                         // MALE Carnivore
-                        life = new Animal(world, world.getPathfinder(), new Genetics("T-REX", Digestion.Carnivore, 4, 95, 400, 100, 90), Gender.Male);
+                        //life = new Animal(world, world.getPathfinder(), new Genetics("T-REX", Digestion.Carnivore, 4, 95, 400, 100, 90), Gender.Male);
                         break;
                     case "#0026ff":
                         // MALE Omnivore

@@ -1,4 +1,4 @@
-package classes.enumerations;
+package classes.life;
 
 
 public enum Digestion {

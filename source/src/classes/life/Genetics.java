@@ -1,8 +1,5 @@
 package classes.life;
 
-import classes.enumerations.Digestion;
-import classes.enumerations.Gender;
-
 import java.util.Random;
 
 public class Genetics extends Object {

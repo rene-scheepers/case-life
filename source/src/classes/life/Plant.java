@@ -1,9 +1,7 @@
 package classes.life;
 
-import classes.enumerations.Digestion;
 import classes.world.Node;
 import classes.world.World;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 

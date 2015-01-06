@@ -1,4 +1,4 @@
-package classes.interfaces;
+package classes.life;
 
 public interface IFood {
 

@@ -1,25 +1,19 @@
-package sample;
+package ui;
 
+import classes.Simulator;
 import classes.debugging.SimDebugger;
 import classes.world.World;
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.*;
-import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
-import javafx.stage.PopupBuilder;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import javax.imageio.ImageIO;
-import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.Buffer;
 
 public class Main extends Application {
 

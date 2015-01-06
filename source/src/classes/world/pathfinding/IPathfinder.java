@@ -1,4 +1,4 @@
-package classes.interfaces;
+package classes.world.pathfinding;
 
 import classes.world.Node;
 import classes.world.pathfinding.Path;

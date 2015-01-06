@@ -1,7 +1,6 @@
 package classes.world;
 
 import classes.exceptions.LocationAlreadyOccupiedException;
-import classes.enumerations.LocationType;
 import classes.life.Life;
 
 import java.util.ArrayList;

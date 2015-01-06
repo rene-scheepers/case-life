@@ -1,13 +1,9 @@
 package classes.world.pathfinding;
 
-import classes.enumerations.LocationType;
-import classes.interfaces.IPathfinder;
-import classes.life.Animal;
-import classes.life.SortedList;
+import classes.SortedList;
 import classes.world.Node;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 public class AStarPathfinder implements IPathfinder {

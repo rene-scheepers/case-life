@@ -1,4 +1,4 @@
-package classes.life;
+package classes;
 
 import java.util.ArrayList;
 import java.util.Collections;

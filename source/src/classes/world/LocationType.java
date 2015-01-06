@@ -1,4 +1,4 @@
-package classes.enumerations;
+package classes.world;
 
 /**
  * Created by Rene on 23-12-2014.

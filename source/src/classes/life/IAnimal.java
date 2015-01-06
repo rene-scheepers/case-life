@@ -1,6 +1,5 @@
-package classes.interfaces;
+package classes.life;
 
-import classes.life.Animal;
 import classes.world.Node;
 
 public interface IAnimal {

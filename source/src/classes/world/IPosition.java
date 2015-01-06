@@ -1,4 +1,4 @@
-package classes.interfaces;
+package classes.world;
 
 import classes.world.Node;
 

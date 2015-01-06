@@ -1,8 +1,7 @@
 package classes.life;
 
-import classes.interfaces.IFood;
-import classes.interfaces.IPosition;
-import classes.interfaces.ISimulate;
+import classes.world.IPosition;
+import classes.ISimulate;
 
 import java.io.Serializable;
 

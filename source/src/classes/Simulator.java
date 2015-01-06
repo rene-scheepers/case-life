@@ -1,4 +1,4 @@
-package sample;
+package classes;
 
 import classes.debugging.DebugGraph;
 import classes.debugging.SimDebugger;
@@ -10,6 +10,7 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import ui.Main;
 
 public class Simulator extends Thread {
 
