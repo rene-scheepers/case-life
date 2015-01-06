@@ -55,14 +55,12 @@ public class Simulator extends Thread {
     public synchronized void start() {
         // Load content here.
         // Load debugger information.
-        SimDebugger.addDebugValue("Simulate elapsed", () -> String.valueOf(perfomanceSimulateMs) + " (ms)");
-        SimDebugger.addDebugValue("Average simulate", () -> String.valueOf(performanceAverageSimulateMs) + " (ms)");
-        SimDebugger.addDebugValue("Draw elapsed", () -> String.valueOf(perfomanceDrawMs) + " (ms)");
         SimDebugger.addDebugValue("Frames", () -> String.valueOf(currentTurn));
         SimDebugger.addDebugValue("Target FPS", () -> String.valueOf(speed));
 
-        SimDebugger.addDebugGraph("FPS_");
-        SimDebugger.addDebugGraph("SIMULATE_");
+        SimDebugger.addDebugGraph("FPS", 30);
+        SimDebugger.addStatistic(new DebugGraph("SIMULATE", 150, null, " (ms)"));
+        SimDebugger.addStatistic(new DebugGraph("DRAW", 150, null, " (ms)"));
 
         isPlaying = true;
         super.start();
@@ -86,8 +84,7 @@ public class Simulator extends Thread {
 
             currentFPS++;
             if (System.currentTimeMillis() - 1000 >= startFPSCountTime) {
-                SimDebugger.setDebugValue("FPS", String.valueOf(currentFPS));
-                SimDebugger.<DebugGraph>getDebugObject("FPS_").addValue(currentFPS);
+                SimDebugger.<DebugGraph>getDebugObject("FPS").addValue(currentFPS);
                 startFPSCountTime = System.currentTimeMillis();
                 currentFPS = 0;
             }
@@ -106,14 +103,10 @@ public class Simulator extends Thread {
      * Update logic being executed each frame.
      */
     private void simulate() {
-        long perfStart = System.currentTimeMillis();
+        long perfStart = System.nanoTime();
         world.simulate();
-        perfomanceSimulateMs = System.currentTimeMillis() - perfStart;
-
-        totalSimulateMs += perfomanceSimulateMs;
-        performanceAverageSimulateMs = Math.round(totalSimulateMs / currentTurn * 10.0) / 10.0;
-        //SimDebugger.setDebugValue("FPS", String.valueOf(currentFPS));
-        SimDebugger.<DebugGraph>getDebugObject("SIMULATE_").addValue(perfomanceSimulateMs);
+        perfomanceSimulateMs = (System.nanoTime() - perfStart) / 1000000.0;
+        SimDebugger.<DebugGraph>getDebugObject("SIMULATE").addValue(perfomanceSimulateMs);
     }
 
     /**
@@ -122,14 +115,14 @@ public class Simulator extends Thread {
      */
     private void draw(GraphicsContext context) {
         Platform.runLater(() -> {
-            long perfStart = System.currentTimeMillis();
+            /// Debug UI.
+            uiContext.clearRect(0, 0, width, height);
+            SimDebugger.draw(uiContext);
+
+            // Measure performance.
+            long perfStart = System.nanoTime();
 
             context.clearRect(0, 0, width, height);
-            uiContext.clearRect(0, 0, width, height);
-
-            /// Debug UI.
-            uiContext.setFill(Color.BLACK);
-            SimDebugger.draw(uiContext);
 
             // UI.
             if (isPaused) {
@@ -147,7 +140,8 @@ public class Simulator extends Thread {
                 ((Life)life).draw(context);
             }
 
-            perfomanceDrawMs = System.currentTimeMillis() - perfStart;
+            perfomanceDrawMs = (System.nanoTime() - perfStart) / 1000000.0;
+            SimDebugger.<DebugGraph>getDebugObject("DRAW").addValue(perfomanceDrawMs);
         });
     }
 
@@ -192,6 +186,11 @@ public class Simulator extends Thread {
                     // Toggle fullscreen.
                     if (!key.isAltDown()) break;
                     main.getPrimaryStage().setFullScreen(!main.getPrimaryStage().isFullScreen());
+                    break;
+                case R:
+                    if (key.isShiftDown())
+                        main.setSelectedMap(null);
+                    main.restart();
                     break;
             }
         });

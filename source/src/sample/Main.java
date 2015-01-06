@@ -1,7 +1,9 @@
 package sample;
 
+import classes.debugging.SimDebugger;
 import classes.world.World;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -13,6 +15,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import javax.imageio.ImageIO;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -27,9 +30,13 @@ public class Main extends Application {
     private Stage primaryStage;
     private Scene scene;
 
+    private BufferedImage selectedMap;
+    private Pane root;
+    private Canvas worldCanvas;
+    private Canvas lifeCanvas;
+    private Canvas uiCanvas;
+
     public Main() {
-
-
         this.width = 1000;
         this.height = 1000;
     }
@@ -37,34 +44,59 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
+        primaryStage.setOnCloseRequest((ev) -> {
+            if (simulator == null) return;
+            simulator.interrupt();
+        });
 
         // Initialize window.
-        Pane root = new Pane();
-
-        Canvas worldCanvas = new Canvas(width, height);
-        Canvas lifeCanvas = new Canvas(width, height);
-        Canvas uiCanvas = new Canvas(width, height);
+        root = new Pane();
 
         Scene scene = new Scene(root);
         this.scene = scene;
-
-        root.getChildren().add(worldCanvas);
-        root.getChildren().add(lifeCanvas);
-        root.getChildren().add(uiCanvas);
-
-        primaryStage.setTitle("Hello World");
         primaryStage.setScene(scene);
 
-
-        try {
-            world = World.instantiateWorldFromImage(selectMap());
-        } catch (Exception ex) {
-            return;
-        }
+        restart();
         primaryStage.show();
+    }
+
+    public void restart() {
+        if (simulator != null) {
+            simulator.interrupt();
+            try {
+                simulator.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        SimDebugger.reset();
+        try {
+            if (selectedMap == null)
+                selectedMap = selectMap();
+            world = World.instantiateWorldFromImage(selectedMap);
+
+            if (simulator != null) {
+                root.getChildren().removeAll(worldCanvas, lifeCanvas, uiCanvas);
+            }
+
+            worldCanvas = new Canvas(width, height);
+            lifeCanvas = new Canvas(width, height);
+            uiCanvas = new Canvas(width, height);
+
+            root.getChildren().add(worldCanvas);
+            root.getChildren().add(lifeCanvas);
+            root.getChildren().add(uiCanvas);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
 
         worldCanvas.getGraphicsContext2D().scale(width / world.getWidth(), height / world.getHeight());
         lifeCanvas.getGraphicsContext2D().scale(width / world.getWidth(), height / world.getHeight());
+
+        worldCanvas.getGraphicsContext2D().clearRect(0, 0, worldCanvas.getWidth(), worldCanvas.getHeight());
+        lifeCanvas.getGraphicsContext2D().clearRect(0, 0, lifeCanvas.getWidth(), lifeCanvas.getHeight());
+        uiCanvas.getGraphicsContext2D().clearRect(0, 0, uiCanvas.getWidth(), uiCanvas.getHeight());
 
         // Draw world background.
         world.draw(worldCanvas.getGraphicsContext2D());
@@ -74,7 +106,6 @@ public class Main extends Application {
         simulator.registerKeys(this);
         simulator.setSpeed(60);
         simulator.start();
-        primaryStage.setOnCloseRequest((ev) -> simulator.interrupt());
     }
 
     public BufferedImage selectMap() {
@@ -85,16 +116,19 @@ public class Main extends Application {
             selector.setInitialDirectory(initialDirectory);
             selector.setTitle("Select simulation map");
             File file = selector.showOpenDialog(primaryStage);
-            if (file != null) {
-                initialDirectory = file.getParentFile();
-            }
 
+            if (file == null || !file.exists()) continue;
             try {
                 image = ImageIO.read(file);
-            } catch (IOException exception) {
+            } catch (IOException ex) {
+                ex.printStackTrace();
             }
         }
         return image;
+    }
+
+    public void setSelectedMap(BufferedImage image) {
+        selectedMap = image;
     }
 
     public Stage getPrimaryStage() {

@@ -39,8 +39,8 @@ public class SimDebugger {
         ((DebugValue)statistics.get(name)).setDisplayedValue(() -> value);
     }
 
-    public static void addDebugGraph(String name) {
-        addStatistic(new DebugGraph(name));
+    public static void addDebugGraph(String name, int captureCount) {
+        addStatistic(new DebugGraph(name, captureCount));
     }
 
     public static <T> T getDebugObject(String name) {
@@ -77,5 +77,12 @@ public class SimDebugger {
             i++;
         }
         context.restore();
+    }
+
+    /**
+     * Clears all debug information.
+     */
+    public static void reset() {
+        statistics.clear();
     }
 }
