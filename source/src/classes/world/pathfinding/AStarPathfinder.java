@@ -13,7 +13,7 @@ public class AStarPathfinder implements IPathfinder {
     private SortedList<NodeHeuristic> openNodes;
     private ArrayList<Node> closedNodes;
 
-    public Path getPath(Map<Node, Double> valueMap, Node origin, Node target) {
+    public Path getPath(double[][] valueMap, Node origin, Node target) {
         openNodes = new SortedList();
         closedNodes = new ArrayList();
 
@@ -22,18 +22,18 @@ public class AStarPathfinder implements IPathfinder {
             NodeHeuristic current = openNodes.getFirst();
             Node currentNode = current.getNode();
             for (Node node : currentNode.getAdjacentNodes()) {
-                Double cost = valueMap.get(node);
+                double cost = valueMap[node.getX()][node.getY()];
+
+                if (cost < 0) {
+                    continue;
+                }
 
                 if (node.equals(target)) {
                     NodeHeuristic targetNodeHeuristic = new NodeHeuristic(node, current.getCost(), 0);
                     targetNodeHeuristic.setParent(current);
                     return new Path(targetNodeHeuristic);
                 }
-
-                if (cost == null) {
-                    continue;
-                }
-
+                
                 if (node.getHolder() != null) {
                     continue;
                 }

@@ -8,7 +8,7 @@ import java.util.Map;
 
 public interface IPathfinder {
 
-    public Path getPath(Map<Node, Double> valueMap, Node origin, Node target);
+    public Path getPath(double[][] valueMap, Node origin, Node target);
 
     public void registerPath(Path path);
 

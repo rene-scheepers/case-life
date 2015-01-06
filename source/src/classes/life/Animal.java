@@ -29,27 +29,12 @@ public class Animal extends Life implements IAnimal {
 
     private IPathfinder pathfinder;
 
-    private HashMap<Node, Double> valueMap = new HashMap();
-
     public Animal(World world, IPathfinder pathfinder, Genetics genetics, Gender gender) {
         this.world = world;
         this.pathfinder = pathfinder;
         this.gender = gender;
         this.genetics = genetics;
         this.energy = (int) (genetics.getStamina() * 0.5);
-
-        Node[][] nodes = world.getNodes();
-        for(int x = 0; x < nodes.length; x++) {
-            for(int y = 0; y < nodes[x].length;y++) {
-                Node node = nodes[x][y];
-
-                if (node.getLocationType().equals(LocationType.Land)) {
-                    valueMap.put(node, new Double(10));
-                } else if (node.getLocationType().equals(LocationType.Water)) {
-                    valueMap.put(node, new Double(100));
-                }
-            }
-        }
     }
 
     /**
@@ -135,28 +120,25 @@ public class Animal extends Life implements IAnimal {
 
     private int wait;
 
-    private HashMap<Node, Double> getMostRecentValueMap() {
+    private double[][] getMostRecentValueMap() {
         //return valueMap;
-        HashMap<Node, Double> recentMap = new HashMap();
-        Iterator iterator = valueMap.entrySet().iterator();
-        while(iterator.hasNext()) {
-            Map.Entry<Node, Double> entry = (Map.Entry<Node, Double>)iterator.next();
-            Node node = entry.getKey();
-            if (nodeIsTraversable(node)) {
-                recentMap.put(node, entry.getValue());
-            } else {
-//                for (Node adjacent : node.getAdjacentNodes()) {
-//                    if (nodeIsTraversable(adjacent)) {
-//                        Double cost = recentMap.get(adjacent);
-//                        if (cost == null) {
-//                            continue;
-//                        }
-//
-//                        recentMap.put(adjacent, cost - cost);
-//                    }
-//                }
-            }
 
+        Node[][] nodes = world.getNodes();
+        double[][] recentMap = new double[world.getWidth()][world.getHeight()];
+        for (int x = 0; x < nodes.length; x++) {
+            for (int y = 0; y < nodes[x].length; y++) {
+                Node node = nodes[x][y];
+
+                if (node.getHolder() != null || node.getLocationType().equals(LocationType.Obstacle)) {
+                    recentMap[x][y] = -1;
+                } else {
+                    if (node.getLocationType().equals(LocationType.Land)) {
+                        recentMap[x][y] = 10;
+                    } else {
+                        recentMap[x][y] = 25;
+                    }
+                }
+            }
         }
 
         return recentMap;
@@ -170,16 +152,8 @@ public class Animal extends Life implements IAnimal {
      */
     private Path getPath(Node target) {
         long time = System.currentTimeMillis();
-        Path path =pathfinder.getPath(getMostRecentValueMap(), getNode(), target);
-        long timeTaken = System.currentTimeMillis() - time;
-        if (timeTaken > 1000) {
-            System.out.println(valueMap.size());
-            System.out.println(getNode());
-            System.out.println(target);
-            System.out.println("");
-            energy -= energy;
+        Path path = pathfinder.getPath(getMostRecentValueMap(), getNode(), target);
 
-        }
         return path;
     }
 
