@@ -198,15 +198,11 @@ public class World implements Serializable, ISimulate {
         lives.remove(life);
     }
 
-    public void draw(GraphicsContext context) {
-        draw(context, width / 2, height / 2);
-    }
-
-    public void draw(GraphicsContext context, int centerX, int centerY) {
+    public void draw(GraphicsContext context, int offsetX, int offsetY) {
         context.clearRect(0, 0, width, height);
         for (int x = 0; x < nodes.length; x++) {
             for (int y = 0; y < nodes[x].length; y++) {
-                Node node = getNode(x + centerX, y + centerY);
+                Node node = getNode(x + offsetX, y + offsetY);
 
                 if (node.getLocationType().equals(LocationType.Land)) {
                     context.setFill(javafx.scene.paint.Color.WHITE);
@@ -215,9 +211,9 @@ public class World implements Serializable, ISimulate {
                 } else {
                     context.setFill(javafx.scene.paint.Color.LIGHTBLUE);
                 }
-
+                
                 if (node.getHolder() != null) {
-                    node.getHolder().draw(context, centerX, centerY);
+                    node.getHolder().draw(context, offsetX, offsetY);
                 }
 
                 context.fillRect(x, y, 1, 1);

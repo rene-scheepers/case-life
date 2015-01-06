@@ -504,9 +504,10 @@ public class Animal extends Life implements IAnimal {
         } else {
             context.setFill(Color.RED);
         }
+
         context.fillRect(
                 x + 0.3,
-                y +  0.3,
+                y + 0.3,
                 0.4,
                 0.4
         );
