@@ -54,7 +54,7 @@ public class Animal extends Life implements IAnimal {
                 if (node.getLocationType().equals(LocationType.Land)) {
                     valueMap.put(node, new Double(10));
                 } else if (node.getLocationType().equals(LocationType.Water)) {
-                    valueMap.put(node, new Double(20));
+                    valueMap.put(node, new Double(100));
                 }
             }
         }
