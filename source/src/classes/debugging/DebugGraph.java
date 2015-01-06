@@ -6,11 +6,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
 import java.awt.geom.Point2D;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicReferenceArray;
+import java.util.*;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * Created by Rene on 1/5/2015.
@@ -33,7 +31,7 @@ public class DebugGraph extends DebugStatistic {
     private static final float DATA_HEIGHT_RELATIVE = 0.6f;
     private static final int DATA_BAR_SPACE = 1;
 
-    private ArrayDeque<Double> data;
+    private BlockingDeque<Double> data;
     private double currentMaxValue;
     private int dataSize;
     private String preFix;
@@ -48,22 +46,22 @@ public class DebugGraph extends DebugStatistic {
         this.dataSize = captureSize;
         this.preFix = preFix == null ? "" : preFix;
         this.postFix = postFix == null ? "" : postFix;
-        data = new ArrayDeque<>(captureSize);
+        data = new LinkedBlockingDeque<>(captureSize);
     }
 
-    private synchronized double getMin() {
+    private double getMin() {
         if (data == null || data.size() == 0) return 0;
-        return data.clone().stream().min((d1, d2) -> Double.compare(d1, d2)).get();
+        return data.stream().min((d1, d2) -> Double.compare(d1, d2)).get();
     }
 
-    private synchronized double getAverage() {
+    private double getAverage() {
         if (data == null || data.size() == 0) return 0;
-        return data.clone().stream().mapToDouble((d) -> d).average().getAsDouble();
+        return data.stream().mapToDouble((d) -> d).average().getAsDouble();
     }
 
-    private synchronized double getMax() {
+    private double getMax() {
         if (data == null || data.size() == 0) return 0;
-        return data.clone().stream().max((d1, d2) -> Double.compare(d1, d2)).get();
+        return data.stream().max((d1, d2) -> Double.compare(d1, d2)).get();
     }
 
     public void draw(GraphicsContext context, int x, int y) {
@@ -132,9 +130,9 @@ public class DebugGraph extends DebugStatistic {
     }
 
     public void addValue(double value) {
-        data.addLast(value);
-        if (data.size() > dataSize) {
+        if (data.size() == dataSize) {
             data.pop();
         }
+        data.addLast(value);
     }
 }

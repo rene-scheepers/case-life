@@ -75,6 +75,7 @@ public class Simulator extends Thread {
         // FPS counter.
         int currentFPS = 0;
         long startFPSCountTime = System.currentTimeMillis();
+        long overSleptTime = 0;
 
         while(isPlaying && !isInterrupted()) {
             long time =  System.currentTimeMillis();
@@ -93,7 +94,16 @@ public class Simulator extends Thread {
             time = System.currentTimeMillis() - time;
             try {
                 long sleepTime = (long) (1000 / speed - time);
-                sleep(sleepTime < 0 ? 0 : sleepTime);
+                sleepTime = sleepTime < 0 ? 0 : sleepTime;
+
+                long actualSleep = System.currentTimeMillis();
+                // Going to fast. Needs to sleep.
+                if (sleepTime + overSleptTime > 0)
+                    sleep(sleepTime + overSleptTime);
+
+                // Adding up under- oversleep for next frame.
+                actualSleep = System.currentTimeMillis() - actualSleep;
+                overSleptTime += sleepTime - actualSleep;
             } catch(Exception ex) {
                 System.out.println(ex.toString());
             }
