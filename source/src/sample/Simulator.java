@@ -111,7 +111,7 @@ public class Simulator extends Thread {
         perfomanceSimulateMs = System.currentTimeMillis() - perfStart;
 
         totalSimulateMs += perfomanceSimulateMs;
-        performanceAverageSimulateMs = Math.round(totalSimulateMs / currentTurn * 10) / 10;
+        performanceAverageSimulateMs = Math.round(totalSimulateMs / currentTurn * 10.0) / 10.0;
     }
 
     /**
