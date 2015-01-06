@@ -32,8 +32,8 @@ public class Main extends Application {
 
         world = World.instantiateWorldFromImage(image);
 
-        this.width = 2000;
-        this.height = 2000;
+        this.width = 1000;
+        this.height = 1000;
     }
 
     @Override
@@ -67,7 +67,7 @@ public class Main extends Application {
         // Run game.
         simulator = new Simulator(world, lifeCanvas.getGraphicsContext2D(), uiCanvas.getGraphicsContext2D(), width, height);
         simulator.registerKeys(this);
-        simulator.setSpeed(5);
+        simulator.setSpeed(60);
         simulator.start();
         primaryStage.setOnCloseRequest((ev) -> simulator.interrupt());
     }

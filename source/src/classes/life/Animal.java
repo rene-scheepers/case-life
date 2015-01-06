@@ -153,30 +153,30 @@ public class Animal extends Life implements IAnimal {
     private int wait;
 
     private HashMap<Node, Double> getMostRecentValueMap() {
-        return valueMap;
-//        HashMap<Node, Double> recentMap = new HashMap(valueMap);
-//        Iterator iterator = recentMap.entrySet().iterator();
-//        while(iterator.hasNext()) {
-//            Map.Entry<Node, Double> entry = (Map.Entry<Node, Double>)iterator.next();
-//            Node node = entry.getKey();
-//            if (nodeIsTraversable(node)) {
-//                recentMap.put(node, entry.getValue());
-//            } else {
-////                for (Node adjacent : node.getAdjacentNodes()) {
-////                    if (nodeIsTraversable(adjacent)) {
-////                        Double cost = recentMap.get(adjacent);
-////                        if (cost == null) {
-////                            continue;
-////                        }
-////
-////                        recentMap.put(adjacent, cost - cost);
-////                    }
-////                }
-//            }
+        //return valueMap;
+        HashMap<Node, Double> recentMap = new HashMap();
+        Iterator iterator = valueMap.entrySet().iterator();
+        while(iterator.hasNext()) {
+            Map.Entry<Node, Double> entry = (Map.Entry<Node, Double>)iterator.next();
+            Node node = entry.getKey();
+            if (nodeIsTraversable(node)) {
+                recentMap.put(node, entry.getValue());
+            } else {
+//                for (Node adjacent : node.getAdjacentNodes()) {
+//                    if (nodeIsTraversable(adjacent)) {
+//                        Double cost = recentMap.get(adjacent);
+//                        if (cost == null) {
+//                            continue;
+//                        }
 //
-//        }
+//                        recentMap.put(adjacent, cost - cost);
+//                    }
+//                }
+            }
 
-//        return recentMap;
+        }
+
+        return recentMap;
     }
 
     /**
@@ -322,7 +322,7 @@ public class Animal extends Life implements IAnimal {
         }
 
         if (path == null || recalculatePathInTurns < 1) {
-            if (false&&gender.equals(Gender.Male) && genetics.getReproductionThreshold() < getHunger()) {
+            if (false && gender.equals(Gender.Male) && genetics.getReproductionThreshold() < getHunger()) {
                 path = findNearestPropagator();
                 if (path == null) {
                     path = findNearestFoodSource();

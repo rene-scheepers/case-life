@@ -62,7 +62,7 @@ public class Simulator extends Thread {
         SimDebugger.addDebugValue("Target FPS", () -> String.valueOf(speed));
 
         SimDebugger.addDebugGraph("FPS_");
-        DebugGraph graph = SimDebugger.getDebugObject("FPS_");
+        SimDebugger.addDebugGraph("SIMULATE_");
 
         isPlaying = true;
         super.start();
@@ -112,6 +112,8 @@ public class Simulator extends Thread {
 
         totalSimulateMs += perfomanceSimulateMs;
         performanceAverageSimulateMs = Math.round(totalSimulateMs / currentTurn * 10.0) / 10.0;
+        //SimDebugger.setDebugValue("FPS", String.valueOf(currentFPS));
+        SimDebugger.<DebugGraph>getDebugObject("SIMULATE_").addValue(perfomanceSimulateMs);
     }
 
     /**

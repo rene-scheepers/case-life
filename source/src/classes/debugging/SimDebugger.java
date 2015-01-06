@@ -69,7 +69,11 @@ public class SimDebugger {
         // Draw all DebugGraph statistics.
         i = 0;
         for (DebugStatistic stat : statistics.values().stream().filter((s) -> s.getClass() == DebugGraph.class && !s.isHidden()).collect(Collectors.toList())) {
-            ((DebugGraph)stat).draw(context, DebugGraph.BOX_WIDTH * (i + 1) + (20 * (i + 1)), 10);
+            ((DebugGraph)stat).draw(
+                    context,
+                    DebugGraph.BOX_WIDTH * i +  (i + 1) * 5,
+                    (int)context.getCanvas().getHeight() - DebugGraph.BOX_HEIGHT - 5
+            );
             i++;
         }
         context.restore();
