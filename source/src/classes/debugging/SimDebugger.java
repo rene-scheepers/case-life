@@ -16,6 +16,16 @@ public class SimDebugger {
     public static double fontSize;
     public static final int VERTICAL_PIXEL_OFFSET = 4;
 
+    public static boolean isVisible() {
+        return visible;
+    }
+
+    public static void setVisible(boolean visible) {
+        SimDebugger.visible = visible;
+    }
+
+    private static boolean visible;
+
     static {
         statistics = new LinkedHashMap<>();
         fontSize = 12;
@@ -50,6 +60,8 @@ public class SimDebugger {
     }
 
     public static void draw(GraphicsContext context) {
+        if (!isVisible()) return;
+
         context.save();
         context.setFont(new Font(fontSize));
         context.setFill(Color.BLACK);

@@ -134,7 +134,7 @@ public class Simulator extends Thread {
         Platform.runLater(() -> {
             /// Debug UI.
             uiContext.clearRect(0, 0, width, height);
-            //SimDebugger.draw(uiContext);
+            SimDebugger.draw(uiContext);
 
             // Measure performance.
             long perfStart = System.nanoTime();
@@ -216,6 +216,9 @@ public class Simulator extends Thread {
                     if (key.isShiftDown())
                         main.setSelectedMap(null);
                     main.restart();
+                    break;
+                case D:
+                    SimDebugger.setVisible(!SimDebugger.isVisible());
                     break;
             }
         });
