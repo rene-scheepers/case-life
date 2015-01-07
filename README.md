@@ -34,5 +34,6 @@ To-Do
 * [ ] User override on life
 * [ ] Saving/loading turns
  
-[Antoen](https://github.com/Measuring)
+[Antoen](https://github.com/Measuring) 
+
 [Rene](https://github.com/rene-scheepers)
