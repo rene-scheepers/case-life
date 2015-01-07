@@ -5,17 +5,26 @@ To-Do
 
 * [x] Generate world from image
 * [ ] Life
-  * [x] Herbivores
-  * [x] Carnivores
-  * [ ] Omnivores
-  * [ ] Plants
+  * [x] Reproduction
+    * [x] Genetics
+  * [x] Eating
+    * [ ] Combat
+  * [x] Moving
+    * [ ] Movement cost
+  * [x] Types
+    * [x] Herbivores
+    * [x] Carnivores
+    * [ ] Omnivores
+    * [x] Plants
 * [ ] Location types 
   * [x] Land
   * [x] Water
   * [x] Obstacles
   * [ ] Forest
   * [ ] Grass
-* [x] Simulator
+  * [ ] Mountain
+* [x] Simulation
+  * [ ] Simulation settings
 * [x] Pathfinding
   * [ ] Line of sight
   * [x] Weight maps
@@ -24,12 +33,16 @@ To-Do
   * [ ] Optimized(balance between performance and quality)
 * [x] Rendering
   * [x] 2d world
+    * [ ] Sprites
+    * [ ] Zoom
+    * [x] Follow
+    * [x] Scaling
   * [ ] 3d world
-* [ ] Camera
-  * [x] Follow movement(animals, plants, etc)
-  * [ ] Zoom
-  * [ ] Rotation
-  * [ ] Movement
+    * [ ] Camera
+      * [x] Follow movement(animals, plants, etc)
+      * [ ] Zoom
+      * [ ] Rotation
+      * [ ] Movement
 * [ ] Random world generator
 * [ ] User override on life
 * [ ] Saving/loading turns
