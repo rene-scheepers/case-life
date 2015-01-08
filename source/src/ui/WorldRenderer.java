@@ -9,6 +9,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+import java.util.List;
+
 public class WorldRenderer implements IRender {
 
     private Canvas canvas;
@@ -69,7 +71,9 @@ public class WorldRenderer implements IRender {
             }
         }
 
-        for (Life life : world.getLives()) {
+        List<Life> lives = world.getLives();
+        for (int i = 0; i < lives.size(); i++) {
+            Life life = lives.get(i);
             if (life instanceof Animal) {
                 drawAnimal((Animal) life, context, offsetX, offsetY);
             } else if (life instanceof Plant) {
