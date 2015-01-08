@@ -4,6 +4,7 @@ import classes.debugging.DebugGraph;
 import classes.debugging.SimDebugger;
 import classes.life.Animal;
 import classes.life.Life;
+import classes.world.Node;
 import classes.world.World;
 import javafx.application.Platform;
 import javafx.scene.canvas.GraphicsContext;
@@ -14,6 +15,7 @@ import javafx.scene.text.TextAlignment;
 import ui.IRender;
 import ui.Main;
 
+import javax.swing.*;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -151,12 +153,6 @@ public class Simulator extends Thread {
                 uiContext.restore();
             }
 
-            List<Life> animals = world.getLives().stream().filter(x -> x.getClass() == Animal.class).collect(Collectors.toList());
-            if (renderer.getFollowing() == null || !animals.contains(renderer.getFollowing())) {
-                Random rand = new Random();
-                renderer.setFollowing(animals.get(rand.nextInt(animals.size())));
-            }
-
             renderer.refresh();
 
             perfomanceDrawMs = (System.nanoTime() - perfStart) / 1000000.0;
@@ -213,6 +209,26 @@ public class Simulator extends Thread {
                     break;
                 case D:
                     SimDebugger.setVisible(!SimDebugger.isVisible());
+                    break;
+                case LEFT:
+                    Node center = renderer.getCenter();
+                    renderer.setFollowing(null);
+                    renderer.setCenter(world.getNode(center.getX() - 2, center.getY()));
+                    break;
+                case RIGHT:
+                    center = renderer.getCenter();
+                    renderer.setFollowing(null);
+                    renderer.setCenter(world.getNode(center.getX() + 2, center.getY()));
+                    break;
+                case UP:
+                    center = renderer.getCenter();
+                    renderer.setFollowing(null);
+                    renderer.setCenter(world.getNode(center.getX(), center.getY() - 2));
+                    break;
+                case DOWN:
+                    center = renderer.getCenter();
+                    renderer.setFollowing(null);
+                    renderer.setCenter(world.getNode(center.getX(), center.getY() + 2));
                     break;
             }
         });
