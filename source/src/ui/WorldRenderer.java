@@ -14,15 +14,34 @@ public class WorldRenderer implements IRender {
     private Canvas canvas;
     private World world;
     private Life following;
+    private Node center;
 
     public WorldRenderer(Canvas canvas, World world) {
         this.canvas = canvas;
         this.world = world;
+        this.center = world.getNode(world.getWidth() / 2, world.getHeight() / 2);
+    }
+
+    public WorldRenderer(Canvas canvas, World world, Node center) {
+        this.canvas = canvas;
+        this.world = world;
+        this.center = center;
+    }
+
+    @Override
+    public Node getCenter() {
+        return center;
     }
 
     @Override
     public Life getFollowing() {
         return following;
+    }
+
+    @Override
+    public void setCenter(Node center)
+    {
+        this.center = center;
     }
 
     @Override
@@ -33,10 +52,8 @@ public class WorldRenderer implements IRender {
     @Override
     public void refresh() {
         GraphicsContext context = canvas.getGraphicsContext2D();
-        Node center;
-        if (following == null) {
-            center = world.getNode(world.getWidth() / 2, world.getHeight() / 2);
-        } else {
+
+        if (following != null) {
             center = following.getNode();
         }
 
