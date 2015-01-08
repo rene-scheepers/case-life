@@ -148,7 +148,7 @@ public class Animal extends Life implements IAnimal {
      * Gets the A* Path for the animal.
      *
      * @param target The target node.
-     * @return The path with the steps to follow to reach the target.
+     * @return The path with the steps to setFollowing to reach the target.
      */
     private Path getPath(Node target) {
         long time = System.currentTimeMillis();
@@ -476,39 +476,4 @@ public class Animal extends Life implements IAnimal {
         return energyEaten;
     }
 
-    public void draw(GraphicsContext context, int offsetX, int offsetY) {
-        Color color;
-        if (genetics.getDigestion().equals(Digestion.Carnivore)) {
-            color = Color.RED;
-        } else if (genetics.getDigestion().equals(Digestion.Omnivore)) {
-            color = Color.YELLOW;
-        } else {
-            color = Color.color(1, 0, 1, getHunger() / 100);
-        }
-
-        Node node = getNode();
-        int x = node.getX() - offsetX;
-        int y = node.getY() - offsetY;
-
-        context.setFill(color);
-        context.fillRect(
-                x + 0.1,
-                y + 0.1,
-                0.8,
-                0.8
-        );
-
-        if (gender.equals(Gender.Female)) {
-            context.setFill(Color.BLUE);
-        } else {
-            context.setFill(Color.RED);
-        }
-
-        context.fillRect(
-                x + 0.3,
-                y + 0.3,
-                0.4,
-                0.4
-        );
-    }
 }

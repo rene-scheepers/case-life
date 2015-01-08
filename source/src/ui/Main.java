@@ -27,7 +27,6 @@ public class Main extends Application {
     private BufferedImage selectedMap;
     private Pane root;
     private Canvas worldCanvas;
-    private Canvas lifeCanvas;
     private Canvas uiCanvas;
 
     public Main() {
@@ -72,32 +71,26 @@ public class Main extends Application {
             world = World.instantiateWorldFromImage(selectedMap);
 
             if (simulator != null) {
-                root.getChildren().removeAll(worldCanvas, lifeCanvas, uiCanvas);
+                root.getChildren().removeAll(worldCanvas, uiCanvas);
             }
 
             worldCanvas = new Canvas(width, height);
-            lifeCanvas = new Canvas(width, height);
             uiCanvas = new Canvas(width, height);
 
             root.getChildren().add(worldCanvas);
-            root.getChildren().add(lifeCanvas);
             root.getChildren().add(uiCanvas);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
 
         worldCanvas.getGraphicsContext2D().scale(width / world.getWidth(), height / world.getHeight());
-        lifeCanvas.getGraphicsContext2D().scale(width / world.getWidth(), height / world.getHeight());
-
-        worldCanvas.getGraphicsContext2D().clearRect(0, 0, worldCanvas.getWidth(), worldCanvas.getHeight());
-        lifeCanvas.getGraphicsContext2D().clearRect(0, 0, lifeCanvas.getWidth(), lifeCanvas.getHeight());
         uiCanvas.getGraphicsContext2D().clearRect(0, 0, uiCanvas.getWidth(), uiCanvas.getHeight());
 
         // Draw world background.
-        //world.draw(worldCanvas.getGraphicsContext2D(), world.getNode(50,50));
+        WorldRenderer renderer = new WorldRenderer(worldCanvas, world);
 
         // Run game.
-        simulator = new Simulator(world, worldCanvas.getGraphicsContext2D(), uiCanvas.getGraphicsContext2D(), width, height);
+        simulator = new Simulator(world, renderer, uiCanvas.getGraphicsContext2D(), width, height);
         simulator.registerKeys(this);
         simulator.setSpeed(60);
         simulator.start();

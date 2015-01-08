@@ -7,5 +7,4 @@ public interface ISimulate {
 
     public void simulate();
 
-    public void draw(GraphicsContext context, int offsetX, int offsetY);
 }

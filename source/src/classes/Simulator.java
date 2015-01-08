@@ -4,7 +4,6 @@ import classes.debugging.DebugGraph;
 import classes.debugging.SimDebugger;
 import classes.life.Animal;
 import classes.life.Life;
-import classes.world.Node;
 import classes.world.World;
 import javafx.application.Platform;
 import javafx.scene.canvas.GraphicsContext;
@@ -12,6 +11,7 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import ui.IRender;
 import ui.Main;
 
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class Simulator extends Thread {
 
     private GraphicsContext uiContext;
-    private GraphicsContext worldContext;
+    private IRender renderer;
 
     private Life following;
     private World world;
@@ -42,9 +42,9 @@ public class Simulator extends Thread {
      */
     private double speed;
 
-    public Simulator(World world, GraphicsContext worldContext, GraphicsContext uiContext, int width, int height) {
+    public Simulator(World world, IRender renderer, GraphicsContext uiContext, int width, int height) {
         this.world = world;
-        this.worldContext = worldContext;
+        this.renderer = renderer;
         this.uiContext = uiContext;
         this.width = width;
         this.height = height;
@@ -139,7 +139,6 @@ public class Simulator extends Thread {
             // Measure performance.
             long perfStart = System.nanoTime();
 
-            worldContext.clearRect(0, 0, width, height);
 
             // UI.
             if (isPaused) {
@@ -152,18 +151,13 @@ public class Simulator extends Thread {
                 uiContext.restore();
             }
 
-            List<Life> lives = world.getLives();
-            List<Life> animals = lives.stream().filter(x -> x.getClass() == Animal.class).collect(Collectors.toList());
-            if (following == null || !animals.contains(following)) {
+            List<Life> animals = world.getLives().stream().filter(x -> x.getClass() == Animal.class).collect(Collectors.toList());
+            if (renderer.getFollowing() == null || !animals.contains(renderer.getFollowing())) {
                 Random rand = new Random();
-                following = animals.get(rand.nextInt(animals.size()));
+                renderer.setFollowing(animals.get(rand.nextInt(animals.size())));
             }
 
-            Node center = following.getNode();
-            int offsetX = center.getX() - world.getWidth() / 2;
-            int offsetY = center.getY() - world.getHeight() / 2;
-
-            world.draw(worldContext, offsetX, offsetY);
+            renderer.refresh();
 
             perfomanceDrawMs = (System.nanoTime() - perfStart) / 1000000.0;
             SimDebugger.<DebugGraph>getDebugObject("DRAW").addValue(perfomanceDrawMs);

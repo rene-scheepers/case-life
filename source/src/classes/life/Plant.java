@@ -7,10 +7,10 @@ import javafx.scene.paint.Color;
 
 public class Plant extends Life {
 
-    private static final int RESPAWN_TIME = 100;
-    private static final int TIMES_EATEN_BEFORE_DEAD = 10;
-    private static final int REGENERATION = 1;
-    private static final int MAX_ENERGY = 100;
+    public static final int RESPAWN_TIME = 100;
+    public static final int TIMES_EATEN_BEFORE_DEAD = 10;
+    public static final int REGENERATION = 1;
+    public static final int MAX_ENERGY = 100;
 
     private int energy;
     private int timesDied;
@@ -51,24 +51,4 @@ public class Plant extends Life {
             }
         }
     }
-
-    public void draw(GraphicsContext context, int offsetX, int offsetY) {
-        Node node = getNode();
-
-        if (energy == 0) {
-            context.setFill(Color.WHEAT);
-        } else {
-            context.setFill(Color.GREEN);
-        }
-
-        context.setFill(Color.rgb(0, 255 * energy / MAX_ENERGY, 0));
-
-        context.fillRect(
-                node.getX() - offsetX,
-                node.getY() - offsetY,
-                1,
-                1
-        );
-    }
-
 }

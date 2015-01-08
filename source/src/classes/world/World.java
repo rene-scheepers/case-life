@@ -198,29 +198,6 @@ public class World implements Serializable, ISimulate {
         lives.remove(life);
     }
 
-    public void draw(GraphicsContext context, int offsetX, int offsetY) {
-        context.clearRect(0, 0, width, height);
 
-        for (int x = 0; x < nodes.length; x++) {
-            for (int y = 0; y < nodes[x].length; y++) {
-                Node node = getNode(x + offsetX, y + offsetY);
-
-                if (node.getLocationType().equals(LocationType.Land)) {
-                    context.setFill(javafx.scene.paint.Color.WHITE);
-                } else if (node.getLocationType().equals(LocationType.Obstacle)) {
-                    context.setFill(javafx.scene.paint.Color.LIGHTGRAY);
-                } else {
-                    context.setFill(javafx.scene.paint.Color.LIGHTBLUE);
-                }
-
-                context.fillRect(x, y, 1, 1);
-
-                if (node.getHolder() != null) {
-                    node.getHolder().draw(context, offsetX, offsetY);
-                }
-
-            }
-        }
-    }
 
 }
