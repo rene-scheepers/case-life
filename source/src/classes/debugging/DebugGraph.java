@@ -120,12 +120,12 @@ public class DebugGraph extends DebugStatistic {
         Double[] dataArray = new Double[data.size()];
         synchronized (this) {
             data.toArray(dataArray);
-        }
 
-        double barWidth = dataBoxWidth / dataSize - DATA_BAR_SPACE;
-        for (int i = 0; i < dataArray.length; i++) {
-            double barLength = BOX_HEIGHT * DATA_HEIGHT_RELATIVE / currentMaxValue * dataArray[i];
-            context.fillRect(x + (i * (barWidth + DATA_BAR_SPACE)) + dataBoxMarginHorizontal + OVERLAY_OFFSET.getX(), y + BOX_HEIGHT - barLength - dataBoxMarginVertical + OVERLAY_OFFSET.getY(), barWidth, barLength);
+            double barWidth = dataBoxWidth / dataSize - DATA_BAR_SPACE;
+            for (int i = 0; i < dataArray.length; i++) {
+                double barLength = BOX_HEIGHT * DATA_HEIGHT_RELATIVE / currentMaxValue * dataArray[i];
+                context.fillRect(x + (i * (barWidth + DATA_BAR_SPACE)) + dataBoxMarginHorizontal + OVERLAY_OFFSET.getX(), y + BOX_HEIGHT - barLength - dataBoxMarginVertical + OVERLAY_OFFSET.getY(), barWidth, barLength);
+            }
         }
     }
 
