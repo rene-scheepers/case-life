@@ -1,8 +1,8 @@
 //package ui;
 //
-//import classes.Simulator;
-//import classes.debugging.SimDebugger;
-//import classes.world.World;
+//import life.game.classes.Simulator;
+//import life.game.classes.debugging.SimDebugger;
+//import life.game.classes.world.World;
 //import javafx.application.Application;
 //import javafx.scene.Scene;
 //import javafx.scene.canvas.Canvas;

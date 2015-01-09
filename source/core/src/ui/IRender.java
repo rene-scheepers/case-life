@@ -1,7 +1,7 @@
 package ui;
 
-import classes.life.Life;
-import classes.world.Node;
+import life.game.classes.life.Life;
+import life.game.classes.world.Node;
 
 public interface IRender {
 

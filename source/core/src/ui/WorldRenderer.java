@@ -1,9 +1,9 @@
 //package ui;
 //
-//import classes.life.*;
-//import classes.world.LocationType;
-//import classes.world.Node;
-//import classes.world.World;
+//import life.game.classes.life.*;
+//import life.game.classes.world.LocationType;
+//import life.game.classes.world.Node;
+//import life.game.classes.world.World;
 //import javafx.geometry.Point2D;
 //import javafx.scene.canvas.Canvas;
 //import javafx.scene.canvas.GraphicsContext;
