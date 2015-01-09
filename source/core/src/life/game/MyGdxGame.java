@@ -56,6 +56,8 @@ public class MyGdxGame extends ApplicationAdapter {
     public AnimalModelInstance follow;
 
     public Environment lights;
+    public CameraInputController cameraInputController;
+
     public PerspectiveCamera camera;
     public ModelBatch modelBatch;
 
@@ -76,6 +78,10 @@ public class MyGdxGame extends ApplicationAdapter {
         camera.update();
 
         instances = getModelInstances();
+
+        cameraInputController = new CameraInputController(camera);
+        Gdx.input.setInputProcessor(cameraInputController);
+        cameraInputController.scrollFactor = 5;
     }
 
 
@@ -83,25 +89,6 @@ public class MyGdxGame extends ApplicationAdapter {
     public void render() {
         Vector3 vector = new Vector3();
         follow.transform.getTranslation(vector);
-
-
-        //camera.position.set(vector.x -20, vector.y - 20, -30);
-        camera.lookAt(vector);
-        camera.update();
-
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            camera.position.add(new Vector3(5,0,0));
-            camera.update();
-        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            camera.position.add(new Vector3(-5,0,0));
-            camera.update();
-        }else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            camera.position.add(new Vector3(0, 5,0));
-            camera.update();
-        }else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            camera.position.add(new Vector3(0,-5,0));
-            camera.update();
-        }
 
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
