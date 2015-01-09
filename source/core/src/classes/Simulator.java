@@ -12,8 +12,6 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
-import ui.IRender;
-import ui.Main;
 
 import javax.swing.*;
 import java.util.List;
@@ -23,9 +21,8 @@ import java.util.stream.Collectors;
 public class Simulator extends Thread {
 
     private GraphicsContext uiContext;
-    private IRender renderer;
 
-    private Life following;
+
     private World world;
     private boolean isPlaying;
     private boolean isPaused;
@@ -44,12 +41,8 @@ public class Simulator extends Thread {
      */
     private double speed;
 
-    public Simulator(World world, IRender renderer, GraphicsContext uiContext, int width, int height) {
+    public Simulator(World world) {
         this.world = world;
-        this.renderer = renderer;
-        this.uiContext = uiContext;
-        this.width = width;
-        this.height = height;
 
         this.speed = 60;
     }
@@ -133,31 +126,30 @@ public class Simulator extends Thread {
      * Draw logic being executed each frame.
      */
     private void draw() {
-        Platform.runLater(() -> {
-            /// Debug UI.
-            uiContext.clearRect(0, 0, width, height);
-            SimDebugger.draw(uiContext);
-
-            // Measure performance.
-            long perfStart = System.nanoTime();
-
-
-            // UI.
-            if (isPaused) {
-                uiContext.save();
-                uiContext.setEffect(new DropShadow(5, 2, 2, Color.BLACK));
-                uiContext.setTextAlign(TextAlignment.CENTER);
-                uiContext.setGlobalAlpha(0.33);
-                uiContext.setFont(new Font(36));
-                uiContext.fillText("PAUSED", width / 2, height / 2);
-                uiContext.restore();
-            }
-
-            renderer.refresh();
-
-            perfomanceDrawMs = (System.nanoTime() - perfStart) / 1000000.0;
-            SimDebugger.<DebugGraph>getDebugObject("DRAW").addValue(perfomanceDrawMs);
-        });
+//        Platform.runLater(() -> {
+//            /// Debug UI.
+//            uiContext.clearRect(0, 0, width, height);
+//            SimDebugger.draw(uiContext);
+//
+//            // Measure performance.
+//            long perfStart = System.nanoTime();
+//
+//
+//            // UI.
+//            if (isPaused) {
+//                uiContext.save();
+//                uiContext.setEffect(new DropShadow(5, 2, 2, Color.BLACK));
+//                uiContext.setTextAlign(TextAlignment.CENTER);
+//                uiContext.setGlobalAlpha(0.33);
+//                uiContext.setFont(new Font(36));
+//                uiContext.fillText("PAUSED", width / 2, height / 2);
+//                uiContext.restore();
+//            }
+//
+//
+//            perfomanceDrawMs = (System.nanoTime() - perfStart) / 1000000.0;
+//            SimDebugger.<DebugGraph>getDebugObject("DRAW").addValue(perfomanceDrawMs);
+//        });
     }
 
     public void pause() { isPlaying = false; }
@@ -175,62 +167,5 @@ public class Simulator extends Thread {
         super.interrupt();
     }
 
-    public void registerKeys(Main main) {
-        main.getScene().setOnKeyPressed((key) -> {
-            switch (key.getCode()) {
-                case P:
-                    // Pause game.
-                    togglePause();
-                    break;
-                case EQUALS:
-                    // Increase FPS cap.
-                    if (key.isShiftDown()) speed += 5;
-                    else speed++;
-                    break;
-                case MINUS:
-                    // Decrease FPS cap.
-                    if (key.isShiftDown()) {
-                        if (speed <= 5) speed = 1;
-                        else speed -= 5;
-                    } else {
-                        if (speed <= 1) break;
-                        speed--;
-                    }
-                    break;
-                case ENTER:
-                    // Toggle fullscreen.
-                    if (!key.isAltDown()) break;
-                    main.getPrimaryStage().setFullScreen(!main.getPrimaryStage().isFullScreen());
-                    break;
-                case R:
-                    if (key.isShiftDown())
-                        main.setSelectedMap(null);
-                    main.restart();
-                    break;
-                case D:
-                    SimDebugger.setVisible(!SimDebugger.isVisible());
-                    break;
-                case LEFT:
-                    Node center = renderer.getCenter();
-                    renderer.setFollowing(null);
-                    renderer.setCenter(world.getNode(center.getX() - 2, center.getY()));
-                    break;
-                case RIGHT:
-                    center = renderer.getCenter();
-                    renderer.setFollowing(null);
-                    renderer.setCenter(world.getNode(center.getX() + 2, center.getY()));
-                    break;
-                case UP:
-                    center = renderer.getCenter();
-                    renderer.setFollowing(null);
-                    renderer.setCenter(world.getNode(center.getX(), center.getY() - 2));
-                    break;
-                case DOWN:
-                    center = renderer.getCenter();
-                    renderer.setFollowing(null);
-                    renderer.setCenter(world.getNode(center.getX(), center.getY() + 2));
-                    break;
-            }
-        });
-    }
+
 }
