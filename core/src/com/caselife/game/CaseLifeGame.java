@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
 import com.caselife.game.classes.Simulator;
@@ -40,6 +41,7 @@ public class CaseLifeGame extends ApplicationAdapter {
 	public AnimalModelInstance follow;
 
 	public Environment lights;
+    public CameraInputController cameraInputController;
 	public PerspectiveCamera camera;
 	public ModelBatch modelBatch;
 
@@ -72,6 +74,10 @@ public class CaseLifeGame extends ApplicationAdapter {
 		camera.far = 3000f;
 		camera.update();
 
+        cameraInputController = new CameraInputController(camera);
+        Gdx.input.setInputProcessor(cameraInputController);
+        cameraInputController.scrollFactor = 5;
+
 		instances = getModelInstances();
 	}
 
@@ -86,19 +92,6 @@ public class CaseLifeGame extends ApplicationAdapter {
 		camera.lookAt(vector);
 		camera.update();
 
-		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-			camera.position.add(new Vector3(5,0,0));
-			camera.update();
-		} else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-			camera.position.add(new Vector3(-5,0,0));
-			camera.update();
-		}else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-			camera.position.add(new Vector3(0, 5,0));
-			camera.update();
-		}else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-			camera.position.add(new Vector3(0,-5,0));
-			camera.update();
-		}
 
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
