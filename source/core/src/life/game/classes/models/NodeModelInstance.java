@@ -28,21 +28,21 @@ public class NodeModelInstance extends BaseModelInstance {
     static public NodeModelInstance createModelInstance(Node node) {
         ModelBuilder builder = new ModelBuilder();
         Color color = Color.DARK_GRAY;
-        float height = 8f;
+        float height = 35f;
 
         if (node.getLocationType().equals(LocationType.Land)) {
             color = Color.GRAY;
-            height = 2f;
+            height = 10f;
         } else if(node.getLocationType().equals(LocationType.Water)) {
             color = Color.LIGHT_GRAY;
-            height = 1f;
+            height = 0f;
         }
 
-        Model model = builder.createBox(1f, 1f, height, new Material(ColorAttribute.createDiffuse(color)), VertexAttributes.Usage.Position);
+        Model model = builder.createBox(5f, 5f, height, new Material(ColorAttribute.createDiffuse(color)), VertexAttributes.Usage.Position);
         return new NodeModelInstance(model, node);
     }
 
     public void update() {
-        this.transform.setTranslation(node.getX(), node.getY(), 0);
+        this.transform.setTranslation(node.getX() * 5, node.getY() * 5, 0);
     }
 }

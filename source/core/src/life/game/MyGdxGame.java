@@ -62,16 +62,17 @@ public class MyGdxGame extends ApplicationAdapter {
     @Override
     public void create() {
         lights = new Environment();
-        lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
-        lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
+        lights.set(new ColorAttribute(ColorAttribute.AmbientLight, Color.WHITE));
+        lights.add(new DirectionalLight().set(1f, 1f, 1f, -1f, -0.8f, -0.2f));
 
         modelBatch = new ModelBatch();
 
         camera = new PerspectiveCamera(70, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.position.set(105f, 50f, -80f);
         camera.lookAt(50f, 50f, 0);
+        camera.rotate(270, 1, 0, 0);
         camera.near = 1f;
-        camera.far = 300f;
+        camera.far = 3000f;
         camera.update();
 
         instances = getModelInstances();
@@ -83,16 +84,24 @@ public class MyGdxGame extends ApplicationAdapter {
         Vector3 vector = new Vector3();
         follow.transform.getTranslation(vector);
 
-        camera.position.set(vector.x +10, vector.y+10, -10);
+
+        //camera.position.set(vector.x -20, vector.y - 20, -30);
         camera.lookAt(vector);
         camera.update();
-//        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-//            camera.translate(5,0,0);
-//            camera.update();
-//        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-//            camera.translate(-5,0,0);
-//            camera.update();
-//        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            camera.position.add(new Vector3(5,0,0));
+            camera.update();
+        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            camera.position.add(new Vector3(-5,0,0));
+            camera.update();
+        }else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            camera.position.add(new Vector3(0, 5,0));
+            camera.update();
+        }else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            camera.position.add(new Vector3(0,-5,0));
+            camera.update();
+        }
 
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);

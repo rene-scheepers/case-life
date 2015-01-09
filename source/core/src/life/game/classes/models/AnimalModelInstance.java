@@ -22,7 +22,7 @@ public class AnimalModelInstance extends BaseModelInstance {
 
     static public AnimalModelInstance createModelInstance(Animal animal) {
         ModelBuilder builder = new ModelBuilder();
-        Model model = builder.createBox(1f, 1f, 1f, new Material(ColorAttribute.createDiffuse(Color.RED)), VertexAttributes.Usage.Position);
+        Model model = builder.createBox(5f, 5f, 5f, new Material(ColorAttribute.createDiffuse(Color.RED)), VertexAttributes.Usage.Position);
         return new AnimalModelInstance(model, animal);
     }
 
@@ -32,6 +32,6 @@ public class AnimalModelInstance extends BaseModelInstance {
 
     public void update() {
         Node node = animal.getNode();
-        this.transform.setTranslation(node.getX(), node.getY(), -2);
+        this.transform.setTranslation(node.getX() * 5, node.getY() * 5, -8);
     }
 }
