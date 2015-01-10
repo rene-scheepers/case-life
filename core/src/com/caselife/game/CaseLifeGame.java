@@ -2,53 +2,59 @@ package com.caselife.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
-import com.caselife.game.classes.Simulator;
-import com.caselife.game.classes.life.Animal;
-import com.caselife.game.classes.life.Life;
-import com.caselife.game.classes.life.Plant;
-import com.caselife.game.classes.models.*;
-import com.caselife.game.classes.models.AnimalModelContainer;
-import com.caselife.game.classes.models.NodeModelContainer;
-import com.caselife.game.classes.world.Node;
-import com.caselife.game.classes.world.World;
+import com.caselife.game.camera.StrategyCamera;
+import com.caselife.game.camera.StrategyCameraInputController;
+import com.caselife.game.life.Animal;
+import com.caselife.game.life.Life;
+import com.caselife.game.life.Plant;
+import com.caselife.game.models.AnimalModelContainer;
+import com.caselife.game.models.ModelContainer;
+import com.caselife.game.models.NodeModelContainer;
+import com.caselife.game.models.PlantModelContainer;
+import com.caselife.game.world.Node;
+import com.caselife.game.world.Simulator;
+import com.caselife.game.world.World;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 public class CaseLifeGame extends ApplicationAdapter {
 	private World world;
 	private Simulator simulator;
 
-	public CaseLifeGame() {
-	}
-
-	public ArrayList<ModelContainer> containers;
+	public List<ModelContainer> containers;
 	public AnimalModelContainer follow;
 
 	public Environment lights;
     public StrategyCameraInputController cameraInputController;
 	public StrategyCamera camera;
 	public ModelBatch modelBatch;
+	public AssetManager assets;
+
+	public void loadContent() {
+		if (assets == null)
+			assets = new AssetManager();
+		else
+			assets.clear();
+
+		assets.load("maps/small.png", Texture.class);
+		assets.finishLoading();
+	}
 
 	@Override
 	public void create() {
-		File file = Gdx.files.internal("maps\\small.png").file();
-		BufferedImage image = null;
-		try {
-			image = ImageIO.read(file);
-		} catch (Exception ex) {
+		loadContent();
+		Texture texture = assets.get("maps/small.png");
 
-		}
-
-		world = World.instantiateWorldFromImage(image);
+		world = World.instantiateWorldFromImage(texture);
 		simulator = new Simulator(world);
 		simulator.setSpeed(60);
 		simulator.start();
@@ -87,26 +93,26 @@ public class CaseLifeGame extends ApplicationAdapter {
 		modelBatch.end();
 	}
 
-	private ArrayList<ModelContainer> getModelInstances() {
-		ArrayList<ModelContainer> instances = new ArrayList();
+	private List<ModelContainer> getModelInstances() {
+		List<ModelContainer> instances = new ArrayList();
 
 		Node[][] nodes = world.getNodes();
 		for (int x = 0; x < nodes.length; x++) {
 			for (int y = 0; y < nodes[x].length; y++) {
+				// Add node.
 				ModelContainer instance = new NodeModelContainer(nodes[x][y]);
 				instances.add(instance);
-			}
-		}
 
-		for (Life life : world.getLives()) {
-			ModelContainer instance = null;
-			if (life instanceof Animal) {
-				instance = new AnimalModelContainer((Animal) life);
-			} else if (life instanceof Plant) {
-				instance = new PlantModelContainer((Plant) life);
+				// Add life.
+				Life life = nodes[x][y].getHolder();
+				if (life != null) {
+					if (life instanceof Animal) {
+						instances.add(new AnimalModelContainer((Animal) life));
+					} else if (life instanceof Plant) {
+						instances.add(new PlantModelContainer((Plant) life));
+					}
+				}
 			}
-
-			instances.add(instance);
 		}
 
 		return instances;
