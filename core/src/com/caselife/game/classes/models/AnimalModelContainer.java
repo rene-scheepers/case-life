@@ -11,35 +11,34 @@ import com.badlogic.gdx.math.Vector3;
 import com.caselife.game.classes.life.Animal;
 import com.caselife.game.classes.world.Node;
 
-public class AnimalModelInstance extends BaseModelInstance {
+public class AnimalModelContainer extends ModelContainer {
 
-    private Animal animal;
+    private final Animal animal;
 
-    public AnimalModelInstance(Model model, Animal animal) {
-        super(model);
+    private ModelInstance instance;
 
+    public AnimalModelContainer(Animal animal) {
         this.animal = animal;
-    }
 
-    static public AnimalModelInstance createModelInstance(Animal animal) {
-        ModelBuilder builder = new ModelBuilder();
-        Model model = builder.createBox(5f, 5f, 5f, new Material(ColorAttribute.createDiffuse(Color.RED)), VertexAttributes.Usage.Position);
+        Model model = modelBuilder.createBox(5f, 5f, 5f, new Material(ColorAttribute.createDiffuse(Color.RED)), VertexAttributes.Usage.Position);
 
-        AnimalModelInstance instance = new AnimalModelInstance(model, animal);
+        instance = new ModelInstance(model);
         instance.transform.trn(0, 12.5f, 0);
-
-        return instance;
     }
 
     public Animal getAnimal() {
         return animal;
     }
 
+    public ModelInstance getModelInstance() {
+        return instance;
+    }
+
     public void update() {
         Vector3 vector = new Vector3();
-        this.transform.getTranslation(vector);
+        instance.transform.getTranslation(vector);
 
         Node node = animal.getNode();
-        this.transform.setTranslation(node.getX() * 5, vector.y, node.getY() * 5);
+        instance.transform.setTranslation(node.getX() * 5, vector.y, node.getY() * 5);
     }
 }

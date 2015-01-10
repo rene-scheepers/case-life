@@ -14,7 +14,6 @@ public class StrategyCamera extends PerspectiveCamera
 
     @Override
     public void update() {
-
         position.x = Math.max(-20, position.x);
         position.x = Math.min(520, position.x);
 
@@ -23,7 +22,6 @@ public class StrategyCamera extends PerspectiveCamera
 
         position.z = Math.max(-20, position.z);
         position.z = Math.min(520, position.z);
-
 
         super.update();
 

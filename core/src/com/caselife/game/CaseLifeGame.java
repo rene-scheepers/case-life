@@ -4,7 +4,6 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
@@ -13,10 +12,9 @@ import com.caselife.game.classes.Simulator;
 import com.caselife.game.classes.life.Animal;
 import com.caselife.game.classes.life.Life;
 import com.caselife.game.classes.life.Plant;
-import com.caselife.game.classes.models.AnimalModelInstance;
-import com.caselife.game.classes.models.BaseModelInstance;
-import com.caselife.game.classes.models.NodeModelInstance;
-import com.caselife.game.classes.models.PlantModelInstance;
+import com.caselife.game.classes.models.*;
+import com.caselife.game.classes.models.AnimalModelContainer;
+import com.caselife.game.classes.models.NodeModelContainer;
 import com.caselife.game.classes.world.Node;
 import com.caselife.game.classes.world.World;
 
@@ -32,8 +30,8 @@ public class CaseLifeGame extends ApplicationAdapter {
 	public CaseLifeGame() {
 	}
 
-	public ArrayList<BaseModelInstance> instances;
-	public AnimalModelInstance follow;
+	public ArrayList<ModelContainer> containers;
+	public AnimalModelContainer follow;
 
 	public Environment lights;
     public StrategyCameraInputController cameraInputController;
@@ -69,7 +67,7 @@ public class CaseLifeGame extends ApplicationAdapter {
         cameraInputController = new StrategyCameraInputController(camera);
         Gdx.input.setInputProcessor(cameraInputController);
 
-		instances = getModelInstances();
+        containers = getModelInstances();
 	}
 
 
@@ -79,35 +77,32 @@ public class CaseLifeGame extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
         Gdx.gl.glClearColor(0.9f,0.9f,0.9f,0);
 
-		for (BaseModelInstance instance : instances) {
+		for (ModelContainer instance : containers) {
 			instance.update();
 		}
 
 		modelBatch.begin(camera);
-		modelBatch.render(instances);
+		modelBatch.render(containers);
 		modelBatch.end();
 	}
 
-	private ArrayList<BaseModelInstance> getModelInstances() {
-		ArrayList<BaseModelInstance> instances = new ArrayList();
+	private ArrayList<ModelContainer> getModelInstances() {
+		ArrayList<ModelContainer> instances = new ArrayList();
 
 		Node[][] nodes = world.getNodes();
 		for (int x = 0; x < nodes.length; x++) {
 			for (int y = 0; y < nodes[x].length; y++) {
-				BaseModelInstance instance = NodeModelInstance.createModelInstance(nodes[x][y]);
+				ModelContainer instance = new NodeModelContainer(nodes[x][y]);
 				instances.add(instance);
 			}
 		}
 
 		for (Life life : world.getLives()) {
-			BaseModelInstance instance = null;
+			ModelContainer instance = null;
 			if (life instanceof Animal) {
-				instance = AnimalModelInstance.createModelInstance((Animal) life);
-				if (follow == null) {
-					follow = (AnimalModelInstance)instance;
-				}
+				instance = new AnimalModelContainer((Animal) life);
 			} else if (life instanceof Plant) {
-				instance = PlantModelInstance.createModelInstance((Plant) life);
+				instance = new PlantModelContainer((Plant) life);
 			}
 
 			instances.add(instance);

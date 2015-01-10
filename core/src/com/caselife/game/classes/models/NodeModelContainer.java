@@ -3,30 +3,22 @@ package com.caselife.game.classes.models;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.Material;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
-import com.caselife.game.classes.life.Animal;
 import com.caselife.game.classes.world.LocationType;
 import com.caselife.game.classes.world.Node;
 import com.badlogic.gdx.graphics.g3d.Model;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
 
-public class NodeModelInstance extends BaseModelInstance {
+public class NodeModelContainer extends ModelContainer {
 
-    private Node node;
+    private final Node node;
 
-    public NodeModelInstance(Model model, Node node) {
-        super(model);
+    private ModelInstance instance;
 
+    public NodeModelContainer(Node node) {
         this.node = node;
-    }
 
-    public Node getNode() {
-        return node;
-    }
-
-    static public NodeModelInstance createModelInstance(Node node) {
-        ModelBuilder builder = new ModelBuilder();
         Color color = Color.GRAY;
         float height = 20f;
 
@@ -38,15 +30,20 @@ public class NodeModelInstance extends BaseModelInstance {
             height = 0f;
         }
 
-        Model model = builder.createBox(5f,height, 5f, new Material(ColorAttribute.createDiffuse(color)), VertexAttributes.Usage.Position);
-        NodeModelInstance instance = new NodeModelInstance(model, node);
+        Model model = modelBuilder.createBox(5f,height, 5f, new Material(ColorAttribute.createDiffuse(color)), VertexAttributes.Usage.Position);
+        instance = new ModelInstance(model);
 
         instance.transform.setTranslation(node.getX() * 5, height / 2, node.getY() * 5);
+    }
 
+    public Node getNode() {
+        return node;
+    }
+
+    public ModelInstance getModelInstance() {
         return instance;
     }
 
     public void update() {
-        //this.transform.setTranslation(node.getX() * 5, node.getY() * 5, 0);
     }
 }
