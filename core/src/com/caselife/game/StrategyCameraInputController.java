@@ -18,22 +18,4 @@ public class StrategyCameraInputController extends CameraInputController {
         this.translateUnits = TRANSLATE_UNITS;
 
     }
-
-    @Override
-    public void update() {
-        Vector3 currentViewPosition = new Vector3();
-
-        this.camera.view.getTranslation(currentViewPosition);
-        System.out.println(currentViewPosition);
-        if (currentViewPosition.y < 0) {
-            System.out.println("WOLLW");
-        }
-
-        if (this.camera.position.y < 10) {
-            this.camera.position.y = 10;
-            System.out.println("LEL NUB");
-
-        }
-        super.update();
-    }
 }
