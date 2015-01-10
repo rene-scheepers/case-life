@@ -2,7 +2,6 @@ package com.caselife.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -87,14 +86,15 @@ public class CaseLifeGame extends ApplicationAdapter {
 		Vector3 vector = new Vector3();
 		follow.transform.getTranslation(vector);
 
-
 		//camera.position.set(vector.x -20, vector.y - 20, -30);
 		camera.lookAt(vector);
 		camera.update();
 
+        Gdx.gl.glClearColor(0.9f,0.9f,0.9f,0);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
-		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+        Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
 
 		for (BaseModelInstance instance : instances) {
 			instance.update();

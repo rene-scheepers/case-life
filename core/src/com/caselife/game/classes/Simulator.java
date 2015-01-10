@@ -99,11 +99,16 @@ public class Simulator extends Thread {
         }
     }
 
+    public void input() {
+        // Do your input.
+    }
+
     /**
      * Update logic being executed each frame.
      */
     private void simulate() {
         long perfStart = System.nanoTime();
+        input();
         world.simulate();
         perfomanceSimulateMs = (System.nanoTime() - perfStart) / 1000000.0;
         SimDebugger.<DebugGraph>getDebugObject("SIMULATE").addValue(perfomanceSimulateMs);
