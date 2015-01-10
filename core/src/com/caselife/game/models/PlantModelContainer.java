@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.BoundingBox;
 import com.caselife.game.life.Plant;
 import com.caselife.game.world.Node;
 
@@ -20,9 +21,10 @@ public class PlantModelContainer extends ModelContainer {
 
         this.plant = plant;
 
-        Model model = modelBuilder.createBox(5f, 5f, 5f, new Material(ColorAttribute.createSpecular(Color.GREEN)), VertexAttributes.Usage.Position);
+        Model model = modelBuilder.createBox(5f, 35f, 5f, new Material(ColorAttribute.createDiffuse(Color.GREEN)), VertexAttributes.Usage.Position);
         instance = new ModelInstance(model);
-        instance.transform.trn(0, 12.5f, 0);
+
+        instance.transform.trn(0, 27.5f, 0);
     }
 
     public Plant getPlant() {
@@ -34,12 +36,16 @@ public class PlantModelContainer extends ModelContainer {
     }
 
     public void update() {
-        Color color = new Color(0, (float) plant.getEnergy() / (float) Plant.MAX_ENERGY, 0, 1);
-        Node node = plant.getNode();
-        Vector3 vector = new Vector3();
+        float percentage = (float)plant.getEnergy() / (float)Plant.MAX_ENERGY;
+        float height = 35 * percentage;
 
-        instance.transform.getTranslation(vector);
-        instance.materials.get(0).set(ColorAttribute.createDiffuse(color));
-        instance.transform.setTranslation(node.getX() * 5, vector.y, node.getY() * 5);
+        if (height > 0) {
+            Node node = plant.getNode();
+            instance = new ModelInstance(modelBuilder.createBox(5f, height, 5f, new Material(ColorAttribute.createDiffuse(Color.GREEN)), VertexAttributes.Usage.Position));
+
+            instance.transform.setTranslation(node.getX() * 5, 10 + height / 2, node.getY() * 5);
+        } else {
+            instance = null;
+        }
     }
 }
