@@ -17,6 +17,9 @@ abstract public class ModelContainer implements RenderableProvider {
 
     @Override
     public void getRenderables(Array<Renderable> renderables, Pool<Renderable> pool) {
-        getModelInstance().getRenderables(renderables, pool);
+        ModelInstance modelInstance = getModelInstance();
+        if (modelInstance != null) {
+            modelInstance.getRenderables(renderables, pool);
+        }
     }
 }
