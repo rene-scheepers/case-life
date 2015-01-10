@@ -81,6 +81,7 @@ public class CaseLifeGame extends ApplicationAdapter {
 			instance.update();
 		}
 
+        cameraInputController.update();
 		modelBatch.begin(camera);
 		modelBatch.render(containers);
 		modelBatch.end();
