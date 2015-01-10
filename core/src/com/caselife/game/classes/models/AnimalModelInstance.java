@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.math.Vector3;
 import com.caselife.game.classes.life.Animal;
 import com.caselife.game.classes.world.Node;
 
@@ -23,7 +24,11 @@ public class AnimalModelInstance extends BaseModelInstance {
     static public AnimalModelInstance createModelInstance(Animal animal) {
         ModelBuilder builder = new ModelBuilder();
         Model model = builder.createBox(5f, 5f, 5f, new Material(ColorAttribute.createDiffuse(Color.RED)), VertexAttributes.Usage.Position);
-        return new AnimalModelInstance(model, animal);
+
+        AnimalModelInstance instance = new AnimalModelInstance(model, animal);
+        instance.transform.trn(0, 12.5f, 0);
+
+        return instance;
     }
 
     public Animal getAnimal() {
@@ -31,7 +36,10 @@ public class AnimalModelInstance extends BaseModelInstance {
     }
 
     public void update() {
+        Vector3 vector = new Vector3();
+        this.transform.getTranslation(vector);
+
         Node node = animal.getNode();
-        this.transform.setTranslation(node.getX() * 5, node.getY() * 5, -8);
+        this.transform.setTranslation(node.getX() * 5, vector.y, node.getY() * 5);
     }
 }

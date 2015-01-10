@@ -32,14 +32,21 @@ public class PlantModelInstance extends BaseModelInstance {
     static public PlantModelInstance createModelInstance(Plant plant) {
         ModelBuilder builder = new ModelBuilder();
         Model model = builder.createBox(5f, 5f, 5f, new Material(ColorAttribute.createSpecular(Color.GREEN)), VertexAttributes.Usage.Position);
-        return new PlantModelInstance(model, plant);
+        PlantModelInstance instance = new PlantModelInstance(model, plant);
+
+        instance.transform.trn(0, 12.5f, 0);
+
+        return instance;
     }
 
     public void update() {
-        Color color = new Color(0, (float)plant.getEnergy() / (float)Plant.MAX_ENERGY, 0, 1);
+        Color color = new Color(0, (float) plant.getEnergy() / (float) Plant.MAX_ENERGY, 0, 1);
         Node node = plant.getNode();
 
+        Vector3 vector = new Vector3();
+        this.transform.getTranslation(vector);
+
         this.materials.get(0).set(ColorAttribute.createDiffuse(color));
-        this.transform.setTranslation(node.getX() * 5, node.getY() * 5, -8f);
+        this.transform.setTranslation(node.getX() * 5, vector.y, node.getY() * 5);
     }
 }

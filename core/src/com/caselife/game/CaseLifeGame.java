@@ -9,9 +9,6 @@ import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
-import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
-import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
-import com.badlogic.gdx.math.Vector3;
 import com.caselife.game.classes.Simulator;
 import com.caselife.game.classes.life.Animal;
 import com.caselife.game.classes.life.Life;
@@ -33,15 +30,14 @@ public class CaseLifeGame extends ApplicationAdapter {
 	private Simulator simulator;
 
 	public CaseLifeGame() {
-
 	}
 
 	public ArrayList<BaseModelInstance> instances;
 	public AnimalModelInstance follow;
 
 	public Environment lights;
-    public CameraInputController cameraInputController;
-	public PerspectiveCamera camera;
+    public StrategyCameraInputController cameraInputController;
+	public StrategyCamera camera;
 	public ModelBatch modelBatch;
 
 	@Override
@@ -65,17 +61,13 @@ public class CaseLifeGame extends ApplicationAdapter {
 
 		modelBatch = new ModelBatch();
 
-		camera = new PerspectiveCamera(70, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		camera.position.set(105f, 50f, -80f);
-		camera.lookAt(50f, 50f, 0);
-		camera.rotate(270, 1, 0, 0);
-		camera.near = 1f;
-		camera.far = 3000f;
+		camera = new StrategyCamera(90, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        camera.position.set(world.getWidth() * 5 / 2, 150, world.getHeight() * 5);
+
 		camera.update();
 
-        cameraInputController = new CameraInputController(camera);
+        cameraInputController = new StrategyCameraInputController(camera);
         Gdx.input.setInputProcessor(cameraInputController);
-        cameraInputController.scrollFactor = 5;
 
 		instances = getModelInstances();
 	}
@@ -83,18 +75,9 @@ public class CaseLifeGame extends ApplicationAdapter {
 
 	@Override
 	public void render() {
-		Vector3 vector = new Vector3();
-		follow.transform.getTranslation(vector);
-
-		//camera.position.set(vector.x -20, vector.y - 20, -30);
-		camera.lookAt(vector);
-		camera.update();
-
+		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
         Gdx.gl.glClearColor(0.9f,0.9f,0.9f,0);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-
-        Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
 
 		for (BaseModelInstance instance : instances) {
 			instance.update();
@@ -107,7 +90,6 @@ public class CaseLifeGame extends ApplicationAdapter {
 
 	private ArrayList<BaseModelInstance> getModelInstances() {
 		ArrayList<BaseModelInstance> instances = new ArrayList();
-		ModelBuilder builder = new ModelBuilder();
 
 		Node[][] nodes = world.getNodes();
 		for (int x = 0; x < nodes.length; x++) {
