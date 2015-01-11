@@ -69,7 +69,6 @@ public class StrategyCameraInputController extends CameraInputController {
                 camera.update();
             }
         }
-        super.update();
     }
 
     @Override
@@ -112,7 +111,7 @@ public class StrategyCameraInputController extends CameraInputController {
                 break;
         }
 
-        return super.keyDown(keycode);
+        return super.keyUp(keycode);
     }
 
 }

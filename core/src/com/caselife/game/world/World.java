@@ -27,23 +27,6 @@ public class World implements Serializable, ISimulate {
         width = nodes.length;
         height = nodes[0].length;
 
-//        for (int x = 0; x < nodes.length; x++) {
-//            for (int y = 0; y < nodes[x].length; y++) {
-//                Node node = nodes[x][y];
-//
-//                node.addAdjacentNode(getNode(x - 1, y + 1));
-//                node.addAdjacentNode(getNode(x, y + 1));
-//                node.addAdjacentNode(getNode(x + 1, y + 1));
-//
-//                node.addAdjacentNode(getNode(x - 1, y));
-//                node.addAdjacentNode(getNode(x + 1, y));
-//
-//                node.addAdjacentNode(getNode(x - 1, y - 1));
-//                node.addAdjacentNode(getNode(x, y - 1));
-//                node.addAdjacentNode(getNode(x + 1, y - 1));
-//            }
-//        }
-
         pathfinder = new AStarPathfinder();
     }
 
