@@ -6,10 +6,11 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g3d.Environment;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.VertexAttributes;
+import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.caselife.game.camera.StrategyCamera;
 import com.caselife.game.camera.StrategyCameraInputController;
 import com.caselife.game.life.Animal;
@@ -38,6 +39,8 @@ public class CaseLifeGame extends ApplicationAdapter {
 	public StrategyCamera camera;
 	public ModelBatch modelBatch;
 	public AssetManager assets;
+
+    public ModelInstance xyz;
 
 	public void loadContent() {
 		if (assets == null)
@@ -74,6 +77,10 @@ public class CaseLifeGame extends ApplicationAdapter {
         Gdx.input.setInputProcessor(cameraInputController);
 
         containers = getModelInstances();
+
+        ModelBuilder builder = new ModelBuilder();
+        Model model = builder.createXYZCoordinates(200f, new Material(ColorAttribute.createDiffuse(Color.GREEN)), VertexAttributes.Usage.Position);
+        xyz = new ModelInstance(model, 0f, 0f, 0f);
 	}
 
 
@@ -85,11 +92,12 @@ public class CaseLifeGame extends ApplicationAdapter {
 
 		for (ModelContainer instance : containers) {
 			instance.update();
-		}
+    	}
 
         cameraInputController.update();
 		modelBatch.begin(camera);
-		modelBatch.render(containers);
+		modelBatch.render(containers, lights);
+        modelBatch.render(xyz);
 		modelBatch.end();
 	}
 

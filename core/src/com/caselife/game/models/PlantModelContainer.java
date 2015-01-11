@@ -42,7 +42,6 @@ public class PlantModelContainer extends ModelContainer {
         if (height > 0) {
             Node node = plant.getNode();
             instance = new ModelInstance(modelBuilder.createBox(5f, height, 5f, new Material(ColorAttribute.createDiffuse(Color.GREEN)), VertexAttributes.Usage.Position));
-
             instance.transform.setTranslation(node.getX() * 5, 10 + height / 2, node.getY() * 5);
         } else {
             instance = null;
