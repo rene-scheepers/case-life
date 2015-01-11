@@ -15,14 +15,14 @@ public class AnimalModelContainer extends ModelContainer {
     private final Animal animal;
 
     private ModelInstance instance;
+    private float scale;
 
-    public AnimalModelContainer(Animal animal) {
+    public AnimalModelContainer(Animal animal, Model model, float scale) {
         this.animal = animal;
+        Node node = animal.getNode();
+        this.scale = scale;
 
-        Model model = modelBuilder.createBox(5f, 5f, 5f, new Material(ColorAttribute.createDiffuse(Color.RED)), VertexAttributes.Usage.Position);
-
-        instance = new ModelInstance(model);
-        instance.transform.trn(0, 12.5f, 0);
+        this.instance = new ModelInstance(model, node.getX() * scale, 13.5f, node.getY() * scale);
     }
 
     public Animal getAnimal() {
@@ -38,6 +38,6 @@ public class AnimalModelContainer extends ModelContainer {
         instance.transform.getTranslation(vector);
 
         Node node = animal.getNode();
-        instance.transform.setTranslation(node.getX() * 5, vector.y, node.getY() * 5);
+        instance.transform.setTranslation(node.getX() * scale, vector.y, node.getY() * scale);
     }
 }

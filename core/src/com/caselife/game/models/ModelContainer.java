@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 
-abstract public class ModelContainer implements RenderableProvider {
+abstract public class ModelContainer {
 
     static protected ModelBuilder modelBuilder = new ModelBuilder();
 
@@ -15,11 +15,4 @@ abstract public class ModelContainer implements RenderableProvider {
 
     abstract public ModelInstance getModelInstance();
 
-    @Override
-    public void getRenderables(Array<Renderable> renderables, Pool<Renderable> pool) {
-        ModelInstance modelInstance = getModelInstance();
-        if (modelInstance != null) {
-            modelInstance.getRenderables(renderables, pool);
-        }
-    }
 }

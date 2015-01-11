@@ -44,5 +44,6 @@ public class NodeModelContainer extends ModelContainer {
     }
 
     public void update() {
+        //instance = null;
     }
 }
