@@ -37,12 +37,12 @@ To-Do
     * [ ] Zoom
     * [x] Follow
     * [x] Scaling
-  * [ ] 3d world
-    * [ ] Camera
+  * [x] 3d world
+    * [x] Camera
       * [x] Follow movement(animals, plants, etc)
-      * [ ] Zoom
-      * [ ] Rotation
-      * [ ] Movement
+      * [x] Zoom
+      * [x] Rotation
+      * [x] Movement
 * [ ] Random world generator
 * [ ] User override on life
 * [ ] Saving/loading turns
