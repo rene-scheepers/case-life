@@ -22,9 +22,9 @@ public class TopDownCameraInputController extends InputAdapter {
     private boolean upKeyPressed;
     private boolean downKeyPressed;
 
-    private OrthographicCamera camera;
+    private TopDownCamera camera;
 
-    public TopDownCameraInputController(OrthographicCamera camera) {
+    public TopDownCameraInputController(TopDownCamera camera) {
         this.camera = camera;
     }
 
@@ -32,19 +32,19 @@ public class TopDownCameraInputController extends InputAdapter {
     {
         if (leftKeyPressed || rightKeyPressed || upKeyPressed || downKeyPressed || zoomInPressed || zoomOutPressed) {
             if (leftKeyPressed) {
-                camera.translate(-5f, 0);
+                camera.translate(-5f * camera.zoom * 5, 0);
             }
 
             if (rightKeyPressed) {
-                camera.translate(5f, 0);
+                camera.translate(5f * camera.zoom * 5, 0);
             }
 
             if (upKeyPressed) {
-                camera.translate(0, 5f);
+                camera.translate(0, 5f * camera.zoom * 5);
             }
 
             if (downKeyPressed) {
-                camera.translate(0, -5f);
+                camera.translate(0, -5f * camera.zoom * 5);
             }
 
             if (zoomInPressed) {

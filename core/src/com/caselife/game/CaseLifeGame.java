@@ -54,7 +54,7 @@ public class CaseLifeGame extends ApplicationAdapter {
         spriteBatch = new SpriteBatch();
 
         renderer3d = new com.caselife.game.render3d.GameRenderer(world, simulator);
-        renderer2d = new GameRenderer(world, simulator);
+        renderer = renderer2d = new GameRenderer(world, simulator);
     }
 
     @Override
@@ -82,10 +82,16 @@ public class CaseLifeGame extends ApplicationAdapter {
 
     private void renderDebug() {
         String debugText = String.format("FPS: %s\r\nVertices: %s\r\nDraw calls: %s", Gdx.graphics.getFramesPerSecond(), GLProfiler.vertexCount.total, GLProfiler.drawCalls);
+        if (renderer instanceof GameRenderer) {
+            debugText += "\r\n2d Rendering";
+        } else if (renderer instanceof com.caselife.game.render3d.GameRenderer) {
+            debugText += "\r\n3d Rendering";
+        }
+
         BitmapFont font = new BitmapFont();
         font.setColor(Color.BLACK);
         spriteBatch.begin();
-        font.drawMultiLine(spriteBatch, debugText, 10, 50);
+        font.drawMultiLine(spriteBatch, debugText, 10, 75);
         spriteBatch.end();
     }
 

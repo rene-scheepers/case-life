@@ -20,6 +20,7 @@ import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Matrix4;
 import com.caselife.game.CaseLifeGame;
 import com.caselife.game.Renderer;
+import com.caselife.game.render2d.camera.TopDownCamera;
 import com.caselife.game.render2d.camera.TopDownCameraInputController;
 import com.caselife.logic.Simulator;
 import com.caselife.logic.life.Animal;
@@ -37,7 +38,8 @@ public class GameRenderer implements Renderer {
     private TopDownCameraInputController cameraInputController;
     private SpriteBatch spriteBatch;
     private World world;
-    public OrthographicCamera camera;
+    private AssetManager assetManager;
+    private TopDownCamera camera;
     private TiledMap tiledMap;
     private MapRenderer renderer;
     private TiledMapTileLayer lifeLayer;
@@ -47,7 +49,7 @@ public class GameRenderer implements Renderer {
         this.world = world;
         tiledMap = new TiledMap();
         renderer = new OrthogonalTiledMapRenderer(tiledMap);
-        camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        camera = new TopDownCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), world, 32);
 
         cameraInputController = new TopDownCameraInputController(camera);
 
