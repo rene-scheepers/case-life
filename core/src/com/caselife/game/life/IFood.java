@@ -9,5 +9,9 @@ public interface IFood {
      */
     public int getEaten();
 
+    /**
+     *
+     * @return
+     */
     public int getEnergy();
 }

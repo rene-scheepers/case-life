@@ -17,8 +17,6 @@ public class Animal extends Life implements IAnimal {
 
     private int energy;
 
-    private int age;
-
     private World world;
 
     private Path path;
@@ -53,10 +51,6 @@ public class Animal extends Life implements IAnimal {
         return world.getNodeForLife(this);
     }
 
-    public int getAge() {
-        return age;
-    }
-
     /**
      * Hunger
      * Hunger is the current(energy) percentage of the total possible(stamina).
@@ -89,7 +83,6 @@ public class Animal extends Life implements IAnimal {
      * Speed
      *
      * @return The amount of nodes an animal can move in a single turn.
-     * @TODO WRITE THIS.
      */
     public int getSpeed() {
         int speed = getWeight() / 50;
@@ -118,6 +111,13 @@ public class Animal extends Life implements IAnimal {
 
     private int wait;
 
+    /**
+     * Gets two-dimensional array for each node in the world with the cost.
+     * -1 for non-traversable nodes.
+     * >= 0 for traversable nodes.
+     *
+     * @return
+     */
     private double[][] getMostRecentValueMap() {
         //return valueMap;
 
@@ -149,7 +149,6 @@ public class Animal extends Life implements IAnimal {
      * @return The path with the steps to setFollowing to reach the target.
      */
     private Path getPath(Node target) {
-        long time = System.currentTimeMillis();
         Path path = pathfinder.getPath(getMostRecentValueMap(), getNode(), target);
 
         return path;
@@ -227,6 +226,12 @@ public class Animal extends Life implements IAnimal {
         return false;
     }
 
+    /**
+     * Checks if the animal can propagate with the given life.
+     *
+     * @param otherLife
+     * @return TRUE if the animal can mate with the other life object.
+     */
     public boolean canPropagateWith(Life otherLife) {
         if (otherLife instanceof Animal) {
             return canPropagateWith(((Animal) otherLife));
@@ -326,21 +331,21 @@ public class Animal extends Life implements IAnimal {
         List<Node> sources = new ArrayList();
         for (Life life : world.getLives()) {
             if (isFoodSource(life)) {
-                boolean registerd = false;
+                boolean registered = false;
                 for (int i = 0; i < pathfinder.getRegisteredPaths().size(); i++) {
                     Path path = pathfinder.getRegisteredPaths().get(i);
                     if (path == null) {
                         pathfinder.unRegisterPath(path);
                     } else {
                         if (life.getNode().equals(path.getTarget())) {
-                            registerd = true;
+                            registered = true;
                             break;
                         }
                     }
                 }
 
 
-                if (!registerd) {
+                if (!registered) {
                     sources.add(life.getNode());
                 }
             }
@@ -352,13 +357,7 @@ public class Animal extends Life implements IAnimal {
                 @Override
                 public int compare(Node o1, Node o2) {
                     Double distance1 = world.getDiagonalDistance(current, o1) - o1.getHolder().getEnergy() * 0.1;
-//                    if (o1.getPathsLeadingHere().size() > 0) {
-//                        distance1 += 1000;
-//                    }
                     Double distance2 = world.getDiagonalDistance(current, o2) - o2.getHolder().getEnergy() * 0.1;
-//                    if (o2.getPathsLeadingHere().size() > 0) {
-//                        distance2 += 1000;
-//                    }
                     return Double.compare(distance1, distance2);
                 }
             });
@@ -373,6 +372,11 @@ public class Animal extends Life implements IAnimal {
         return null;
     }
 
+    /**
+     * Find shortest path to propagator.
+     *
+     * @return
+     */
     public Path findNearestPropagator() {
         Node current = getNode();
 
@@ -424,7 +428,7 @@ public class Animal extends Life implements IAnimal {
     /**
      * Reproduces with another animal.
      *
-     * @param animal
+     * @param animal Other animal to propagate with.
      * @return
      */
     @Override
@@ -437,7 +441,6 @@ public class Animal extends Life implements IAnimal {
         Genetics dna = Genetics.getPropagatingGenetics(this.getGenetics(), animal.getGenetics());
         Animal child = new Animal(world, pathfinder, dna, random.nextBoolean() ? Gender.Male : Gender.Female);
 
-        System.out.println(dna);
         Node node = getNode();
         for (Node adjacent : node.getAdjacentNodes()) {
             if (!child.nodeIsTraversable(adjacent)) {

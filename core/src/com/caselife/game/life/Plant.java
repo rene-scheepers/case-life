@@ -27,6 +27,10 @@ public class Plant extends Life {
         return world.getNodeForLife(this);
     }
 
+    /**
+     *
+     * @return The amount of energy eaten.
+     */
     @Override
     public int getEaten() {
         int eaten = MAX_ENERGY / TIMES_EATEN_BEFORE_DEAD;

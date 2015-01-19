@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.math.Vector3;
 import com.caselife.game.life.Animal;
+import com.caselife.game.life.Life;
 import com.caselife.game.world.Node;
 
 public class AnimalModelContainer extends ModelContainer {
@@ -23,6 +24,10 @@ public class AnimalModelContainer extends ModelContainer {
         this.scale = scale;
 
         this.instance = new ModelInstance(model, node.getX() * scale, 13.5f, node.getY() * scale);
+    }
+
+    public Life getLife() {
+        return animal;
     }
 
     public Animal getAnimal() {
