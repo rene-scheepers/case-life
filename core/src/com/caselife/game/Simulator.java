@@ -1,4 +1,4 @@
-package com.caselife.game.world;
+package com.caselife.game;
 
 import com.caselife.game.debugging.DebugGraph;
 import com.caselife.game.debugging.SimDebugger;

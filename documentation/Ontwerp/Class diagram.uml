@@ -2,12 +2,64 @@
 <Diagram>
   <ID>JAVA</ID>
   <OriginalElement />
-  <nodes />
+  <nodes>
+    <node x="26.75" y="158.0">com.caselife.game.life.Animal</node>
+    <node x="120.625" y="158.0">com.caselife.game.life.Plant</node>
+    <node x="161.0" y="232.0">com.caselife.game.life.Digestion</node>
+    <node x="112.375" y="79.0">com.caselife.game.life.Life</node>
+    <node x="134.0" y="306.0">com.caselife.game.life.Gender</node>
+    <node x="0.0" y="232.0">com.caselife.game.world.LocationType</node>
+    <node x="0.0" y="306.0">com.caselife.game.life.Genetics</node>
+    <node x="195.0" y="0.0">com.caselife.game.world.ISimulate</node>
+    <node x="107.0" y="0.0">com.caselife.game.life.IFood</node>
+    <node x="6.5" y="79.0">com.caselife.game.life.IAnimal</node>
+    <node x="0.0" y="0.0">com.caselife.game.world.IPosition</node>
+    <node x="228.75" y="79.0">com.caselife.game.world.World</node>
+    <node x="259.0" y="306.0">com.caselife.game.world.Node</node>
+  </nodes>
   <notes />
-  <edges />
+  <edges>
+    <edge source="com.caselife.game.life.Animal" target="com.caselife.game.life.Life">
+      <point x="18.75" y="-14.5" />
+      <point x="83.0" y="133.0" />
+      <point x="126.125" y="133.0" />
+      <point x="-13.75" y="14.5" />
+    </edge>
+    <edge source="com.caselife.game.life.Animal" target="com.caselife.game.life.IAnimal">
+      <point x="-18.75" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="com.caselife.game.life.Plant" target="com.caselife.game.life.Life">
+      <point x="0.0" y="-14.5" />
+      <point x="13.75" y="14.5" />
+    </edge>
+    <edge source="com.caselife.game.life.Life" target="com.caselife.game.world.IPosition">
+      <point x="-18.33333333333333" y="-14.5" />
+      <point x="121.54166666666667" y="54.0" />
+      <point x="43.5" y="54.0" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="com.caselife.game.life.Life" target="com.caselife.game.world.ISimulate">
+      <point x="18.33333333333333" y="-14.5" />
+      <point x="158.20833333333331" y="54.0" />
+      <point x="217.75" y="54.0" />
+      <point x="-22.75" y="14.5" />
+    </edge>
+    <edge source="com.caselife.game.world.World" target="com.caselife.game.world.ISimulate">
+      <point x="0.0" y="-14.5" />
+      <point x="22.75" y="14.5" />
+    </edge>
+    <edge source="com.caselife.game.life.Life" target="com.caselife.game.life.IFood">
+      <point x="0.0" y="-14.5" />
+      <point x="139.875" y="54.0" />
+      <point x="141.0" y="54.0" />
+      <point x="0.0" y="14.5" />
+    </edge>
+  </edges>
   <settings layout="Hierarchic Group" zoom="1.0" x="0.0" y="0.0" />
   <SelectedNodes />
   <Categories />
   <SCOPE>All</SCOPE>
+  <VISIBILITY>public</VISIBILITY>
 </Diagram>
 
