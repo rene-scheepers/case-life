@@ -20,6 +20,8 @@ public class DesktopLauncher {
         // Anti-aliasing.
         config.samples = 8;
 
+        config.fullscreen = true;
+
         new LwjglApplication(new CaseLifeGame(), config);
     }
 }

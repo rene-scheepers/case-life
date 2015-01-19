@@ -77,7 +77,12 @@ public class GameRenderer implements Renderer {
 
             TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
             cell.setTile(tile);
-            lifeLayer.setCell(node.getX(), node.getY(), cell);
+
+            try {
+                lifeLayer.setCell(node.getX(), node.getY(), cell);
+            } catch(NullPointerException exception) {
+
+            }
         }
 
         return lifeLayer;

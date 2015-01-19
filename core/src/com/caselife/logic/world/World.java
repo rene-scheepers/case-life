@@ -13,6 +13,7 @@ public class World implements Serializable, ISimulate {
 
     private ArrayList<Life> lives;
 
+    private int animalsKIA = 0;
     private Node[][] nodes;
 
     private int width;
@@ -73,7 +74,7 @@ public class World implements Serializable, ISimulate {
                         break;
                     case "#ff6a00":
                         // MALE Carnivore
-                        //life = new Animal(world, world.getPathfinder(), new Genetics("T-REX", Digestion.Carnivore, 4, 95, 400, 100, 90), Gender.Male);
+                        life = new Animal(world, world.getPathfinder(), new Genetics("T-REX", Digestion.Carnivore, 4, 95, 400, 100, 90), Gender.Male);
                         break;
                     case "#0026ff":
                         // MALE Omnivore
@@ -169,7 +170,12 @@ public class World implements Serializable, ISimulate {
 
     public void removeLife(Life life) {
         lives.remove(life);
+        animalsKIA++;
         System.out.println("Life: " + life + " died.");
+    }
+
+    public int getAnimalsKIA() {
+        return animalsKIA;
     }
 
 

@@ -10,7 +10,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.profiling.GLProfiler;
 import com.caselife.game.render.orthographic.GameRenderer;
 import com.caselife.logic.Simulator;
+import com.caselife.logic.life.Animal;
+import com.caselife.logic.life.Gender;
 import com.caselife.logic.world.World;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class CaseLifeGame extends ApplicationAdapter {
     private static AssetManager assets;
@@ -47,7 +53,7 @@ public class CaseLifeGame extends ApplicationAdapter {
 
         world = World.instantiateWorldFromImage(texture);
         simulator = new Simulator(world);
-        simulator.setSpeed(60);
+        simulator.setSpeed(200);
         simulator.start();
 
 
@@ -88,10 +94,16 @@ public class CaseLifeGame extends ApplicationAdapter {
             debugText += "\r\n3d Rendering";
         }
 
+        List<Animal> animals = world.getLives().stream().filter(x -> x instanceof Animal).map(y -> (Animal) y).collect(Collectors.toList());
+        int males = (int) animals.stream().filter(x -> x.getGender().equals(Gender.Male)).count();
+        int females = animals.size() - males;
+        String simulationText = String.format("Turn: %s\r\nAnimals: %s\r\nMale: %s\r\nFemale: %s\r\nDied: %s", simulator.getCurrentTurn(), animals.size(), males, females, world.getAnimalsKIA());
+
         BitmapFont font = new BitmapFont();
         font.setColor(Color.BLACK);
         spriteBatch.begin();
         font.drawMultiLine(spriteBatch, debugText, 10, 75);
+        font.drawMultiLine(spriteBatch, simulationText, 225, 90);
         spriteBatch.end();
     }
 

@@ -278,7 +278,7 @@ public class Animal extends Life implements IAnimal {
         }
 
         if (path == null || recalculatePathInTurns < 1) {
-            if (false && gender.equals(Gender.Male) && genetics.getReproductionThreshold() < getHunger()) {
+            if (gender.equals(Gender.Male) && genetics.getReproductionThreshold() < getHunger()) {
                 path = findNearestPropagator();
                 if (path == null) {
                     path = findNearestFoodSource();
