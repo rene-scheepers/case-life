@@ -1,4 +1,4 @@
-package com.caselife.game.render2d.camera;
+package com.caselife.game.renderOrthographic.camera;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.caselife.logic.world.World;

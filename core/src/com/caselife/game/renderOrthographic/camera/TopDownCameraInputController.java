@@ -1,10 +1,7 @@
-package com.caselife.game.render2d.camera;
+package com.caselife.game.renderOrthographic.camera;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.Vector3;
 
 public class TopDownCameraInputController extends InputAdapter {
 

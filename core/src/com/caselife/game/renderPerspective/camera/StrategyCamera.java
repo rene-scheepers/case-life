@@ -1,4 +1,4 @@
-package com.caselife.game.render3d.camera;
+package com.caselife.game.renderPerspective.camera;
 
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.caselife.logic.world.World;

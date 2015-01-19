@@ -1,20 +1,11 @@
-package com.caselife.game.render3d;
+package com.caselife.game.renderPerspective;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.*;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
-import com.badlogic.gdx.graphics.profiling.GLProfiler;
 import com.badlogic.gdx.math.Vector3;
 import com.caselife.game.Renderer;
-import com.caselife.game.render3d.WorldRenderableProvider;
-import com.caselife.game.render3d.camera.StrategyCamera;
-import com.caselife.game.render3d.camera.StrategyCameraInputController;
+import com.caselife.game.renderPerspective.camera.StrategyCamera;
+import com.caselife.game.renderPerspective.camera.StrategyCameraInputController;
 import com.caselife.logic.Simulator;
 import com.caselife.logic.world.World;
 
