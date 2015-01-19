@@ -1,4 +1,4 @@
-package com.caselife.game.renderOrthographic.camera;
+package com.caselife.game.render.orthographic.camera;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;

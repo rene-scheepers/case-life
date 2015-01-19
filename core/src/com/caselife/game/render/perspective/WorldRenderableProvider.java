@@ -1,4 +1,4 @@
-package com.caselife.game.renderPerspective;
+package com.caselife.game.render.perspective;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.VertexAttributes;
@@ -10,8 +10,8 @@ import com.badlogic.gdx.utils.Pool;
 import com.caselife.logic.life.Animal;
 import com.caselife.logic.life.Life;
 import com.caselife.logic.life.Plant;
-import com.caselife.game.renderPerspective.models.AnimalModelContainer;
-import com.caselife.game.renderPerspective.models.ModelContainer;
+import com.caselife.game.render.perspective.models.AnimalModelContainer;
+import com.caselife.game.render.perspective.models.ModelContainer;
 import com.caselife.logic.world.LocationType;
 import com.caselife.logic.world.Node;
 import com.caselife.logic.world.World;

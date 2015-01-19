@@ -1,4 +1,4 @@
-package com.caselife.game.renderOrthographic;
+package com.caselife.game.render.orthographic;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -10,8 +10,8 @@ import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.caselife.game.Renderer;
-import com.caselife.game.renderOrthographic.camera.TopDownCamera;
-import com.caselife.game.renderOrthographic.camera.TopDownCameraInputController;
+import com.caselife.game.render.orthographic.camera.TopDownCamera;
+import com.caselife.game.render.orthographic.camera.TopDownCameraInputController;
 import com.caselife.logic.Simulator;
 import com.caselife.logic.life.Animal;
 import com.caselife.logic.life.Life;

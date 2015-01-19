@@ -1,4 +1,4 @@
-package com.caselife.game.renderPerspective.models;
+package com.caselife.game.render.perspective.models;
 
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;

@@ -1,11 +1,11 @@
-package com.caselife.game.renderPerspective;
+package com.caselife.game.render.perspective;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.math.Vector3;
 import com.caselife.game.Renderer;
-import com.caselife.game.renderPerspective.camera.StrategyCamera;
-import com.caselife.game.renderPerspective.camera.StrategyCameraInputController;
+import com.caselife.game.render.perspective.camera.StrategyCamera;
+import com.caselife.game.render.perspective.camera.StrategyCameraInputController;
 import com.caselife.logic.Simulator;
 import com.caselife.logic.world.World;
 

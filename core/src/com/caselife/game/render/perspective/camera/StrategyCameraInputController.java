@@ -1,4 +1,4 @@
-package com.caselife.game.renderPerspective.camera;
+package com.caselife.game.render.perspective.camera;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;

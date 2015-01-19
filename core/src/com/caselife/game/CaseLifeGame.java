@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.profiling.GLProfiler;
-import com.caselife.game.renderOrthographic.GameRenderer;
+import com.caselife.game.render.orthographic.GameRenderer;
 import com.caselife.logic.Simulator;
 import com.caselife.logic.world.World;
 
@@ -53,7 +53,7 @@ public class CaseLifeGame extends ApplicationAdapter {
 
         spriteBatch = new SpriteBatch();
 
-        renderer3d = new com.caselife.game.renderPerspective.GameRenderer(world, simulator);
+        renderer3d = new com.caselife.game.render.perspective.GameRenderer(world, simulator);
         renderer = renderer2d = new GameRenderer(world, simulator);
     }
 
@@ -84,7 +84,7 @@ public class CaseLifeGame extends ApplicationAdapter {
         String debugText = String.format("FPS: %s\r\nVertices: %s\r\nDraw calls: %s", Gdx.graphics.getFramesPerSecond(), GLProfiler.vertexCount.total, GLProfiler.drawCalls);
         if (renderer instanceof GameRenderer) {
             debugText += "\r\n2d Rendering";
-        } else if (renderer instanceof com.caselife.game.renderPerspective.GameRenderer) {
+        } else if (renderer instanceof com.caselife.game.render.perspective.GameRenderer) {
             debugText += "\r\n3d Rendering";
         }
 
