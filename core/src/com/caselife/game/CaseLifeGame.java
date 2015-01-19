@@ -13,23 +13,29 @@ import com.caselife.logic.Simulator;
 import com.caselife.logic.world.World;
 
 public class CaseLifeGame extends ApplicationAdapter {
+    private static AssetManager assets;
+
     private Renderer renderer;
     private World world;
     private Simulator simulator;
-    private AssetManager assets;
     private SpriteBatch spriteBatch;
-
     private Renderer renderer2d;
     private Renderer renderer3d;
+
+    public void reloadContent() {
+        if (assets != null) {
+            assets.clear();
+        }
+        loadContent();
+    }
 
     public void loadContent() {
         if (assets == null) {
             assets = new AssetManager();
-        } else {
-            assets.clear();
         }
 
         assets.load("maps/small.png", Texture.class);
+
         assets.finishLoading();
     }
 
@@ -81,5 +87,9 @@ public class CaseLifeGame extends ApplicationAdapter {
         spriteBatch.begin();
         font.drawMultiLine(spriteBatch, debugText, 10, 50);
         spriteBatch.end();
+    }
+
+    public static AssetManager getAssets() {
+        return assets;
     }
 }

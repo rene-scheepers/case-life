@@ -18,6 +18,7 @@ import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Matrix4;
+import com.caselife.game.CaseLifeGame;
 import com.caselife.game.Renderer;
 import com.caselife.game.render2d.camera.TopDownCameraInputController;
 import com.caselife.logic.Simulator;
@@ -36,7 +37,6 @@ public class GameRenderer implements Renderer {
     private TopDownCameraInputController cameraInputController;
     private SpriteBatch spriteBatch;
     private World world;
-    private AssetManager assetManager;
     public OrthographicCamera camera;
     private TiledMap tiledMap;
     private MapRenderer renderer;
@@ -45,7 +45,6 @@ public class GameRenderer implements Renderer {
     public GameRenderer(World world, Simulator simulator) {
         spriteBatch = new SpriteBatch();
         this.world = world;
-        this.assetManager = new AssetManager();
         tiledMap = new TiledMap();
         renderer = new OrthogonalTiledMapRenderer(tiledMap);
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -53,6 +52,13 @@ public class GameRenderer implements Renderer {
         cameraInputController = new TopDownCameraInputController(camera);
 
         Gdx.input.setInputProcessor(cameraInputController);
+
+        CaseLifeGame.getAssets().load("tiles/plant.png", Texture.class);
+        CaseLifeGame.getAssets().load("tiles/herbivore.png", Texture.class);
+        CaseLifeGame.getAssets().load("tiles/land.png", Texture.class);
+        CaseLifeGame.getAssets().load("tiles/water.png", Texture.class);
+        CaseLifeGame.getAssets().load("tiles/obstacle.png", Texture.class);
+        CaseLifeGame.getAssets().finishLoading();
 
         lifeLayer = getLifeLayer();
 
@@ -63,8 +69,8 @@ public class GameRenderer implements Renderer {
     private TiledMapTileLayer getLifeLayer() {
         lifeLayer = new TiledMapTileLayer(world.getWidth(), world.getHeight(), 32, 32);
 
-        Texture texturePlant = new Texture("/home/rene/Documents/Repositories/case-life/core/assets/tiles/plant.png");
-        Texture textureHerbivore = new Texture("/home/rene/Documents/Repositories/case-life/core/assets/tiles/herbivore.png");
+        Texture texturePlant = CaseLifeGame.getAssets().get("tiles/plant.png");
+        Texture textureHerbivore = CaseLifeGame.getAssets().get("tiles/herbivore.png");
 
         ArrayList<Life> lives = (ArrayList<Life>) world.getLives().clone();
         for (Life life : lives) {
@@ -89,9 +95,10 @@ public class GameRenderer implements Renderer {
     private TiledMapTileLayer getStaticLayer() {
         TiledMapTileLayer layer = new TiledMapTileLayer(world.getWidth(), world.getHeight(), 32, 32);
 
-        Texture textureLand = new Texture("/home/rene/Documents/Repositories/case-life/core/assets/tiles/land.png");
-        Texture textureWater = new Texture("/home/rene/Documents/Repositories/case-life/core/assets/tiles/water.png");
-        Texture textureObstacle = new Texture("/home/rene/Documents/Repositories/case-life/core/assets/tiles/obstacle.png");
+        Texture textureLand = CaseLifeGame.getAssets().get("tiles/land.png");
+        Texture textureWater = CaseLifeGame.getAssets().get("tiles/water.png");
+        Texture textureObstacle = CaseLifeGame.getAssets().get("tiles/obstacle.png");
+
         spriteBatch.begin();
         Node[][] nodes = world.getNodes();
         for (int x = 0; x < nodes.length; x++) {
