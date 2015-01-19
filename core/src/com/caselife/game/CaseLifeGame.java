@@ -2,34 +2,25 @@ package com.caselife.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g3d.*;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.profiling.GLProfiler;
-import com.badlogic.gdx.math.Vector3;
-import com.caselife.game.camera.StrategyCamera;
-import com.caselife.game.camera.StrategyCameraInputController;
-import com.caselife.game.world.World;
-
-import java.util.ArrayList;
+import com.caselife.game.render2d.GameRenderer;
+import com.caselife.logic.Simulator;
+import com.caselife.logic.world.World;
 
 public class CaseLifeGame extends ApplicationAdapter {
+    private Renderer renderer;
     private World world;
     private Simulator simulator;
-    private WorldRenderableProvider worldRenderableProvider;
-
-    private StrategyCameraInputController cameraInputController;
-    private ModelBatch modelBatch;
     private AssetManager assets;
     private SpriteBatch spriteBatch;
 
-    private float scale = 5f;
-
-    public ModelInstance xyz;
+    private Renderer renderer2d;
+    private Renderer renderer3d;
 
     public void loadContent() {
         if (assets == null) {
@@ -53,55 +44,34 @@ public class CaseLifeGame extends ApplicationAdapter {
         simulator.setSpeed(60);
         simulator.start();
 
-        modelBatch = new ModelBatch();
+
         spriteBatch = new SpriteBatch();
 
-        StrategyCamera camera = new StrategyCamera(
-                90,
-                Gdx.graphics.getWidth(),
-                Gdx.graphics.getHeight(),
-                world,
-                scale
-        );
-        cameraInputController = new StrategyCameraInputController(camera);
-        Gdx.input.setInputProcessor(cameraInputController);
-
-        ModelBuilder builder = new ModelBuilder();
-        Model model = builder.createXYZCoordinates(200f, new Material(ColorAttribute.createDiffuse(Color.GREEN)), VertexAttributes.Usage.Position);
-        xyz = new ModelInstance(model, 0f, 0f, 0f);
-
-        worldRenderableProvider = new WorldRenderableProvider(world, scale);
+        renderer3d = new com.caselife.game.render3d.GameRenderer(world, simulator);
+        renderer2d = new GameRenderer(world, simulator);
     }
-
 
     @Override
     public void render() {
+        if (Gdx.input.isKeyPressed(Input.Keys.NUM_3)) {
+            renderer = renderer2d;
+            renderer.activate();
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.NUM_2)) {
+            renderer = renderer3d;
+            renderer.activate();
+        }
+
         GLProfiler.reset();
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
         Gdx.gl.glClearColor(0.9f, 0.9f, 0.9f, 0);
 
-        cameraInputController.update();
-        renderModels();
-        renderDebug();
-    }
-
-    private void renderModels()
-    {
-        ArrayList<ModelInstance> visible = new ArrayList();
-        worldRenderableProvider.update();
-        for (ModelInstance instance : worldRenderableProvider.getModelInstances()) {
-            Vector3 position = new Vector3();
-            instance.transform.getTranslation(position);
-            if (cameraInputController.camera.frustum.pointInFrustum(position)) {
-                visible.add(instance);
-            }
+        if (renderer != null) {
+            renderer.render();
         }
 
-        modelBatch.begin(cameraInputController.camera);
-        modelBatch.render(visible);
-        modelBatch.render(xyz);
-        modelBatch.end();
+        renderDebug();
     }
 
     private void renderDebug() {
@@ -112,5 +82,4 @@ public class CaseLifeGame extends ApplicationAdapter {
         font.drawMultiLine(spriteBatch, debugText, 10, 50);
         spriteBatch.end();
     }
-
 }
