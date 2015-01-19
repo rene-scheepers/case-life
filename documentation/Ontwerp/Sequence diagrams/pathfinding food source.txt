@@ -1,0 +1,10 @@
+Animal->World: Request food sources
+World->Animal: Food sources
+Animal->World: Request distance from current to target
+World->Animal: Distance between two points
+Animal->Pathfinder: Request path too food source
+Pathfinder->Path: Generate path from node array
+Path->Pathfinder: Shortest path
+Pathfinder->Animal: Shortest path
+
+http://websequencediagrams.com
