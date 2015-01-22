@@ -137,8 +137,17 @@ public class World implements Serializable, ISimulate {
     }
 
     public Node getNode(int x, int y) {
-        if (x < 0 || x >= width || y < 0 || y >= height)
-            return null;
+        x = x % width;
+        y = y % height;
+
+        while (x < 0) {
+            x += width;
+        }
+
+        while (y < 0) {
+            y += height;
+        }
+
         return nodes[x][y];
     }
 

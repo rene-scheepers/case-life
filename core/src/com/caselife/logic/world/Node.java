@@ -10,6 +10,7 @@ public class Node {
     private final World world;
     private final int x;
     private final int y;
+    private List<Node> adjacentNodes;
 
     private LocationType type;
 
@@ -21,18 +22,29 @@ public class Node {
         this.y = y;
         this.type = type;
     }
+    
+    private void loadAdjacentNodes()
+    {
+        adjacentNodes = new ArrayList();
+        
+        adjacentNodes.add(world.getNode(x - 1, y + 1));
+        adjacentNodes.add(world.getNode(x, y + 1));
+        adjacentNodes.add(world.getNode(x + 1, y + 1));
+
+        adjacentNodes.add(world.getNode(x - 1, y));
+        adjacentNodes.add(world.getNode(x + 1, y));
+
+        adjacentNodes.add(world.getNode(x - 1, y - 1));
+        adjacentNodes.add(world.getNode(x, y - 1));
+        adjacentNodes.add(world.getNode(x + 1, y - 1));
+    }
 
     public List<Node> getAdjacentNodes() {
-        List<Node> list = new ArrayList<>(8); // 8 adjacent nodes possible.
-        for (int x = this.x - 1; x <= this.x + 1; x++) {
-            for (int y = this.y - 1; y <= this.y + 1; y++) {
-                Node loopNode = world.getNode(x, y);
-                if (this.equals(loopNode) || loopNode == null)
-                    continue;
-                list.add(loopNode);
-            }
+        if (adjacentNodes == null) {
+            loadAdjacentNodes();
         }
-        return list;
+
+        return adjacentNodes;
     }
 
     public Life getHolder() {

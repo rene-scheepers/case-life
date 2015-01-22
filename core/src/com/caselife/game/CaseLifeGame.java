@@ -53,7 +53,7 @@ public class CaseLifeGame extends ApplicationAdapter {
 
         world = World.instantiateWorldFromImage(texture);
         simulator = new Simulator(world);
-        simulator.setSpeed(200);
+        simulator.setSpeed(20);
         simulator.start();
 
 
