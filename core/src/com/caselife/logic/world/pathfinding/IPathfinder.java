@@ -3,6 +3,7 @@ package com.caselife.logic.world.pathfinding;
 import com.caselife.logic.world.Node;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface IPathfinder {
 
@@ -12,6 +13,6 @@ public interface IPathfinder {
 
     public void unRegisterPath(Path path);
 
-    public ArrayList<Path> getRegisteredPaths();
+    public List<Path> getRegisteredPaths();
 
 }

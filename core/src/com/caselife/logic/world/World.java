@@ -137,16 +137,15 @@ public class World implements Serializable, ISimulate {
     }
 
     public Node getNode(int x, int y) {
+        // Wrap x and y around when accessing out of bounds.
         x = x % width;
         y = y % height;
 
-        while (x < 0) {
+        while (x < 0)
             x += width;
-        }
 
-        while (y < 0) {
+        while (y < 0)
             y += height;
-        }
 
         return nodes[x][y];
     }
@@ -157,6 +156,7 @@ public class World implements Serializable, ISimulate {
 
     public boolean addLife(Life life, Node node) {
         if (node.setHolder(life)) {
+            System.out.println("NEW LIFE: " + life);
             lives.add(life);
         } else {
             return false;
@@ -180,13 +180,10 @@ public class World implements Serializable, ISimulate {
     public void removeLife(Life life) {
         lives.remove(life);
         animalsKIA++;
-        System.out.println("Life: " + life + " died.");
+        System.out.println(String.format("DIED: %s", life));
     }
 
     public int getAnimalsKIA() {
         return animalsKIA;
     }
-
-
-
 }

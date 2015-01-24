@@ -53,4 +53,12 @@ public class Plant extends Life {
             }
         }
     }
+
+    @Override
+    public String toString() {
+        return "Plant{" +
+                "energy=" + energy +
+                ", timesDied=" + timesDied +
+                '}';
+    }
 }

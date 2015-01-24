@@ -449,7 +449,6 @@ public class Animal extends Life implements IAnimal {
 
             try {
                 world.addLife(child, adjacent);
-                System.out.println("NEW ANIMAL");
                 energy -= genetics.getReproductionCost();
                 return true;
             } catch (Exception exception) {
@@ -466,11 +465,18 @@ public class Animal extends Life implements IAnimal {
      */
     @Override
     public int getEaten() {
-        System.out.println("I get eaten ofzo");
+        System.out.println(String.format("EATEN: %s", this));
         int energyEaten = energy;
         energy = 0;
         world.removeLife(this);
         return energyEaten;
     }
 
+    @Override
+    public String toString() {
+        return "Animal{" +
+                "gender=" + gender +
+                ", energy=" + energy +
+                '}';
+    }
 }

@@ -14,12 +14,13 @@ import com.caselife.logic.life.Animal;
 import com.caselife.logic.life.Gender;
 import com.caselife.logic.world.World;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class CaseLifeGame extends ApplicationAdapter {
     private static AssetManager assets;
+    private static HashMap<String, BitmapFont> fonts;
 
     private Renderer renderer;
     private World world;
@@ -29,18 +30,26 @@ public class CaseLifeGame extends ApplicationAdapter {
     private Renderer renderer3d;
 
     public void reloadContent() {
-        if (assets != null) {
-            assets.clear();
-        }
+        if (assets != null) assets.clear();
+        if (fonts != null) fonts.clear();
+
         loadContent();
     }
 
     public void loadContent() {
-        if (assets == null) {
-            assets = new AssetManager();
-        }
+        if (assets == null) assets = new AssetManager();
+        if (fonts == null) fonts = new HashMap<>();
+
+        BitmapFont font = new BitmapFont();
+        font.setColor(Color.BLACK);
+        fonts.put("default", font);
 
         assets.load("maps/small.png", Texture.class);
+        assets.load("tiles/plant.png", Texture.class);
+        assets.load("tiles/herbivore.png", Texture.class);
+        assets.load("tiles/land.png", Texture.class);
+        assets.load("tiles/water.png", Texture.class);
+        assets.load("tiles/obstacle.png", Texture.class);
 
         assets.finishLoading();
     }
@@ -55,7 +64,6 @@ public class CaseLifeGame extends ApplicationAdapter {
         simulator = new Simulator(world);
         simulator.setSpeed(20);
         simulator.start();
-
 
         spriteBatch = new SpriteBatch();
 
@@ -87,27 +95,31 @@ public class CaseLifeGame extends ApplicationAdapter {
     }
 
     private void renderDebug() {
-        String debugText = String.format("FPS: %s\r\nVertices: %s\r\nDraw calls: %s", Gdx.graphics.getFramesPerSecond(), GLProfiler.vertexCount.total, GLProfiler.drawCalls);
+        StringBuilder debugText = new StringBuilder();
+        debugText.append(String.format("FPS: %s\r\nVertices: %s\r\nDraw calls: %s", Gdx.graphics.getFramesPerSecond(), GLProfiler.vertexCount.total, GLProfiler.drawCalls));
+
         if (renderer instanceof GameRenderer) {
-            debugText += "\r\n2d Rendering";
+            debugText.append("\r\n2d Rendering");
         } else if (renderer instanceof com.caselife.game.render.perspective.GameRenderer) {
-            debugText += "\r\n3d Rendering";
+            debugText.append("\r\n3d Rendering");
         }
 
+        // Get all animals.
         List<Animal> animals = world.getLives().stream().filter(x -> x instanceof Animal).map(y -> (Animal) y).collect(Collectors.toList());
+
         int males = (int) animals.stream().filter(x -> x.getGender().equals(Gender.Male)).count();
         int females = animals.size() - males;
         String simulationText = String.format("Turn: %s\r\nAnimals: %s\r\nMale: %s\r\nFemale: %s\r\nDied: %s", simulator.getCurrentTurn(), animals.size(), males, females, world.getAnimalsKIA());
 
-        BitmapFont font = new BitmapFont();
-        font.setColor(Color.BLACK);
         spriteBatch.begin();
-        font.drawMultiLine(spriteBatch, debugText, 10, 75);
-        font.drawMultiLine(spriteBatch, simulationText, 225, 90);
+        fonts.get("default").drawMultiLine(spriteBatch, debugText, 10, 75);
+        fonts.get("default").drawMultiLine(spriteBatch, simulationText, 225, 90);
         spriteBatch.end();
     }
 
     public static AssetManager getAssets() {
         return assets;
     }
+
+    public static HashMap<String, BitmapFont> getFonts() { return fonts; }
 }

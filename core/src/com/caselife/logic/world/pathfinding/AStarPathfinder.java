@@ -5,10 +5,11 @@ import com.caselife.logic.customtypes.SortedList;
 import com.caselife.logic.world.Node;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AStarPathfinder implements IPathfinder {
 
-    private ArrayList<Path> registeredPaths = new ArrayList();
+    private List<Path> registeredPaths = new ArrayList();
 
     private SortedList<NodeHeuristic> openNodes;
     private ArrayList<Node> closedNodes;
@@ -83,7 +84,7 @@ public class AStarPathfinder implements IPathfinder {
         return null;
     }
 
-    public ArrayList<Path> getRegisteredPaths() {
+    public List<Path> getRegisteredPaths() {
         return registeredPaths;
     }
 

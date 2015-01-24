@@ -44,14 +44,6 @@ public class GameRenderer implements Renderer {
         cameraInputController = new TopDownCameraInputController(camera);
         Gdx.input.setInputProcessor(cameraInputController);
 
-        // Content loading.
-        CaseLifeGame.getAssets().load("tiles/plant.png", Texture.class);
-        CaseLifeGame.getAssets().load("tiles/herbivore.png", Texture.class);
-        CaseLifeGame.getAssets().load("tiles/land.png", Texture.class);
-        CaseLifeGame.getAssets().load("tiles/water.png", Texture.class);
-        CaseLifeGame.getAssets().load("tiles/obstacle.png", Texture.class);
-        CaseLifeGame.getAssets().finishLoading();
-
         // Initializing.
         lifeLayer = getLifeLayer();
         tiledMap.getLayers().add(getStaticLayer());
