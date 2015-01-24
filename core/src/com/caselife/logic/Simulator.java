@@ -4,22 +4,11 @@ import com.caselife.logic.world.World;
 import javafx.scene.canvas.GraphicsContext;
 
 public class Simulator extends Thread {
-
-    private GraphicsContext uiContext;
-
-
     private World world;
     private boolean isPlaying;
     private boolean isPaused;
 
     private int currentTurn = 0;
-    private int width;
-    private int height;
-
-    private double perfomanceSimulateMs;
-    private double totalSimulateMs;
-    private double performanceAverageSimulateMs;
-    private double perfomanceDrawMs;
 
     /**
      * Desired speed in FPS.
@@ -54,8 +43,6 @@ public class Simulator extends Thread {
      */
     @Override
     public void run() {
-        // FPS counter.
-        int currentFPS = 0;
         long startFPSCountTime = System.currentTimeMillis();
         long overSleptTime = 0;
 
@@ -67,10 +54,8 @@ public class Simulator extends Thread {
                 currentTurn++;
             }
 
-            currentFPS++;
             if (System.currentTimeMillis() - 1000 >= startFPSCountTime) {
                 startFPSCountTime = System.currentTimeMillis();
-                currentFPS = 0;
             }
 
             time = System.currentTimeMillis() - time;
@@ -96,9 +81,7 @@ public class Simulator extends Thread {
      * Update logic being executed each frame.
      */
     private void simulate() {
-        long perfStart = System.nanoTime();
         world.simulate();
-        perfomanceSimulateMs = (System.nanoTime() - perfStart) / 1000000.0;
     }
 
     public void pause() { isPlaying = false; }
