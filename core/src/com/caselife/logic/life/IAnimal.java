@@ -3,7 +3,6 @@ package com.caselife.logic.life;
 import com.caselife.logic.world.Node;
 
 public interface IAnimal {
-
     /**
      *
      * @param food

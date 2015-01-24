@@ -22,7 +22,7 @@ public class TopDownCamera extends OrthographicCamera {
         this.maxZoom = 100f;
         this.minZoom = 0.25f;
 
-        zoom = 1f;
+        zoom = 2.5f;
 
         translate(world.getWidth() * scale / 2, world.getHeight() * scale / 2);
         update();

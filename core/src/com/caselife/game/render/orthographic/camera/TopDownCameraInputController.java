@@ -25,8 +25,7 @@ public class TopDownCameraInputController extends InputAdapter {
         this.camera = camera;
     }
 
-    public void update()
-    {
+    public void update() {
         if (leftKeyPressed || rightKeyPressed || upKeyPressed || downKeyPressed || zoomInPressed || zoomOutPressed) {
             if (leftKeyPressed) {
                 camera.translate(-5f * camera.zoom * 5, 0);
@@ -57,8 +56,7 @@ public class TopDownCameraInputController extends InputAdapter {
     }
 
     @Override
-    public boolean keyDown(int keycode)
-    {
+    public boolean keyDown(int keycode) {
         switch (keycode) {
             case LEFT_KEY:
                 leftKeyPressed = true;
@@ -73,6 +71,7 @@ public class TopDownCameraInputController extends InputAdapter {
                 downKeyPressed = true;
                 break;
             case ZOOM_IN_KEY:
+            case Input.Keys.EQUALS:
                 zoomInPressed = true;
                 break;
             case ZOOM_OUT_KEY:
@@ -84,8 +83,7 @@ public class TopDownCameraInputController extends InputAdapter {
     }
 
     @Override
-    public boolean keyUp(int keycode)
-    {
+    public boolean keyUp(int keycode) {
         switch (keycode) {
             case LEFT_KEY:
                 leftKeyPressed = false;
@@ -100,6 +98,7 @@ public class TopDownCameraInputController extends InputAdapter {
                 downKeyPressed = false;
                 break;
             case ZOOM_IN_KEY:
+            case Input.Keys.EQUALS:
                 zoomInPressed = false;
                 break;
             case ZOOM_OUT_KEY:

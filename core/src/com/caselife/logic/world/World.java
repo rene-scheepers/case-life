@@ -136,16 +136,26 @@ public class World implements Serializable, ISimulate {
         return null;
     }
 
+    /**
+     * Returns the node at the x and y coordinates. If out of bounds, it wraps around and returns that node.
+     *
+     * @param x horizontal coordinate.
+     * @param y vertical coordinate.
+     * @return The node at the x and y coordinate. Wraps around if out of bounds.
+     */
     public Node getNode(int x, int y) {
-        // Wrap x and y around when accessing out of bounds.
-        x = x % width;
-        y = y % height;
+        // Example: x = -201, width = 100
+        // -201 % 100 = -1
+        // -1 + 100 = -99
+        // -99 % 100 = -99
 
-        while (x < 0)
-            x += width;
+        // OR: x = 215, width = 100
+        // 215 % 100 = 15
+        // 15 + 100 = 115
+        // 115 % 100 = 15
 
-        while (y < 0)
-            y += height;
+        x = (x % width + width) % width;
+        y = (y % height + height) % height;
 
         return nodes[x][y];
     }

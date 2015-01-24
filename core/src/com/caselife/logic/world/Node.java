@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Node {
-
     private final World world;
     private final int x;
     private final int y;
@@ -22,11 +21,9 @@ public class Node {
         this.y = y;
         this.type = type;
     }
-    
-    private void loadAdjacentNodes()
-    {
+
+    private void loadAdjacentNodes() {
         adjacentNodes = new ArrayList();
-        
         adjacentNodes.add(world.getNode(x - 1, y + 1));
         adjacentNodes.add(world.getNode(x, y + 1));
         adjacentNodes.add(world.getNode(x + 1, y + 1));

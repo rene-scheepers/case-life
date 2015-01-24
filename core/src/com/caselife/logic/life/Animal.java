@@ -179,9 +179,11 @@ public class Animal extends Life implements IAnimal {
         }
 
         energy -= genetics.getLegs();
-        boolean canSetHolder = newNode.setHolder(this);
-        current.unsetHolder();
-        return canSetHolder;
+        if (newNode.setHolder(this)) {
+            current.unsetHolder();
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -192,10 +194,7 @@ public class Animal extends Life implements IAnimal {
      * @return TRUE if the node can move onto the node.
      */
     public boolean nodeIsTraversable(Node node) {
-        if (node.getLocationType().equals(LocationType.Obstacle) || node.getHolder() != null) {
-            return false;
-        }
-        return true;
+        return !(node.getLocationType().equals(LocationType.Obstacle) || node.getHolder() != null);
     }
 
     /**

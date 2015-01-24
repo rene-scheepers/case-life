@@ -23,12 +23,20 @@ public class Plant extends Life {
         return energy;
     }
 
+    /**
+     * Sets the new energy value clamped to the @see MAX_ENERGY specified.
+     *
+     * @param energy New energy value.
+     */
+    public void setEnergy(int energy) {
+        this.energy = Math.min(MAX_ENERGY - this.energy, energy);
+    }
+
     public Node getNode() {
         return world.getNodeForLife(this);
     }
 
     /**
-     *
      * @return The amount of energy eaten.
      */
     @Override
@@ -49,7 +57,7 @@ public class Plant extends Life {
             timesDied = 0;
 
             if (energy < MAX_ENERGY) {
-                energy += REGENERATION;
+                setEnergy(energy + REGENERATION);
             }
         }
     }
