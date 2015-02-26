@@ -8,6 +8,7 @@ import com.caselife.logic.world.pathfinding.IPathfinder;
 import com.caselife.logic.world.pathfinding.Path;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Animal extends Life implements IAnimal {
 
@@ -119,25 +120,21 @@ public class Animal extends Life implements IAnimal {
      * @return
      */
     private double[][] getMostRecentValueMap() {
-        //return valueMap;
-
-        Node[][] nodes = world.getNodes();
         double[][] recentMap = new double[world.getWidth()][world.getHeight()];
-        for (int x = 0; x < nodes.length; x++) {
-            for (int y = 0; y < nodes[x].length; y++) {
-                Node node = nodes[x][y];
+        world.getNodes().stream().forEach(node -> {
+            int x = node.getX();
+            int y = node.getY();
 
-                if (node.getHolder() != null || node.getLocationType().equals(LocationType.Obstacle)) {
-                    recentMap[x][y] = -1;
+            if (node.getHolder() != null || node.getLocationType().equals(LocationType.Obstacle)) {
+                recentMap[x][y] = -1;
+            } else {
+                if (node.getLocationType().equals(LocationType.Land)) {
+                    recentMap[x][y] = 10;
                 } else {
-                    if (node.getLocationType().equals(LocationType.Land)) {
-                        recentMap[x][y] = 10;
-                    } else {
-                        recentMap[x][y] = 25;
-                    }
+                    recentMap[x][y] = 25;
                 }
             }
-        }
+        });
 
         return recentMap;
     }
@@ -379,12 +376,7 @@ public class Animal extends Life implements IAnimal {
     public Path findNearestPropagator() {
         Node current = getNode();
 
-        List<Node> sources = new ArrayList();
-        for (Life life : world.getLives()) {
-            if (canPropagateWith(life)) {
-                sources.add(life.getNode());
-            }
-        }
+        List<Node> sources = world.getLives().stream().filter(life -> canPropagateWith(life)).map(Life::getNode).collect(Collectors.toList());
 
         if (sources.size() > 0) {
             Collections.sort(sources, new Comparator<Node>() {

@@ -16,11 +16,11 @@ public class Simulator extends Thread {
 
     public Simulator(World world) {
         this.world = world;
-
         this.speed = 60;
     }
 
     public void setSpeed(double speed) {
+        if (speed < 1) return;
         this.speed = speed;
     }
 

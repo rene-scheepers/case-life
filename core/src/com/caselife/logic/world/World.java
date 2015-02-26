@@ -8,27 +8,38 @@ import com.caselife.logic.life.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Optional;
 
 public class World implements Serializable, ISimulate {
 
     private ArrayList<Life> lives;
 
     private int animalsKIA = 0;
-    private Node[][] nodes;
+    private Nodes nodes;
 
     private int width;
     private int height;
     private AStarPathfinder pathfinder;
 
+    private World() {
+        lives = new ArrayList<>();
+        pathfinder = new AStarPathfinder();
+    }
+
+    private World(int width, int height) {
+        this();
+        nodes = new Nodes(width, height);
+        this.width = width;
+        this.height = height;
+    }
+
     private World(Node[][] nodes) {
-        lives = new ArrayList();
+        this();
 
-        this.nodes = nodes;
-
+        this.nodes = new Nodes(nodes);
         width = nodes.length;
         height = nodes[0].length;
-
-        pathfinder = new AStarPathfinder();
     }
 
     public AStarPathfinder getPathfinder() {
@@ -42,8 +53,7 @@ public class World implements Serializable, ISimulate {
 
         int width = texture.getWidth();
         int height = texture.getHeight();
-        Node[][] nodes = new Node[width][height];
-        World world = new World(nodes);
+        World world = new World(width, height);
 
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
@@ -106,7 +116,7 @@ public class World implements Serializable, ISimulate {
         return world;
     }
 
-    public Node[][] getNodes() {
+    public Nodes getNodes() {
         return nodes;
     }
 
@@ -123,16 +133,15 @@ public class World implements Serializable, ISimulate {
     }
 
     public Node getNodeForLife(Life life) {
-        for (int x = 0; x < nodes.length; x++) {
-            for (int y = 0; y < nodes[x].length; y++) {
-                Node node = nodes[x][y];
+        for (int x = 0; x < nodes.length(); x++) {
+            for (int y = 0; y < nodes.length(x); y++) {
+                Node node = nodes.get(x, y);
                 Life holder = node.getHolder();
-                if (holder != null && holder.equals(life)) {
+                if (holder != null && holder.equals(life))
                     return node;
-                }
+
             }
         }
-
         return null;
     }
 
@@ -157,11 +166,11 @@ public class World implements Serializable, ISimulate {
         x = (x % width + width) % width;
         y = (y % height + height) % height;
 
-        return nodes[x][y];
+        return nodes.get(x, y);
     }
 
     public void setNode(int x, int y, LocationType type) {
-        nodes[x][y] = new Node(this, x, y, type);
+        nodes.set(x, y, new Node(this, x, y, type));
     }
 
     public boolean addLife(Life life, Node node) {

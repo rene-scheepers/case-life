@@ -1,9 +1,11 @@
 package com.caselife.game.render.perspective;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.utils.MeshBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
@@ -42,7 +44,7 @@ public class WorldRenderableProvider implements RenderableProvider {
         modelNodeWater = modelBuilder.createBox(world.getWidth() * 5, 1f, world.getHeight() * 5, new Material(ColorAttribute.createDiffuse(Color.WHITE)), VertexAttributes.Usage.Position);
         modelNodeLand = modelBuilder.createBox(5f, 10f, 5f, new Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY)), VertexAttributes.Usage.Position);
         modelNodeObstacle = modelBuilder.createBox(5f, 30f, 5f, new Material(ColorAttribute.createDiffuse(Color.BLACK)), VertexAttributes.Usage.Position);
-        modelLifePlant = modelBuilder.createBox(5f, 15f, 5f, new Material(ColorAttribute.createDiffuse(Color.DARK_GRAY)), VertexAttributes.Usage.Position);
+        modelLifePlant = modelBuilder.createBox(5f, 15f, 5f, new Material(ColorAttribute.createDiffuse(Color.GREEN)), VertexAttributes.Usage.Position);
         modelLifeAnimal = modelBuilder.createBox(5f, 5f, 5f, new Material(ColorAttribute.createDiffuse(Color.RED)), VertexAttributes.Usage.Position);
 
         buildWorld();
@@ -67,18 +69,13 @@ public class WorldRenderableProvider implements RenderableProvider {
     private void buildWorld() {
         instances.add(new ModelInstance(modelNodeWater, world.getWidth() * scale / 2, 0.5f, world.getHeight() * scale / 2));
 
-        Node[][] nodes = world.getNodes();
-        for (int x = 0; x < nodes.length; x++) {
-            for (int y = 0; y < nodes[x].length; y++) {
-                Node node = nodes[x][y];
-
-                if (node.getLocationType().equals(LocationType.Land)) {
-                    instances.add(new ModelInstance(modelNodeLand, x * scale, 6f, y * scale));
-                } else if (node.getLocationType().equals(LocationType.Obstacle)) {
-                    instances.add(new ModelInstance(modelNodeObstacle, x * scale, 16f, y * scale));
-                }
+        world.getNodes().stream().forEach(node -> {
+            if (node.getLocationType().equals(LocationType.Land)) {
+                instances.add(new ModelInstance(modelNodeLand, node.getX() * scale, 6f, node.getY() * scale));
+            } else if (node.getLocationType().equals(LocationType.Obstacle)) {
+                instances.add(new ModelInstance(modelNodeObstacle, node.getX() * scale, 16f, node.getY() * scale));
             }
-        }
+        });
 
         for (Life life : world.getLives()) {
             Node node = life.getNode();
@@ -93,12 +90,10 @@ public class WorldRenderableProvider implements RenderableProvider {
     }
 
     protected void update() {
+
+        // Replace dynamicInstances every update.
         dynamicInstances.clear();
-
-        for (Animal animal : world.getLives().stream().filter(x -> x.getClass() == Animal.class).map(y -> (Animal) y).collect(Collectors.toList())) {
-            dynamicInstances.add(new AnimalModelContainer(animal, modelLifeAnimal, scale));
-        }
-
+        dynamicInstances.addAll(world.getLives().stream().filter(x -> x.getClass() == Animal.class).map(y -> (Animal) y).collect(Collectors.toList()).stream().map(animal -> new AnimalModelContainer(animal, modelLifeAnimal, scale)).collect(Collectors.toList()));
         dynamicInstances.forEach(x -> x.update());
     }
 }

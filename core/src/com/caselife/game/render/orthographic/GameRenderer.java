@@ -19,9 +19,11 @@ import com.caselife.logic.life.Life;
 import com.caselife.logic.life.Plant;
 import com.caselife.logic.world.LocationType;
 import com.caselife.logic.world.Node;
+import com.caselife.logic.world.Nodes;
 import com.caselife.logic.world.World;
 
 import java.util.ArrayList;
+import java.util.stream.IntStream;
 
 public class GameRenderer implements Renderer {
 
@@ -88,27 +90,23 @@ public class GameRenderer implements Renderer {
         Texture textureWater = CaseLifeGame.getAssets().get("tiles/water.png");
         Texture textureObstacle = CaseLifeGame.getAssets().get("tiles/obstacle.png");
         spriteBatch.begin();
-        Node[][] nodes = world.getNodes();
-        for (int x = 0; x < nodes.length; x++) {
-            for (int y = 0; y < nodes[x].length; y++) {
-                Node node = nodes[x][y];
 
-                Texture texture;
-                if (node.getLocationType().equals(LocationType.Land)) {
-                    texture = textureLand;
-                } else if (node.getLocationType().equals(LocationType.Obstacle)) {
-                    texture = textureObstacle;
-                } else {
-                    texture = textureWater;
-                }
-
-                TiledMapTile tile = new StaticTiledMapTile(new TextureRegion(texture));
-
-                TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
-                cell.setTile(tile);
-                layer.setCell(x, y, cell);
+        world.getNodes().stream().forEach(node -> {
+            Texture texture;
+            if (node.getLocationType().equals(LocationType.Land)) {
+                texture = textureLand;
+            } else if (node.getLocationType().equals(LocationType.Obstacle)) {
+                texture = textureObstacle;
+            } else {
+                texture = textureWater;
             }
-        }
+
+            TiledMapTile tile = new StaticTiledMapTile(new TextureRegion(texture));
+            TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
+            cell.setTile(tile);
+
+            layer.setCell(node.getX(), node.getY(), cell);
+        });
 
         return layer;
     }
