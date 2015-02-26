@@ -1,7 +1,6 @@
 package com.caselife.logic;
 
 import com.caselife.logic.world.World;
-import javafx.scene.canvas.GraphicsContext;
 
 public class Simulator extends Thread {
     private World world;
