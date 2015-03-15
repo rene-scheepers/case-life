@@ -91,7 +91,7 @@ public class GameRenderer implements Renderer {
         Texture textureObstacle = CaseLifeGame.getAssets().get("tiles/obstacle.png");
         spriteBatch.begin();
 
-        world.getNodes().stream().forEach(node -> {
+        for (Node node : world.getNodes()) {
             Texture texture;
             if (node.getLocationType().equals(LocationType.Land)) {
                 texture = textureLand;
@@ -106,8 +106,7 @@ public class GameRenderer implements Renderer {
             cell.setTile(tile);
 
             layer.setCell(node.getX(), node.getY(), cell);
-        });
-
+        }
         return layer;
     }
 
